@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import loginImage from "./Login.jpeg";
 
 function CandidateLogin() {
   const navigate = useNavigate();
@@ -10,25 +11,19 @@ function CandidateLogin() {
 
   function handleLogin(e) {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
+    console.log("Candidate Email:", email);
+    console.log("Candidate Password:", password);
     navigate("/candidate/instructions");
   }
 
   return (
     <div className="min-h-screen flex w-full overflow-hidden bg-white">
-
       <div className="hidden md:block w-[58%] relative min-h-screen">
         <img
-          src="/recruiter.jpg"
+          src={loginImage}
           alt="Recruitment background"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/10"></div>
-
-        <h1 className="absolute top-8 left-12 text-4xl font-extrabold text-slate-900 tracking-tight drop-shadow-sm">
-          SmartRecruit
-        </h1>
       </div>
 
       <div className="w-full md:w-[42%] min-h-screen flex items-center justify-center px-6 sm:px-12 py-12 overflow-y-auto">
@@ -39,7 +34,7 @@ function CandidateLogin() {
           </h1>
 
           <p className="mt-2 text-slate-500 text-sm">
-            Login to continue to your assessment platform.
+            Login to continue to your candidate assessment portal.
           </p>
 
           <div className="flex p-1 bg-slate-100 border border-slate-200 rounded-xl mt-6">
@@ -78,7 +73,7 @@ function CandidateLogin() {
 
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                Password
+                Password / Access Code
               </label>
               <div className="relative">
                 <input
@@ -108,20 +103,21 @@ function CandidateLogin() {
               </button>
             </div>
 
-            <button type="submit"
-              className="w-full h-11 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white rounded-xl font-medium shadow-md shadow-blue-500/20 transition-all"
+            <button
+              type="submit"
+              className="w-full h-11 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white rounded-xl font-medium shadow-md shadow-blue-500/20 transition-all cursor-pointer"
             >
-              Login →
+              Login & Start Assessment →
             </button>
 
           </form>
 
           <div className="text-center mt-6 text-sm">
             <span className="text-slate-500">
-              Don't have an account?
+              Need assistance with your assessment link?
             </span>
             <button type="button" className="ml-1.5 text-blue-600 font-semibold hover:underline">
-              Create Account
+              Contact Support
             </button>
           </div>
 

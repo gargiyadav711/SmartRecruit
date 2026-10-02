@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import loginImage from "./Login.jpeg";
 
 function RecruiterLogin() {
   const navigate = useNavigate();
@@ -19,15 +20,10 @@ function RecruiterLogin() {
     <div className="min-h-screen flex w-full overflow-hidden bg-white">
       <div className="hidden md:block w-[58%] relative min-h-screen">
         <img
-          src="/recruiter.jpg"
+          src={loginImage}
           alt="Recruitment background"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/10"></div>
-        
-        <h1 className="absolute top-8 left-12 text-4xl font-extrabold text-slate-900 tracking-tight drop-shadow-sm">
-          SmartRecruit
-        </h1>
       </div>
 
       <div className="w-full md:w-[42%] min-h-screen flex items-center justify-center px-6 sm:px-12 py-12 overflow-y-auto">
