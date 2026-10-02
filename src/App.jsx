@@ -1,14 +1,29 @@
-import { useState } from 'react'
-import './App.css'
-import Login from './Candidate/Login'
-function App()
-{
-  const [count, setCount] = useState(0)
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import LandingPage from "./pages/LandingPage";
+import CandidateLogin from "./pages/Candidate/CandidateLogin";
+import RecruiterLogin from "./pages/Recruiter/RecruiterLogin";
+
+function App() {
   return (
-    <>
-    <Login/>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+
+        <Route path="/" element={<LandingPage />} />
+    
+        <Route
+          path="/candidate/login"
+          element={<CandidateLogin />}
+        />
+
+        <Route
+          path="/recruiter/login"
+          element={<RecruiterLogin />}
+        />
+
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
