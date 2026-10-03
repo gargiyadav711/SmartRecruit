@@ -12,8 +12,7 @@ function CandidateLogin() {
   function handleLogin(e) {
     e.preventDefault();
     console.log("Candidate Email:", email);
-    console.log("Candidate Password:", password);
-    navigate("/candidate/instructions");
+    navigate("/candidate/profile");
   }
 
   return (

@@ -1,11 +1,10 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function CandidateAssessmentOverview() {
   const navigate = useNavigate();
 
   function handleStartAssessment() {
-    alert("Starting assessment session now!");
+    navigate("/candidate/assessment");
   }
 
   return (
