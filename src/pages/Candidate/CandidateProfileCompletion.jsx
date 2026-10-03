@@ -68,8 +68,8 @@ function CandidateProfileCompletion() {
                     <button
                         onClick={() => setPreviewState("Complete")}
                         className={`px-3 py-1 rounded-lg font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${previewState === "Complete"
-                                ? "bg-blue-600 text-white shadow-sm shadow-blue-500/20"
-                                : "bg-slate-100 text-slate-600 hover:text-slate-900"
+                            ? "bg-blue-600 text-white shadow-sm shadow-blue-500/20"
+                            : "bg-slate-100 text-slate-600 hover:text-slate-900"
                             }`}
                     >
                         <i className="fa-solid fa-circle-check text-[10px]"></i>
@@ -79,8 +79,8 @@ function CandidateProfileCompletion() {
                     <button
                         onClick={() => setPreviewState("Validation")}
                         className={`px-3 py-1 rounded-lg font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${previewState === "Validation"
-                                ? "bg-amber-600 text-white shadow-sm shadow-amber-500/20"
-                                : "bg-slate-100 text-slate-600 hover:text-slate-900"
+                            ? "bg-amber-600 text-white shadow-sm shadow-amber-500/20"
+                            : "bg-slate-100 text-slate-600 hover:text-slate-900"
                             }`}
                     >
                         <i className="fa-solid fa-triangle-exclamation text-[10px]"></i>

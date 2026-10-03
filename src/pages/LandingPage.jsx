@@ -1,80 +1,79 @@
 import { useNavigate } from "react-router-dom";
-import Button from "../components/Buttons";
 
 function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12">
-      <div className="max-w-4xl w-full flex flex-col items-center">
+    <div className="min-h-screen bg-white text-slate-900 flex flex-col justify-between selection:bg-[#1D4ED8] selection:text-white">
+      
+      <header className="w-full border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+
+          <div className="flex items-center gap-3 cursor-pointer">
+            <div className="w-9 h-9 bg-[#1D4ED8] text-white rounded-xl flex items-center justify-center font-black text-xl shadow-md shadow-blue-600/20">
+              S
+            </div>
+            <span className="text-xl font-bold tracking-tight lowercase">
+              <span className="text-slate-900 font-extrabold">Smart</span><span className="text-[#1D4ED8]">Recruit</span><span className="text-[#1D4ED8]">.</span>
+            </span>
+          </div>
+
+          <div className="hidden md:flex items-center gap-8 text-sm font-mono text-slate-600">
+            <a href="#about" className="hover:text-[#1D4ED8] transition-colors">About</a>
+            <a href="#features" className="hover:text-[#1D4ED8] transition-colors">Features</a>
+            <a href="#contact" className="hover:text-[#1D4ED8] transition-colors">Contact</a>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate("/candidate/SignUpPage")}
+              className="text-sm font-mono text-slate-600 hover:text-[#1D4ED8] px-3 py-2 transition-colors"
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => navigate("/candidate/login")}
+              className="bg-[#1D4ED8] hover:bg-blue-700 text-white px-5 py-2.5 rounded-full text-xs font-mono font-bold uppercase tracking-wider transition-all shadow-sm shadow-blue-600/20"
+            >
+              Login
+            </button>
+          </div>
+
+        </div>
+      </header>
+
+      <section className="max-w-6xl mx-auto w-full px-6 pt-20 pb-16 flex flex-col gap-12">
         
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
-            SmartRecruit
+        <div className="flex flex-col gap-4">
+          <h1 className="text-6xl sm:text-8xl md:text-9xl font-black tracking-tighter lowercase leading-none flex items-center flex-wrap">
+            <span className="text-slate-900">Smart</span>
+            <span className="text-[#1D4ED8]">Recruit</span>
+            <span className="inline-block w-4 h-4 sm:w-6 sm:h-6 bg-[#1D4ED8] rounded-full ml-2 mb-10 sm:mb-16"></span>
+            <span className="text-[#1D4ED8]">.</span>
           </h1>
-          <p className="mt-3 text-base md:text-lg text-slate-500 font-medium">
-            AI-Powered Recruitment & Assessment Platform
+          
+          <p className="text-lg sm:text-2xl text-slate-600 max-w-3xl font-normal leading-relaxed mt-2">
+            A poster-grade system for the last mile of hiring: turn <span className="text-slate-900 font-semibold underline decoration-[#1D4ED8] underline-offset-4">almost qualified</span> into confirmed, assessed, and locked, with a sign-off everyone trusts.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
-          
-          <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col items-center text-center group">
-            
-            <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
+      </section>
 
-            <h2 className="text-2xl font-bold text-slate-900">
-              Candidate
-            </h2>
-
-            <p className="text-slate-500 text-sm mt-3 mb-8 leading-relaxed">
-              Take assessments and showcase your skills seamlessly.
-            </p>
-
-            <div className="w-full mt-auto">
-              <Button
-                onClick={() => navigate("/candidate/login")}
-                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-sm transition-colors"
-              >
-                Continue as Candidate
-              </Button>
-            </div>
-          </div>
-          
-          <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col items-center text-center group">
-            
-            <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </div>
-
-            <h2 className="text-2xl font-bold text-slate-900">
-              Recruiter
-            </h2>
-
-            <p className="text-slate-500 text-sm mt-3 mb-8 leading-relaxed">
-              Create assessments and evaluate top candidates effectively.
-            </p>
-
-            <div className="w-full mt-auto">
-              <Button
-                onClick={() => navigate("/recruiter/login")}
-                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-sm transition-colors"
-              >
-                Continue as Recruiter
-              </Button>
-            </div>
-          </div>
-
+      <footer id="contact" className="max-w-6xl mx-auto w-full px-6 py-8 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-400 uppercase tracking-wider">
+        <div>
+          <span className="font-bold">
+            <span className="text-slate-900">Smart</span><span className="text-[#1D4ED8]">Recruit</span>
+          </span> — completion & sign-off
         </div>
+        <div className="flex gap-6">
+          <a href="#" className="hover:text-slate-900 transition-colors">Privacy</a>
+          <a href="#" className="hover:text-slate-900 transition-colors">Terms</a>
+          <a href="#contact" className="hover:text-slate-900 transition-colors">Contact</a>
+        </div>
+      </footer>
 
-      </div>
     </div>
   );
 }
+
 export default LandingPage;
