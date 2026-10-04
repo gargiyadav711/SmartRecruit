@@ -9,14 +9,81 @@ function CandidateLogin() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  function handleLogin(e) {
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  async function handleLogin(e) {
     e.preventDefault();
-    console.log("Candidate Email:", email);
-    navigate("/candidate/profile");
+
+    if (!email || !password) {
+      setMessage("Please enter your email and password.");
+      return;
+    }
+
+    setLoading(true);
+    setMessage("");
+
+    try {
+      // Send login request to Render backend
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/login`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      console.log("Login response:", data);
+
+      // Backend returned an error
+      if (!response.ok) {
+        throw new Error(data.message || "Invalid email or password.");
+      }
+
+      // Save JWT token if backend sends one
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+      // Save user information if backend sends it
+      if (data.user) {
+        localStorage.setItem(
+          "user",
+          JSON.stringify(data.user)
+        );
+      }
+
+      setMessage("Login successful!");
+
+      // Navigate after successful login
+      setTimeout(() => {
+        navigate("/candidate/profile");
+      }, 1000);
+
+    } catch (error) {
+      console.error("Login error:", error);
+
+      setMessage(
+        error.message || "Unable to login. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <div className="min-h-screen flex w-full overflow-hidden bg-white">
+
       <div className="hidden md:block w-[58%] relative min-h-screen">
         <img
           src={loginImage}
@@ -26,6 +93,7 @@ function CandidateLogin() {
       </div>
 
       <div className="w-full md:w-[42%] min-h-screen flex items-center justify-center px-6 sm:px-12 py-12 overflow-y-auto">
+
         <div className="w-full max-w-md">
 
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
@@ -35,8 +103,8 @@ function CandidateLogin() {
           <p className="mt-2 text-slate-500 text-sm">
             Login to continue to your candidate assessment portal.
           </p>
-
           <div className="flex p-1 bg-slate-100 border border-slate-200 rounded-xl mt-6">
+
             <button
               type="button"
               className="w-1/2 py-2.5 bg-blue-600 text-white font-medium rounded-lg shadow-sm transition-all"
@@ -52,14 +120,19 @@ function CandidateLogin() {
             >
               I'm a Recruiter
             </button>
+
           </div>
 
-          <form onSubmit={handleLogin} className="mt-6 space-y-4">
+          <form
+            onSubmit={handleLogin}
+            className="mt-6 space-y-4"
+          >
 
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
                 Email
               </label>
+
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -74,7 +147,9 @@ function CandidateLogin() {
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
                 Password / Access Code
               </label>
+
               <div className="relative">
+
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
@@ -83,13 +158,17 @@ function CandidateLogin() {
                   className="w-full h-11 bg-slate-100 border border-slate-200 rounded-xl px-4 pr-12 text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
                   required
                 />
+
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() =>
+                    setShowPassword(!showPassword)
+                  }
                   className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 text-sm"
                 >
                   {showPassword ? "🙈" : "👁"}
                 </button>
+
               </div>
             </div>
 
@@ -104,20 +183,42 @@ function CandidateLogin() {
 
             <button
               type="submit"
-              className="w-full h-11 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white rounded-xl font-medium shadow-md shadow-blue-500/20 transition-all cursor-pointer"
+              disabled={loading}
+              className="w-full h-11 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white rounded-xl font-medium shadow-md shadow-blue-500/20 transition-all cursor-pointer disabled:bg-blue-400 disabled:cursor-not-allowed"
             >
-              Login & Start Assessment →
+              {loading
+                ? "Logging in..."
+                : "Login & Start Assessment →"}
             </button>
 
           </form>
 
+          {/* BACKEND RESPONSE MESSAGE */}
+          {message && (
+            <div
+              className={`mt-4 text-center text-sm ${
+                message.toLowerCase().includes("successful")
+                  ? "text-green-600"
+                  : "text-red-600"
+              }`}
+            >
+              {message}
+            </div>
+          )}
+
           <div className="text-center mt-6 text-sm">
+
             <span className="text-slate-500">
               Need assistance with your assessment link?
             </span>
-            <button type="button" className="ml-1.5 text-blue-600 font-semibold hover:underline">
+
+            <button
+              type="button"
+              className="ml-1.5 text-blue-600 font-semibold hover:underline"
+            >
               Contact Support
             </button>
+
           </div>
 
           <p className="text-center text-[11px] text-slate-400 mt-12">
