@@ -207,18 +207,16 @@ function CandidateLogin() {
           )}
 
           <div className="text-center mt-6 text-sm">
-
             <span className="text-slate-500">
-              Need assistance with your assessment link?
+              Don't have an account?
             </span>
-
-            <button
-              type="button"
-              className="ml-1.5 text-blue-600 font-semibold hover:underline"
+            <button 
+              type="button" 
+              onClick={() => navigate("/candidate/SignUpPage")}
+              className="ml-1.5 text-blue-600 font-semibold hover:underline cursor-pointer"
             >
-              Contact Support
+              Create Account
             </button>
-
           </div>
 
           <p className="text-center text-[11px] text-slate-400 mt-12">

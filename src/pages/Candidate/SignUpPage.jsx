@@ -45,11 +45,9 @@ function SignUp() {
         `${import.meta.env.VITE_API_URL}/api/auth/register`,
         {
           method: "POST",
-
           headers: {
             "Content-Type": "application/json",
           },
-
           body: JSON.stringify({
             name: formData.name,
             email: formData.email,
@@ -250,7 +248,6 @@ function SignUp() {
         {/* Login */}
         <p className="login-text">
           Already have an account?{" "}
-
           <span
             onClick={() =>
               navigate("/candidate/login")
@@ -268,328 +265,168 @@ function SignUp() {
 
 
 // ===============================
-// STYLED COMPONENT
+// STYLED COMPONENT (GREEN & BLACK)
 // ===============================
 
 const StyledWrapper = styled.div`
-
   min-height: 100vh;
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
   padding: 20px;
-
-  background: #f4f7fb;
-
+  background: #000000;
 
   .container {
-
     width: 100%;
-
     max-width: 390px;
-
-    background:
-      linear-gradient(
-        0deg,
-        rgb(255, 255, 255) 0%,
-        rgb(244, 247, 251) 100%
-      );
-
+    background: linear-gradient(0deg, #09090b 0%, #000000 100%);
     border-radius: 40px;
-
     padding: 30px 35px;
-
-    border: 5px solid white;
-
-    box-shadow:
-      rgba(133, 189, 215, 0.55)
-      0px 30px 30px -20px;
-
+    border: 2px solid #1f2937;
+    box-shadow: rgba(16, 185, 129, 0.15) 0px 30px 30px -20px;
   }
-
 
   .heading {
-
     text-align: center;
-
     font-weight: 900;
-
     font-size: 30px;
-
-    color: rgb(16, 137, 211);
-
+    color: #10B981;
   }
-
 
   .subtitle {
-
     text-align: center;
-
     font-size: 13px;
-
-    color: rgb(130, 130, 130);
-
+    color: #9ca3af;
     margin-top: 5px;
-
   }
-
 
   .form {
-
     margin-top: 20px;
-
   }
-
 
   .form .input {
-
     width: 100%;
-
     box-sizing: border-box;
-
-    background: white;
-
-    border: none;
-
+    background: #18181b;
+    color: #ffffff;
+    border: 1px solid #27272a;
     padding: 15px 20px;
-
     border-radius: 20px;
-
     margin-top: 15px;
-
-    box-shadow:
-      #cff0ff
-      0px 10px 10px -5px;
-
-    border-inline:
-      2px solid transparent;
-
     font-size: 14px;
-
+    transition: all 0.2s ease-in-out;
   }
-
 
   .form .input::placeholder {
-
-    color: rgb(170, 170, 170);
-
+    color: #71717a;
   }
-
 
   .form .input:focus {
-
     outline: none;
-
-    border-inline:
-      2px solid #12B1D1;
-
+    border-color: #10B981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
   }
-
 
   .signup-button {
-
     display: block;
-
     width: 100%;
-
     font-weight: bold;
-
-    background:
-      linear-gradient(
-        45deg,
-        rgb(16, 137, 211) 0%,
-        rgb(18, 177, 209) 100%
-      );
-
+    background: linear-gradient(45deg, #10B981 0%, #059669 100%);
     color: white;
-
     padding: 15px;
-
     margin: 25px auto 20px;
-
     border-radius: 20px;
-
-    box-shadow:
-      rgba(133, 189, 215, 0.55)
-      0px 20px 10px -15px;
-
+    box-shadow: rgba(16, 185, 129, 0.3) 0px 20px 10px -15px;
     border: none;
-
     transition: all 0.2s ease-in-out;
-
     cursor: pointer;
-
   }
-
 
   .signup-button:hover {
-
     transform: scale(1.03);
-
-    box-shadow:
-      rgba(133, 189, 215, 0.55)
-      0px 23px 10px -20px;
-
+    box-shadow: rgba(16, 185, 129, 0.4) 0px 23px 10px -20px;
   }
-
 
   .signup-button:active {
-
     transform: scale(0.95);
-
   }
-
 
   .signup-button:disabled {
-
     opacity: 0.7;
-
     cursor: not-allowed;
-
     transform: none;
-
   }
-
 
   .message {
-
     text-align: center;
-
     font-size: 13px;
-
     margin-top: 10px;
-
-    color: #555;
-
+    color: #d1d5db;
   }
-
 
   .social-account-container {
-
     margin-top: 25px;
-
   }
-
 
   .social-account-container .title {
-
     display: block;
-
     text-align: center;
-
     font-size: 11px;
-
-    color: rgb(170, 170, 170);
-
+    color: #71717a;
   }
-
 
   .social-accounts {
-
     width: 100%;
-
     display: flex;
-
     justify-content: center;
-
     gap: 15px;
-
     margin-top: 10px;
-
   }
-
 
   .social-button {
-
-    background:
-      linear-gradient(
-        45deg,
-        rgb(0, 0, 0) 0%,
-        rgb(112, 112, 112) 100%
-      );
-
-    border: 5px solid white;
-
+    background: linear-gradient(45deg, #18181b 0%, #27272a 100%);
+    border: 2px solid #3f3f46;
     padding: 7px;
-
     border-radius: 50%;
-
     width: 48px;
-
     height: 48px;
-
     display: grid;
-
     place-content: center;
-
-    box-shadow:
-      rgba(133, 189, 215, 0.55)
-      0px 12px 10px -8px;
-
+    box-shadow: 0px 12px 10px -8px rgba(0, 0, 0, 0.5);
     transition: all 0.2s ease-in-out;
-
     cursor: pointer;
-
   }
-
 
   .social-button:hover {
-
-    transform: scale(1.2);
-
+    transform: scale(1.15);
+    border-color: #10B981;
   }
-
 
   .social-button:active {
-
     transform: scale(0.9);
-
   }
-
 
   .social-button .svg {
-
     width: 22px;
-
     height: 22px;
-
   }
-
 
   .login-text {
-
     text-align: center;
-
     font-size: 13px;
-
-    color: rgb(120, 120, 120);
-
+    color: #9ca3af;
     margin-top: 25px;
-
   }
-
 
   .login-text span {
-
-    color: #0099ff;
-
+    color: #10B981;
     font-weight: 600;
-
     cursor: pointer;
-
   }
-
 
   .login-text span:hover {
-
     text-decoration: underline;
-
   }
-
 `;
 
 export default SignUp;

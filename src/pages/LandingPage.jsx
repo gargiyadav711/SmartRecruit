@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
-
 function LandingPage() {
   const navigate = useNavigate();
-
   return (
     <div className="min-h-screen bg-black text-white flex flex-col justify-between selection:bg-[#10B981] selection:text-white">
       <header className="w-full border-b border-slate-800 bg-black/80 backdrop-blur-md sticky top-0 z-50">
@@ -36,7 +34,7 @@ function LandingPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <button onClick={() => navigate("/candidate/SignUpPage")} className="text-sm font-mono text-slate-400 hover:text-[#10B981] px-3 py-2 transition-colors">
+            <button onClick={() => navigate("/candidate/profile")} className="text-sm font-mono text-slate-400 hover:text-[#10B981] px-3 py-2 transition-colors">
               Sign In
             </button>
 

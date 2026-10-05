@@ -12,9 +12,11 @@ function CandidateProfileCompletion() {
     });
 
     const [resumeFile, setResumeFile] = useState({
-        name: "",
-        size: 2.5 * 1024 * 1024
+        name: "Abhinayak_Pandey_Resume.pdf",
+        size: 2.4 * 1024 * 1024
     });
+
+    const [resumeError, setResumeError] = useState("");
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -23,13 +25,33 @@ function CandidateProfileCompletion() {
 
     const handleFileUpload = (e) => {
         if (e.target.files && e.target.files[0]) {
-            setResumeFile(e.target.files[0]);
+            const file = e.target.files[0];
+            const maxSize = 10 * 1024 * 1024; // 10 MB in bytes
+
+            // Check if file size exceeds 10 MB
+            if (file.size > maxSize) {
+                setResumeError("File size exceeds 10 MB. Please upload a smaller file.");
+                return;
+            }
+
+            // Clear any previous error and update file
+            setResumeError("");
+            setResumeFile(file);
         }
     };
 
+    // Format file size for display
+    const formatFileSize = (bytes) => {
+        if (bytes === 0) return "0 Bytes";
+        const k = 1024;
+        const sizes = ["Bytes", "KB", "MB", "GB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+    };
+
     return (
-        <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9] flex flex-col justify-between font-sans selection:bg-emerald-500 selection:text-black">
-            <header className="bg-[#161b22] border-b border-[#30363d] px-6 py-3.5 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+        <div className="min-h-screen bg-gradient-to-b from-[#0d1117] via-[#091512] to-[#0d1117] text-[#c9d1d9] flex flex-col justify-between font-sans selection:bg-emerald-500 selection:text-black">
+            <header className="bg-[#161b22]/90 backdrop-blur-md border-b border-[#30363d] px-6 py-3.5 flex items-center justify-between sticky top-0 z-30 shadow-sm">
                 <div className="flex items-center space-x-3">
                     <div className="w-7 h-7 bg-emerald-500 rounded-lg flex items-center justify-center font-bold text-black text-xs shadow-md shadow-emerald-500/20">
                         S
@@ -39,16 +61,11 @@ function CandidateProfileCompletion() {
                         <span className="text-[10px] text-[#8b949e] font-medium tracking-wide uppercase">CANDIDATE PORTAL</span>
                     </div>
                 </div>
-
-                <div className="hidden md:flex items-center space-x-2 text-xs font-medium text-[#c9d1d9]">
-                    <span>Frontend Developer · Recruitment drive</span>
-                </div>
-
                 <div className="flex items-center space-x-2.5 bg-[#21262d] border border-[#30363d] pl-2 pr-3 py-1 rounded-xl shadow-sm">
                     <div className="w-7 h-7 bg-emerald-500 text-black rounded-lg flex items-center justify-center text-xs font-bold">
                         {formData.fullName ? formData.fullName.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase() : "AP"}
                     </div>
-                    <span className="text-xs font-semibold text-white">{formData.fullName || "Abhinayak Pandey"}</span>
+                    <span className="text-xs font-semibold text-white">{formData.fullName || "Your Name"}</span>
                 </div>
             </header>
 
@@ -64,6 +81,7 @@ function CandidateProfileCompletion() {
                     Step 1 of 3
                 </div>
             </div>
+
             <main className="max-w-7xl w-full mx-auto p-4 sm:p-6 my-6 flex flex-col lg:flex-row gap-8 flex-grow">
                 <div className="flex-grow space-y-8">
                     <div className="space-y-2">
@@ -72,20 +90,6 @@ function CandidateProfileCompletion() {
                         <p className="text-[#8b949e] text-xs sm:text-sm">
                             A few details help the hiring team put your work in context. You can review everything before you continue.
                         </p>
-                    </div>
-
-                    <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-4 flex items-start space-x-3.5">
-                        <div className="w-8 h-8 bg-[#21262d] text-emerald-400 border border-[#30363d] rounded-xl flex items-center justify-center shrink-0 mt-0.5">
-                            <i className="fa-solid fa-laptop-code text-xs"></i>
-                        </div>
-                        <div className="text-xs space-y-1">
-                            <p className="font-bold text-white text-sm">
-                                Frontend Developer <span className="text-[#8b949e] font-normal">Technical Recruitment Drive</span>
-                            </p>
-                            <p className="text-[#8b949e] leading-relaxed">
-                                Your profile will be shared with the recruiting team alongside your assessment.
-                            </p>
-                        </div>
                     </div>
                     <div className="space-y-4 pt-2">
                         <div className="flex justify-between items-center">
@@ -104,7 +108,7 @@ function CandidateProfileCompletion() {
                                     placeholder="Enter your full name"
                                     value={formData.fullName}
                                     onChange={handleChange}
-                                    className="w-full bg-[#161b22] border border-[#30363d] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#8b949e] focus:outline-none focus:border-emerald-500 transition-colors font-medium"
+                                    className="w-full bg-[#161b22] border border-[#30363d] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#8b949e] focus:outline-none focus:border-emerald-500 transition-colors font-medium shadow-inner"
                                 />
                             </div>
 
@@ -118,7 +122,7 @@ function CandidateProfileCompletion() {
                                     placeholder="candidate@example.com"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className="w-full bg-[#161b22] border border-[#30363d] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#8b949e] focus:outline-none focus:border-emerald-500 transition-colors font-medium"
+                                    className="w-full bg-[#161b22] border border-[#30363d] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#8b949e] focus:outline-none focus:border-emerald-500 transition-colors font-medium shadow-inner"
                                 />
                             </div>
 
@@ -132,7 +136,7 @@ function CandidateProfileCompletion() {
                                     placeholder="+91 XXXXX XXXXX"
                                     value={formData.phone}
                                     onChange={handleChange}
-                                    className="w-full bg-[#161b22] border border-[#30363d] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#8b949e] focus:outline-none focus:border-emerald-500 transition-colors font-medium"
+                                    className="w-full bg-[#161b22] border border-[#30363d] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#8b949e] focus:outline-none focus:border-emerald-500 transition-colors font-medium shadow-inner"
                                 />
                             </div>
 
@@ -146,18 +150,19 @@ function CandidateProfileCompletion() {
                                     placeholder="Enter your college or university name"
                                     value={formData.college}
                                     onChange={handleChange}
-                                    className="w-full bg-[#161b22] border border-[#30363d] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#8b949e] focus:outline-none focus:border-emerald-500 transition-colors font-medium"
+                                    className="w-full bg-[#161b22] border border-[#30363d] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#8b949e] focus:outline-none focus:border-emerald-500 transition-colors font-medium shadow-inner"
                                 />
                             </div>
                         </div>
                     </div>
+
                     <div className="space-y-3 pt-2">
                         <div className="flex justify-between items-center">
                             <h2 className="text-base font-bold text-white">Your resume</h2>
                             <span className="text-[11px] text-[#8b949e]">PDF or DOCX · up to 10 MB</span>
                         </div>
 
-                        <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className={`bg-[#161b22]/90 backdrop-blur-sm border rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors ${resumeError ? 'border-red-500/50' : 'border-[#30363d]'}`}>
                             <div className="flex items-center space-x-3.5 w-full sm:w-auto">
                                 <div className="w-10 h-10 bg-[#21262d] text-emerald-400 border border-[#30363d] rounded-xl flex items-center justify-center shrink-0">
                                     <i className="fa-solid fa-file-pdf text-lg"></i>
@@ -165,11 +170,11 @@ function CandidateProfileCompletion() {
                                 <div className="space-y-0.5 overflow-hidden">
                                     <div className="flex items-center space-x-2">
                                         <span className="font-bold text-xs sm:text-sm text-white truncate">
-                                            {resumeFile ? resumeFile.name : "Upload your resume (PDF)"}
+                                            {resumeFile ? resumeFile.name : "Upload your resume (PDF/DOCX)"}
                                         </span>
                                     </div>
                                     <p className="text-[11px] text-[#8b949e]">
-                                        PDF · 2.4 MB · Uploaded just now
+                                        {resumeFile ? `${formatFileSize(resumeFile.size)} · Uploaded just now` : "PDF or DOCX · Up to 10 MB"}
                                     </p>
                                 </div>
                             </div>
@@ -187,17 +192,26 @@ function CandidateProfileCompletion() {
                                 >
                                     Preview
                                 </button>
-                                <span className="text-emerald-400 flex items-center space-x-1 ml-2">
-                                    <i className="fa-solid fa-check text-[10px]"></i>
-                                    <span>Ready</span>
-                                </span>
+                                {!resumeError && (
+                                    <span className="text-emerald-400 flex items-center space-x-1 ml-2">
+                                        <i className="fa-solid fa-check text-[10px]"></i>
+                                        <span>Ready</span>
+                                    </span>
+                                )}
                             </div>
                         </div>
+
+                        {resumeError && (
+                            <p className="text-xs text-red-400 font-medium flex items-center space-x-1 pt-1">
+                                <i className="fa-solid fa-triangle-exclamation"></i>
+                                <span>{resumeError}</span>
+                            </p>
+                        )}
                     </div>
+
                     <div className="space-y-3 pt-2">
                         <div className="flex justify-between items-center">
                             <h2 className="text-base font-bold text-white">Show us what you've built</h2>
-                            <span className="text-[11px] text-[#8b949e]">Optional</span>
                         </div>
 
                         <div className="space-y-2">
@@ -210,7 +224,7 @@ function CandidateProfileCompletion() {
                                 placeholder="https://github.com/your-username/project-repo"
                                 value={formData.githubUrl}
                                 onChange={handleChange}
-                                className="w-full bg-[#161b22] border border-[#30363d] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#8b949e] focus:outline-none focus:border-emerald-500 transition-colors font-mono"
+                                className="w-full bg-[#161b22] border border-[#30363d] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#8b949e] focus:outline-none focus:border-emerald-500 transition-colors font-mono shadow-inner"
                             />
                         </div>
 
@@ -228,84 +242,24 @@ function CandidateProfileCompletion() {
                     </div>
 
                     <div className="pt-6 border-t border-[#30363d] flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div className="text-xs">
-                            <p className="font-bold text-white">Saved as you go</p>
-                            <p className="text-[11px] text-[#8b949e]">You can come back to finish later.</p>
-                        </div>
-
                         <button
                             type="button"
-                            onClick={() => navigate("/candidate/instructions")}
-                            className="w-full sm:w-auto px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-black font-bold text-xs rounded-xl transition-all shadow-lg shadow-emerald-500/10 flex items-center justify-center space-x-2 cursor-pointer"
+                            disabled={Boolean(resumeError)}
+                            onClick={() => {
+                                if (resumeError) return;
+                                navigate("/candidate/instructions");
+                            }}
+                            className={`w-full sm:w-auto px-6 py-3 font-bold text-xs rounded-xl transition-all shadow-lg flex items-center justify-center space-x-2 ${
+                                resumeError 
+                                    ? 'bg-gray-700 text-gray-400 cursor-not-allowed opacity-50 shadow-none' 
+                                    : 'bg-emerald-500 hover:bg-emerald-600 text-black cursor-pointer shadow-emerald-500/20'
+                            }`}
                         >
                             <span>Save and continue</span>
                             <span>→</span>
                         </button>
                     </div>
-
                 </div>
-
-                <div className="w-full lg:w-80 space-y-6 shrink-0">
-                    <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-5 space-y-4">
-                        <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-emerald-500 text-black rounded-xl flex items-center justify-center font-bold text-xs">
-                                AP
-                            </div>
-                            <div>
-                                <span className="font-bold text-sm text-white block">Abhinayak Pandey</span>
-                                <span className="text-xs text-[#8b949e]">Candidate</span>
-                            </div>
-                        </div>
-
-                        <div className="border-t border-[#30363d] pt-4 space-y-2">
-                            <h3 className="font-bold text-xs text-white uppercase tracking-wider">A note from the team</h3>
-                            <p className="text-xs text-[#8b949e] leading-relaxed">
-                                Thanks for taking the time to apply. Your profile gives us a little context before we see your work.
-                            </p>
-                            <div className="pt-1">
-                                <a href="#help" onClick={(e) => { e.preventDefault(); alert("Talk to our team"); }} className="text-emerald-400 text-xs hover:underline inline-flex items-center space-x-1">
-                                    <span>Need help? Talk to our team</span>
-                                    <span>→</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-5 space-y-4">
-                        <h3 className="font-bold text-xs text-white uppercase tracking-wider">Your application</h3>
-                        
-                        <div className="space-y-3 text-xs">
-                            <div className="flex items-center justify-between text-[#c9d1d9]">
-                                <div className="flex items-center space-x-2.5">
-                                    <i className="fa-regular fa-circle-check text-emerald-400"></i>
-                                    <span>Contact details</span>
-                                </div>
-                                <span className="text-[#8b949e]">Done</span>
-                            </div>
-
-                            <div className="flex items-center justify-between text-[#c9d1d9]">
-                                <div className="flex items-center space-x-2.5">
-                                    <i className="fa-regular fa-circle-check text-emerald-400"></i>
-                                    <span>Resume</span>
-                                </div>
-                                <span className="text-[#8b949e]">Added</span>
-                            </div>
-
-                            <div className="flex items-center justify-between text-[#8b949e]">
-                                <div className="flex items-center space-x-2.5">
-                                    <i className="fa-regular fa-square text-[#8b949e]"></i>
-                                    <span>Assessment</span>
-                                </div>
-                                <span>Next</span>
-                            </div>
-                        </div>
-
-                        <div className="border-t border-[#30363d] pt-3 text-[11px] text-[#8b949e]">
-                            Your progress is saved automatically.
-                        </div>
-                    </div>
-                </div>
-
             </main>
 
             <footer className="bg-[#161b22] border-t border-[#30363d] px-6 py-4 flex flex-col sm:flex-row items-center justify-between text-xs text-[#8b949e]">
@@ -319,7 +273,6 @@ function CandidateProfileCompletion() {
                     <a href="#support" onClick={(e) => e.preventDefault()} className="hover:text-white transition-colors">Support</a>
                 </div>
             </footer>
-
         </div>
     );
 }

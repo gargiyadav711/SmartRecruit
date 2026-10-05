@@ -115,7 +115,11 @@ function RecruiterLogin() {
             <span className="text-slate-500">
               Don't have an account?
             </span>
-            <button type="button" className="ml-1.5 text-blue-600 font-semibold hover:underline">
+            <button 
+              type="button" 
+              onClick={() => navigate("/candidate/SignUpPage")}
+              className="ml-1.5 text-blue-600 font-semibold hover:underline cursor-pointer"
+            >
               Create Account
             </button>
           </div>
