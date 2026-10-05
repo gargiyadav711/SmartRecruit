@@ -11,8 +11,10 @@ function CandidateProfileCompletion() {
         githubUrl: ""
     });
 
-    const [resumeFile, setResumeFile] = useState(null);
-    const [previewState, setPreviewState] = useState("Complete"); // "Complete" or "Validation"
+    const [resumeFile, setResumeFile] = useState({
+        name: "",
+        size: 2.5 * 1024 * 1024
+    });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -26,116 +28,75 @@ function CandidateProfileCompletion() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col justify-between font-sans selection:bg-blue-600 selection:text-white">
-
-            <header className="bg-white border-b border-slate-200 px-6 py-3.5 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+        <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9] flex flex-col justify-between font-sans selection:bg-emerald-500 selection:text-black">
+            <header className="bg-[#161b22] border-b border-[#30363d] px-6 py-3.5 flex items-center justify-between sticky top-0 z-30 shadow-sm">
                 <div className="flex items-center space-x-3">
-                    <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-md shadow-blue-500/20">
+                    <div className="w-7 h-7 bg-emerald-500 rounded-lg flex items-center justify-center font-bold text-black text-xs shadow-md shadow-emerald-500/20">
                         S
                     </div>
                     <div>
-                        <span className="font-bold text-sm tracking-tight text-slate-900 block">SmartRecruit</span>
-                        <span className="text-[10px] text-slate-500 font-medium tracking-wide uppercase">CANDIDATE PORTAL</span>
+                        <span className="font-bold text-sm tracking-tight text-white block">SmartRecruit</span>
+                        <span className="text-[10px] text-[#8b949e] font-medium tracking-wide uppercase">CANDIDATE PORTAL</span>
                     </div>
                 </div>
 
-                <div className="hidden md:flex items-center space-x-2 bg-slate-100 border border-slate-200 px-4 py-1.5 rounded-full text-xs font-medium text-slate-700 shadow-inner">
-                    <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                    <span>Frontend Developer Recruitment Drive</span>
+                <div className="hidden md:flex items-center space-x-2 text-xs font-medium text-[#c9d1d9]">
+                    <span>Frontend Developer · Recruitment drive</span>
                 </div>
 
-                <div className="flex items-center space-x-4">
-                    <button className="flex items-center space-x-1.5 text-xs text-slate-600 hover:text-slate-900 transition-colors bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg border border-slate-200 cursor-pointer">
-                        <i className="fa-regular fa-circle-question text-blue-600"></i>
-                        <span>Help</span>
-                    </button>
-
-                    <div className="flex items-center space-x-2.5 bg-white border border-slate-200 pl-2 pr-3 py-1 rounded-xl shadow-sm">
-                        <div className="w-7 h-7 bg-blue-600 text-white rounded-lg flex items-center justify-center text-xs font-bold shadow-sm">
-                            {formData.fullName ? formData.fullName.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase() : "CP"}
-                        </div>
-                        <span className="text-xs font-semibold text-slate-800">{formData.fullName || "Candidate"}</span>
+                <div className="flex items-center space-x-2.5 bg-[#21262d] border border-[#30363d] pl-2 pr-3 py-1 rounded-xl shadow-sm">
+                    <div className="w-7 h-7 bg-emerald-500 text-black rounded-lg flex items-center justify-center text-xs font-bold">
+                        {formData.fullName ? formData.fullName.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase() : "AP"}
                     </div>
+                    <span className="text-xs font-semibold text-white">{formData.fullName || "Abhinayak Pandey"}</span>
                 </div>
             </header>
 
-            <div className="bg-white border-b border-slate-200 px-6 py-2.5 flex flex-wrap items-center justify-center md:justify-start space-x-4 text-xs">
-                <div className="flex items-center space-x-2 text-slate-500 font-medium">
-                    <i className="fa-solid fa-sliders text-blue-600"></i>
-                    <span>PROTOTYPE PREVIEW STATE:</span>
+            <div className="bg-[#161b22] border-b border-[#30363d] px-6 py-2.5 flex items-center justify-between text-xs">
+                <div className="flex items-center space-x-2 text-[#8b949e] font-medium">
+                    <span className="text-emerald-400 font-semibold">01 About you</span>
+                    <span>/</span>
+                    <span>Assessment</span>
+                    <span>/</span>
+                    <span>Review</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                    <button
-                        onClick={() => setPreviewState("Complete")}
-                        className={`px-3 py-1 rounded-lg font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${previewState === "Complete"
-                            ? "bg-blue-600 text-white shadow-sm shadow-blue-500/20"
-                            : "bg-slate-100 text-slate-600 hover:text-slate-900"
-                            }`}
-                    >
-                        <i className="fa-solid fa-circle-check text-[10px]"></i>
-                        <span>Complete (100%)</span>
-                    </button>
-
-                    <button
-                        onClick={() => setPreviewState("Validation")}
-                        className={`px-3 py-1 rounded-lg font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${previewState === "Validation"
-                            ? "bg-amber-600 text-white shadow-sm shadow-amber-500/20"
-                            : "bg-slate-100 text-slate-600 hover:text-slate-900"
-                            }`}
-                    >
-                        <i className="fa-solid fa-triangle-exclamation text-[10px]"></i>
-                        <span>Validation Warning</span>
-                    </button>
+                <div className="text-[#8b949e]">
+                    Step 1 of 3
                 </div>
             </div>
-
-            <main className="max-w-4xl w-full mx-auto p-4 sm:p-6 my-6 flex-grow">
-                <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden space-y-8">
-
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-6 gap-4">
-                        <div className="space-y-1.5">
-                            <div className="flex items-center space-x-2">
-                                <span className="text-blue-600 bg-blue-50 border border-blue-200 p-1.5 rounded-lg text-xs">
-                                    <i className="fa-solid fa-user-pen"></i>
-                                </span>
-                                <span className="text-[11px] font-bold tracking-wider uppercase text-blue-600">APPLICATION PROFILE</span>
-                            </div>
-                            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Complete your profile</h1>
-                            <p className="text-slate-500 text-xs sm:text-sm">
-                                Provide your details and resume before starting the assessment. This builds your context dossier for technical evaluation.
-                            </p>
-                        </div>
-
-                        <div className="self-start sm:self-center bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 shrink-0">
-                            Step 1 of 3 • Prior to Assessment
-                        </div>
+            <main className="max-w-7xl w-full mx-auto p-4 sm:p-6 my-6 flex flex-col lg:flex-row gap-8 flex-grow">
+                <div className="flex-grow space-y-8">
+                    <div className="space-y-2">
+                        <span className="text-[11px] font-bold tracking-wider uppercase text-[#8b949e]">1 CANDIDATE PROFILE & APPLICATION</span>
+                        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Complete your profile.</h1>
+                        <p className="text-[#8b949e] text-xs sm:text-sm">
+                            A few details help the hiring team put your work in context. You can review everything before you continue.
+                        </p>
                     </div>
 
-                    <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-start space-x-3.5">
-                        <div className="w-9 h-9 bg-blue-100 text-blue-600 border border-blue-200 rounded-xl flex items-center justify-center shrink-0 mt-0.5">
-                            <i className="fa-solid fa-briefcase"></i>
+                    <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-4 flex items-start space-x-3.5">
+                        <div className="w-8 h-8 bg-[#21262d] text-emerald-400 border border-[#30363d] rounded-xl flex items-center justify-center shrink-0 mt-0.5">
+                            <i className="fa-solid fa-laptop-code text-xs"></i>
                         </div>
                         <div className="text-xs space-y-1">
-                            <p className="font-bold text-slate-900 text-sm">
-                                Frontend Developer <span className="text-blue-600 font-normal">· Technical Recruitment Drive</span>
+                            <p className="font-bold text-white text-sm">
+                                Frontend Developer <span className="text-[#8b949e] font-normal">Technical Recruitment Drive</span>
                             </p>
-                            <p className="text-slate-600 leading-relaxed">
-                                Your profile information will be shared with the recruiting committee along with your interactive code submissions.
+                            <p className="text-[#8b949e] leading-relaxed">
+                                Your profile will be shared with the recruiting team alongside your assessment.
                             </p>
                         </div>
                     </div>
-
-                    <div className="space-y-5 pt-2">
+                    <div className="space-y-4 pt-2">
                         <div className="flex justify-between items-center">
-                            <h2 className="text-base font-bold text-slate-900">Basic Information</h2>
-                            <span className="text-[11px] text-slate-500 font-medium">Fields marked with <span className="text-blue-600">*</span> are required</span>
+                            <h2 className="text-base font-bold text-white">Your details</h2>
+                            <span className="text-[11px] text-[#8b949e]"><span>*</span> Required</span>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {/* Full Name */}
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700 block">
-                                    Full Name <span className="text-blue-600">*</span>
+                                <label className="text-xs font-semibold text-[#c9d1d9] block">
+                                    Full name <span className="text-emerald-400">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -143,13 +104,13 @@ function CandidateProfileCompletion() {
                                     placeholder="Enter your full name"
                                     value={formData.fullName}
                                     onChange={handleChange}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-colors font-medium shadow-inner"
+                                    className="w-full bg-[#161b22] border border-[#30363d] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#8b949e] focus:outline-none focus:border-emerald-500 transition-colors font-medium"
                                 />
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700 block">
-                                    Email Address <span className="text-blue-600">*</span>
+                                <label className="text-xs font-semibold text-[#c9d1d9] block">
+                                    Email address <span className="text-emerald-400">*</span>
                                 </label>
                                 <input
                                     type="email"
@@ -157,13 +118,13 @@ function CandidateProfileCompletion() {
                                     placeholder="candidate@example.com"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-colors font-medium shadow-inner"
+                                    className="w-full bg-[#161b22] border border-[#30363d] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#8b949e] focus:outline-none focus:border-emerald-500 transition-colors font-medium"
                                 />
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700 block">
-                                    Phone Number <span className="text-blue-600">*</span>
+                                <label className="text-xs font-semibold text-[#c9d1d9] block">
+                                    Phone number <span className="text-emerald-400">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -171,13 +132,13 @@ function CandidateProfileCompletion() {
                                     placeholder="+91 XXXXX XXXXX"
                                     value={formData.phone}
                                     onChange={handleChange}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-colors font-medium shadow-inner"
+                                    className="w-full bg-[#161b22] border border-[#30363d] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#8b949e] focus:outline-none focus:border-emerald-500 transition-colors font-medium"
                                 />
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-700 block">
-                                    College / University <span className="text-blue-600">*</span>
+                                <label className="text-xs font-semibold text-[#c9d1d9] block">
+                                    College or university <span className="text-emerald-400">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -185,151 +146,177 @@ function CandidateProfileCompletion() {
                                     placeholder="Enter your college or university name"
                                     value={formData.college}
                                     onChange={handleChange}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-colors font-medium shadow-inner"
+                                    className="w-full bg-[#161b22] border border-[#30363d] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#8b949e] focus:outline-none focus:border-emerald-500 transition-colors font-medium"
                                 />
                             </div>
                         </div>
                     </div>
-
                     <div className="space-y-3 pt-2">
                         <div className="flex justify-between items-center">
-                            <h2 className="text-base font-bold text-slate-900">
-                                Resume <span className="text-blue-600">*</span>
-                            </h2>
-                            <span className="text-[11px] text-slate-500">Upload your latest resume for this recruitment drive</span>
+                            <h2 className="text-base font-bold text-white">Your resume</h2>
+                            <span className="text-[11px] text-[#8b949e]">PDF or DOCX · up to 10 MB</span>
                         </div>
 
-                        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div className="flex items-center space-x-3.5 w-full sm:w-auto">
-                                <div className="w-10 h-10 bg-blue-100 text-blue-600 border border-blue-200 rounded-xl flex items-center justify-center shrink-0">
+                                <div className="w-10 h-10 bg-[#21262d] text-emerald-400 border border-[#30363d] rounded-xl flex items-center justify-center shrink-0">
                                     <i className="fa-solid fa-file-pdf text-lg"></i>
                                 </div>
                                 <div className="space-y-0.5 overflow-hidden">
                                     <div className="flex items-center space-x-2">
-                                        <span className="font-bold text-xs sm:text-sm text-slate-800 truncate">
+                                        <span className="font-bold text-xs sm:text-sm text-white truncate">
                                             {resumeFile ? resumeFile.name : "Upload your resume (PDF)"}
                                         </span>
-                                        {resumeFile && (
-                                            <span className="bg-emerald-50 border border-emerald-200 text-emerald-600 text-[10px] px-2 py-0.5 rounded-full font-semibold flex items-center space-x-1 shrink-0">
-                                                <i className="fa-solid fa-check text-[9px]"></i>
-                                                <span>Uploaded</span>
-                                            </span>
-                                        )}
                                     </div>
-                                    <p className="text-[11px] text-slate-500">
-                                        {resumeFile ? `${(resumeFile.size / (1024 * 1024)).toFixed(1)} MB • Scanned for virus checks` : "PDF Document • Max size 5MB"}
+                                    <p className="text-[11px] text-[#8b949e]">
+                                        PDF · 2.4 MB · Uploaded just now
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
-                                <label className="px-3.5 py-2 bg-white hover:bg-slate-100 border border-slate-300 text-xs font-semibold text-slate-700 rounded-xl transition-colors flex items-center space-x-1.5 cursor-pointer shadow-sm">
-                                    <i className="fa-solid fa-upload text-[10px]"></i>
-                                    <span>{resumeFile ? "Replace" : "Browse File"}</span>
-                                    <input type="file" accept=".pdf" onChange={handleFileUpload} className="hidden" />
+                            <div className="flex items-center space-x-3 w-full sm:w-auto justify-end text-xs font-semibold">
+                                <label className="text-emerald-400 hover:underline cursor-pointer">
+                                    <span>Replace file</span>
+                                    <input type="file" accept=".pdf,.docx" onChange={handleFileUpload} className="hidden" />
                                 </label>
-                                {resumeFile && (
-                                    <button
-                                        type="button"
-                                        onClick={() => alert("Previewing resume...")}
-                                        className="p-2.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 rounded-xl transition-colors cursor-pointer shadow-sm"
-                                        title="Preview Resume"
-                                    >
-                                        <i className="fa-regular fa-eye text-xs"></i>
-                                    </button>
-                                )}
+                                <span className="text-[#30363d]">|</span>
+                                <button
+                                    type="button"
+                                    onClick={() => alert("Previewing resume...")}
+                                    className="text-emerald-400 hover:underline cursor-pointer bg-transparent border-none"
+                                >
+                                    Preview
+                                </button>
+                                <span className="text-emerald-400 flex items-center space-x-1 ml-2">
+                                    <i className="fa-solid fa-check text-[10px]"></i>
+                                    <span>Ready</span>
+                                </span>
                             </div>
                         </div>
                     </div>
-
                     <div className="space-y-3 pt-2">
                         <div className="flex justify-between items-center">
-                            <h2 className="text-base font-bold text-slate-900">GitHub Repository</h2>
-                            <span className="text-[11px] text-slate-500">Add your GitHub profile or repository to showcase your technical projects.</span>
+                            <h2 className="text-base font-bold text-white">Show us what you've built</h2>
+                            <span className="text-[11px] text-[#8b949e]">Optional</span>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-semibold text-slate-700 block">
-                                GitHub URL <span className="text-blue-600">*</span>
+                            <label className="text-xs font-semibold text-[#c9d1d9] block">
+                                GitHub profile or project
                             </label>
-                            <div className="relative">
-                                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                                    <i className="fa-brands fa-github text-sm"></i>
-                                </span>
-                                <input
-                                    type="url"
-                                    name="githubUrl"
-                                    placeholder="https://github.com/your-username/project-repo"
-                                    value={formData.githubUrl}
-                                    onChange={handleChange}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-colors font-mono shadow-inner"
-                                />
-                            </div>
+                            <input
+                                type="url"
+                                name="githubUrl"
+                                placeholder="https://github.com/your-username/project-repo"
+                                value={formData.githubUrl}
+                                onChange={handleChange}
+                                className="w-full bg-[#161b22] border border-[#30363d] rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#8b949e] focus:outline-none focus:border-emerald-500 transition-colors font-mono"
+                            />
                         </div>
 
-                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-[11px] text-slate-500 pt-1 gap-2">
-                            <span>Use your GitHub profile or a relevant project repository.</span>
-                            {formData.githubUrl ? (
-                                <span className="bg-blue-50 border border-blue-200 text-blue-600 px-2.5 py-1 rounded-lg font-semibold flex items-center space-x-1">
-                                    <i className="fa-solid fa-circle-check text-[10px]"></i>
-                                    <span>GitHub link added</span>
-                                </span>
-                            ) : (
-                                <span className="text-slate-400">Optional / Required for portfolio check</span>
-                            )}
+                        <div className="text-[11px] text-[#8b949e] pt-1">
+                            Share a profile or one project you're proud of.
                         </div>
                     </div>
 
-                    <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between text-xs text-slate-600">
-                        <div className="flex items-center space-x-2.5">
-                            <i className="fa-solid fa-lock text-blue-600 text-xs"></i>
-                            <span>Your resume and GitHub link provide additional candidate context for this recruitment drive.</span>
-                        </div>
-                        <a href="#privacy" onClick={(e) => { e.preventDefault(); alert("Privacy details modal"); }} className="text-blue-600 hover:underline font-semibold shrink-0 ml-2">
-                            Privacy details →
+                    <div className="text-xs text-[#8b949e] flex items-center space-x-1 pt-1">
+                        <i className="fa-solid fa-lock text-[10px]"></i>
+                        <span>Your details stay within this hiring process.</span>
+                        <a href="#privacy" onClick={(e) => { e.preventDefault(); alert("Privacy details modal"); }} className="text-emerald-400 hover:underline ml-1">
+                            How we use your information →
                         </a>
                     </div>
 
-                    <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-
-                        <div className="flex items-center space-x-3 bg-slate-50 border border-slate-200 px-4 py-2 rounded-2xl w-full sm:w-auto">
-                            <div className="relative flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-600 border border-blue-200 text-[10px] font-bold">
-                                {Object.values(formData).every(val => val.trim() !== "") && resumeFile ? "100%" : "Draft"}
-                            </div>
-                            <div className="text-xs">
-                                <p className="font-bold text-slate-900 flex items-center space-x-1">
-                                    <span>Profile status</span>
-                                    <i className="fa-solid fa-circle-check text-emerald-600 text-[10px]"></i>
-                                </p>
-                                <p className="text-[10px] text-slate-500">
-                                    {Object.values(formData).every(val => val.trim() !== "") && resumeFile ? "Ready to continue" : "Please fill required fields"}
-                                </p>
-                            </div>
+                    <div className="pt-6 border-t border-[#30363d] flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="text-xs">
+                            <p className="font-bold text-white">Saved as you go</p>
+                            <p className="text-[11px] text-[#8b949e]">You can come back to finish later.</p>
                         </div>
 
                         <button
                             type="button"
                             onClick={() => navigate("/candidate/instructions")}
-                            className="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-2xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center space-x-2 cursor-pointer"
+                            className="w-full sm:w-auto px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-black font-bold text-xs rounded-xl transition-all shadow-lg shadow-emerald-500/10 flex items-center justify-center space-x-2 cursor-pointer"
                         >
-                            <span>Save & Continue</span>
+                            <span>Save and continue</span>
                             <span>→</span>
                         </button>
                     </div>
 
                 </div>
-            </main>
 
-            <footer className="bg-white border-t border-slate-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 space-y-2 sm:space-y-0">
-                <div className="flex items-center space-x-2">
-                    <i className="fa-solid fa-shield-halved text-blue-600"></i>
-                    <span>Powered by SmartRecruit Candidate Portal • Secure & Confidential</span>
+                <div className="w-full lg:w-80 space-y-6 shrink-0">
+                    <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-5 space-y-4">
+                        <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-emerald-500 text-black rounded-xl flex items-center justify-center font-bold text-xs">
+                                AP
+                            </div>
+                            <div>
+                                <span className="font-bold text-sm text-white block">Abhinayak Pandey</span>
+                                <span className="text-xs text-[#8b949e]">Candidate</span>
+                            </div>
+                        </div>
+
+                        <div className="border-t border-[#30363d] pt-4 space-y-2">
+                            <h3 className="font-bold text-xs text-white uppercase tracking-wider">A note from the team</h3>
+                            <p className="text-xs text-[#8b949e] leading-relaxed">
+                                Thanks for taking the time to apply. Your profile gives us a little context before we see your work.
+                            </p>
+                            <div className="pt-1">
+                                <a href="#help" onClick={(e) => { e.preventDefault(); alert("Talk to our team"); }} className="text-emerald-400 text-xs hover:underline inline-flex items-center space-x-1">
+                                    <span>Need help? Talk to our team</span>
+                                    <span>→</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-[#161b22] border border-[#30363d] rounded-2xl p-5 space-y-4">
+                        <h3 className="font-bold text-xs text-white uppercase tracking-wider">Your application</h3>
+                        
+                        <div className="space-y-3 text-xs">
+                            <div className="flex items-center justify-between text-[#c9d1d9]">
+                                <div className="flex items-center space-x-2.5">
+                                    <i className="fa-regular fa-circle-check text-emerald-400"></i>
+                                    <span>Contact details</span>
+                                </div>
+                                <span className="text-[#8b949e]">Done</span>
+                            </div>
+
+                            <div className="flex items-center justify-between text-[#c9d1d9]">
+                                <div className="flex items-center space-x-2.5">
+                                    <i className="fa-regular fa-circle-check text-emerald-400"></i>
+                                    <span>Resume</span>
+                                </div>
+                                <span className="text-[#8b949e]">Added</span>
+                            </div>
+
+                            <div className="flex items-center justify-between text-[#8b949e]">
+                                <div className="flex items-center space-x-2.5">
+                                    <i className="fa-regular fa-square text-[#8b949e]"></i>
+                                    <span>Assessment</span>
+                                </div>
+                                <span>Next</span>
+                            </div>
+                        </div>
+
+                        <div className="border-t border-[#30363d] pt-3 text-[11px] text-[#8b949e]">
+                            Your progress is saved automatically.
+                        </div>
+                    </div>
                 </div>
 
-                <div className="flex items-center space-x-6 text-[11px]">
-                    <a href="#terms" onClick={(e) => e.preventDefault()} className="hover:text-slate-900 transition-colors">Candidate Terms</a>
-                    <a href="#privacy" onClick={(e) => e.preventDefault()} className="hover:text-slate-900 transition-colors">Privacy Policy</a>
-                    <a href="#support" onClick={(e) => e.preventDefault()} className="hover:text-slate-900 transition-colors">Support</a>
+            </main>
+
+            <footer className="bg-[#161b22] border-t border-[#30363d] px-6 py-4 flex flex-col sm:flex-row items-center justify-between text-xs text-[#8b949e]">
+                <div className="flex items-center space-x-2">
+                    <span>© SmartRecruit · Candidate portal</span>
+                </div>
+
+                <div className="flex items-center space-x-6 text-xs">
+                    <a href="#terms" onClick={(e) => e.preventDefault()} className="hover:text-white transition-colors">Candidate terms</a>
+                    <a href="#privacy" onClick={(e) => e.preventDefault()} className="hover:text-white transition-colors">Privacy</a>
+                    <a href="#support" onClick={(e) => e.preventDefault()} className="hover:text-white transition-colors">Support</a>
                 </div>
             </footer>
 

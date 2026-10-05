@@ -42,7 +42,7 @@ function SignUp() {
     try {
       // Send data to backend
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/v1/auth/register`,
+        `${import.meta.env.VITE_API_URL}/api/auth/register`,
         {
           method: "POST",
 

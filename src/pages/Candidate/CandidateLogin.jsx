@@ -26,7 +26,7 @@ function CandidateLogin() {
     try {
       // Send login request to Render backend
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/v1/auth/login`,
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
         {
           method: "POST",
 
