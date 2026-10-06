@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function CandidateInstructions() {
+function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
   const navigate = useNavigate();
   const [agreed, setAgreed] = useState(false);
 
@@ -14,255 +14,342 @@ function CandidateInstructions() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-between font-sans">
-
-      <header className="bg-white border-b border-slate-200 px-8 py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-sm">
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
-            <span className="text-lg font-bold text-slate-900 tracking-tight">SmartRecruit</span>
-          </div>
-          <span className="text-slate-300">|</span>
-          <span className="text-[11px] font-bold text-slate-500 tracking-wider uppercase">
-            Evaluation Portal
-          </span>
-        </div>
-
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-sm">
-            👤
-          </div>
-          <div className="text-right">
-            <p className="text-sm font-semibold text-slate-900 leading-tight">Priya Tiwari</p>
-            <p className="text-xs text-slate-400 font-medium">candidate</p>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-4xl w-full mx-auto px-4 py-8 flex-grow">
-
-        <div className="bg-white rounded-2xl px-8 py-5 shadow-sm border border-slate-200/80 mb-6">
-          <div className="flex items-center justify-between relative">
-
-            <div className="flex items-center space-x-2.5 z-10">
-              <span className="w-7 h-7 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center shadow-md shadow-blue-500/20">1</span>
-              <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Instructions</span>
+    <div className="min-h-screen bg-[#020b06] text-slate-100 flex font-sans selection:bg-emerald-500 selection:text-white">
+      
+      {/* Sidebar */}
+      <aside className="w-72 bg-[#04120a]/80 border-r border-emerald-950/80 p-6 flex flex-col justify-between hidden lg:flex select-none">
+        <div>
+          {/* Logo */}
+          <div className="flex items-center space-x-3 mb-10">
+            <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-white text-sm shadow-sm shadow-emerald-900/50">
+              S
             </div>
-
-            <div className="flex-1 border-t border-slate-200 mx-4"></div>
-
-            <div className="flex items-center space-x-2.5 z-10 opacity-70">
-              <span className="w-7 h-7 rounded-full bg-slate-200 text-slate-600 font-semibold text-xs flex items-center justify-center">2</span>
-              <span className="text-xs font-medium text-slate-500">Permission check</span>
+            <div>
+              <span className="text-base font-bold text-slate-100 tracking-tight block leading-none">
+                SmartRecriut
+              </span>
+              <span className="text-[10px] font-bold text-emerald-500/80 tracking-wider uppercase mt-1 block">
+                Evaluation Portal
+              </span>
             </div>
-
-            <div className="flex-1 border-t border-slate-200 mx-4"></div>
-
-            <div className="flex items-center space-x-2.5 z-10 opacity-70">
-              <span className="w-7 h-7 rounded-full bg-slate-200 text-slate-600 font-semibold text-xs flex items-center justify-center">3</span>
-              <span className="text-xs font-medium text-slate-500">Assessment overview</span>
-            </div>
-
-            <div className="flex-1 border-t border-slate-200 mx-4"></div>
-
-            <div className="flex items-center space-x-2.5 z-10 opacity-70">
-              <span className="w-7 h-7 rounded-full bg-slate-200 text-slate-600 font-semibold text-xs flex items-center justify-center">4</span>
-              <span className="text-xs font-medium text-slate-500">Assessment</span>
-            </div>
-
           </div>
-        </div>
 
-        <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200/80">
-
+          {/* Candidate Card */}
           <div className="mb-8">
-            <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest bg-blue-50/80 px-2.5 py-1 rounded">
-              • ASSESSMENT
+            <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-2">
+              Your Assessment
+            </p>
+            <div className="flex items-center space-x-3 bg-[#06170e] border border-emerald-900/40 p-3 rounded-xl">
+              <div className="w-9 h-9 bg-emerald-600 text-white rounded-lg flex items-center justify-center font-bold text-xs shadow-sm shadow-emerald-900/50">
+                PT
+              </div>
+              <div className="overflow-hidden">
+                <p className="text-sm font-semibold text-slate-100 truncate">{candidateName}</p>
+                <p className="text-xs text-emerald-500/70">Candidate</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Assessment Steps */}
+          <div>
+            <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-3">
+              Assessment Steps
+            </p>
+            <div className="space-y-2">
+              
+              {/* Step 1: Active */}
+              <div className="p-3 bg-emerald-950/40 border border-emerald-800/40 rounded-xl">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shadow-sm shadow-emerald-900/50">
+                    1
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-100">Instructions</p>
+                    <p className="text-[11px] text-emerald-400/80">Review before you begin</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="p-3 opacity-60">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-950/50 text-slate-400 font-bold text-xs flex items-center justify-center border border-emerald-900/30">
+                    2
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-300">System check</p>
+                    <p className="text-[11px] text-slate-500">Check your setup</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="p-3 opacity-60">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-950/50 text-slate-400 font-bold text-xs flex items-center justify-center border border-emerald-900/30">
+                    3
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-300">Assessment overview</p>
+                    <p className="text-[11px] text-slate-500">See what's included</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 4 */}
+              <div className="p-3 opacity-60">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-950/50 text-slate-400 font-bold text-xs flex items-center justify-center border border-emerald-900/30">
+                    4
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-300">Assessment</p>
+                    <p className="text-[11px] text-slate-500">30 minutes</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        {/* Support Section */}
+        <div className="space-y-4 pt-6 border-t border-emerald-950/80">
+          <div className="p-3.5 bg-[#06170e]/50 border border-emerald-900/30 rounded-xl">
+            <p className="text-xs font-bold text-slate-200 mb-1">Need a hand?</p>
+            <p className="text-[11px] text-slate-400 leading-relaxed mb-3">
+              If something isn't clear, our support team can help before you start.
+            </p>
+            <a href="#support" className="text-xs font-semibold text-emerald-400 hover:underline inline-flex items-center space-x-1">
+              <span>Contact support</span>
+              <span>→</span>
+            </a>
+          </div>
+          <p className="text-[10px] text-emerald-700/80 text-center">🔒 Secure and confidential session</p>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col justify-between min-h-screen">
+        
+        {/* Top Navbar */}
+        <header className="bg-[#04120a]/40 border-b border-emerald-950/80 px-8 py-4 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md">
+          <div className="text-xs text-slate-400 font-medium">
+            Candidate portal <span className="text-emerald-800 mx-2">/</span> <span className="text-slate-200">Assessment</span>
+          </div>
+
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-2.5">
+              <span className="text-xs text-slate-400">Frontend Developer role</span>
+              <div className="w-7 h-7 bg-emerald-600 text-white rounded-full flex items-center justify-center font-bold text-[10px] shadow-sm shadow-emerald-900/50">
+                PT
+              </div>
+              <span className="text-xs font-semibold text-slate-200">{candidateName}</span>
+            </div>
+          </div>
+        </header>
+
+        {/* Content Body */}
+        <main className="max-w-5xl w-full mx-auto px-6 py-8 flex-grow">
+
+          {/* Heading Section */}
+          <div className="mb-8">
+            <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-950/80 px-2.5 py-1 rounded border border-emerald-800/50 shadow-sm">
+              • BEFORE YOU BEGIN
             </span>
-            <h2 className="text-3xl font-extrabold text-slate-900 mt-2.5 tracking-tight">
-              Frontend Developer Assessment
-            </h2>
-            <p className="text-slate-500 text-sm mt-1">
-              Review the instructions before starting your assessment. Ensure your setup is ready and uninterrupted.
+            <h1 className="text-4xl font-extrabold text-slate-100 mt-3 tracking-tight">
+              Here's what to expect.
+            </h1>
+            <p className="text-slate-400 text-xs mt-1.5 max-w-xl leading-relaxed">
+              Take a minute to get comfortable and check the details below. When you're ready, we'll make sure your setup is working before the assessment starts.
             </p>
           </div>
 
+          {/* Stat Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
 
-            <div className="bg-slate-50/70 border border-slate-100 rounded-xl p-4 flex items-center space-x-3.5">
-              <div className="w-10 h-10 bg-white shadow-sm border border-slate-100 rounded-xl flex items-center justify-center text-blue-600 text-sm">
-                <i className="fa-solid fa-clock"></i>
+            <div className="bg-[#06170e]/60 border border-emerald-900/30 rounded-xl p-4 flex items-center space-x-3.5 shadow-sm">
+              <div className="w-10 h-10 bg-[#020b06] border border-emerald-900/40 rounded-xl flex items-center justify-center text-emerald-400 text-base">
+                <i className="fa-regular fa-clock"></i>
               </div>
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Duration</p>
-                <p className="text-base font-bold text-slate-900 mt-0.5">30 min</p>
+                <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Time available</p>
+                <p className="text-sm font-bold text-slate-100 mt-0.5">30 minutes</p>
               </div>
             </div>
 
-            <div className="bg-slate-50/70 border border-slate-100 rounded-xl p-4 flex items-center space-x-3.5">
-              <div className="w-10 h-10 bg-white shadow-sm border border-slate-100 rounded-xl flex items-center justify-center text-blue-600 text-sm">
-                <i className="fa-solid fa-clipboard-list"></i>
+            <div className="bg-[#06170e]/60 border border-emerald-900/30 rounded-xl p-4 flex items-center space-x-3.5 shadow-sm">
+              <div className="w-10 h-10 bg-[#020b06] border border-emerald-900/40 rounded-xl flex items-center justify-center text-emerald-400 text-base">
+                <i className="fa-regular fa-folder"></i>
               </div>
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Questions</p>
-                <p className="text-base font-bold text-slate-900 mt-0.5">6 Questions</p>
+                <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Question count</p>
+                <p className="text-sm font-bold text-slate-100 mt-0.5">6 questions</p>
               </div>
             </div>
 
-            <div className="bg-slate-50/70 border border-slate-100 rounded-xl p-4 flex items-center space-x-3.5">
-              <div className="w-10 h-10 bg-white shadow-sm border border-slate-100 rounded-xl flex items-center justify-center text-blue-600 text-sm">
-                <i className="fa-solid fa-chart-bar"></i>
+            <div className="bg-[#06170e]/60 border border-emerald-900/30 rounded-xl p-4 flex items-center space-x-3.5 shadow-sm">
+              <div className="w-10 h-10 bg-[#020b06] border border-emerald-900/40 rounded-xl flex items-center justify-center text-emerald-400 text-base">
+                <i className="fa-solid fa-user-tie"></i>
               </div>
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Assessment Type</p>
-                <p className="text-base font-bold text-slate-900 mt-0.5 truncate max-w-[160px]">Technical Screening</p>
+                <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Assessment type</p>
+                <p className="text-sm font-bold text-slate-100 mt-0.5">Technical screening</p>
               </div>
             </div>
 
           </div>
 
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="text-sm font-bold text-slate-900">Before you begin</h3>
-              <span className="text-xs text-slate-400 font-medium">Mandatory Requirements</span>
-            </div>
+          {/* Two-Column Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+            
+            {/* Left Column: A few things to prepare */}
+            <div className="lg:col-span-7 bg-[#06170e]/60 border border-emerald-900/30 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
+              <div>
+                <div className="flex justify-between items-center mb-5">
+                  <h3 className="text-sm font-bold text-slate-100">A few things to prepare</h3>
+                  <span className="text-[10px] font-bold text-emerald-600 tracking-wider uppercase">Please read</span>
+                </div>
 
-            <div className="space-y-2.5">
-
-              <div className="flex items-center space-x-3 p-3.5 bg-slate-50/60 border border-slate-100 rounded-xl text-slate-700 text-xs font-medium">
-                <span className="w-4 h-4 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0">
-                  <i className="fa-solid fa-check"></i>
-                </span>
-                <span>Make sure your camera and microphone are working properly.</span>
-              </div>
-
-              <div className="flex items-center space-x-3 p-3.5 bg-slate-50/60 border border-slate-100 rounded-xl text-slate-700 text-xs font-medium">
-                <span className="w-4 h-4 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0">
-                  <i className="fa-solid fa-check"></i>
-                </span>
-                <span>Complete the assessment within the allotted time without taking breaks.</span>
-              </div>
-
-              <div className="flex items-center space-x-3 p-3.5 bg-slate-50/60 border border-slate-100 rounded-xl text-slate-700 text-xs font-medium">
-                <span className="w-4 h-4 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0">
-                  <i className="fa-solid fa-check"></i>
-                </span>
-                <span>Read each question carefully before responding or executing code.</span>
-              </div>
-
-              <div className="flex items-center space-x-3 p-3.5 bg-slate-50/60 border border-slate-100 rounded-xl text-slate-700 text-xs font-medium">
-                <span className="w-4 h-4 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0">
-                  <i className="fa-solid fa-check"></i>
-                </span>
-                <span>Remain on the assessment screen during the session; leaving full-screen may flag proctoring alerts.</span>
-              </div>
-
-            </div>
-          </div>
-
-          <div className="mb-8">
-            <h3 className="text-sm font-bold text-slate-900 mb-3">What to expect</h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-              <div className="p-4 bg-slate-50/70 border border-slate-100 rounded-xl flex flex-col justify-between">
-                <div>
-                  <div className="text-blue-600 font-bold mb-2 text-sm">
-                    <i className="fa-solid fa-laptop-code"></i>
+                <div className="space-y-4">
+                  
+                  <div className="flex items-start space-x-3 text-slate-300 text-xs font-medium">
+                    <span className="text-emerald-400 mt-0.5"><i className="fa-regular fa-circle-check"></i></span>
+                    <span className="leading-relaxed">Check that your camera and microphone are working.</span>
                   </div>
-                  <h4 className="font-bold text-slate-900 text-xs">Technical Questions</h4>
-                  <p className="text-slate-500 text-[11px] mt-1 leading-relaxed">
-                    Answer role-specific technical questions covering DOM performance, asynchronous patterns, and state architecture.
-                  </p>
-                </div>
-                <div className="flex items-center space-x-1.5 text-[11px] font-semibold text-slate-600 mt-4 pt-2 border-t border-slate-200/50">
-                  <span><i className="fa-regular fa-file-lines"></i></span>
-                  <span>Multiple Choice</span>
+
+                  <div className="flex items-start space-x-3 text-slate-300 text-xs font-medium">
+                    <span className="text-emerald-400 mt-0.5"><i className="fa-regular fa-circle-check"></i></span>
+                    <span className="leading-relaxed">Set aside about 30 minutes so you can finish in one sitting.</span>
+                  </div>
+
+                  <div className="flex items-start space-x-3 text-slate-300 text-xs font-medium">
+                    <span className="text-emerald-400 mt-0.5"><i className="fa-regular fa-circle-check"></i></span>
+                    <span className="leading-relaxed">Read each question carefully before you answer or run code.</span>
+                  </div>
+
+                  <div className="flex items-start space-x-3 text-slate-300 text-xs font-medium">
+                    <span className="text-emerald-400 mt-0.5"><i className="fa-regular fa-circle-check"></i></span>
+                    <span className="leading-relaxed">Keep the assessment open while you work. Switching away may trigger a proctoring alert.</span>
+                  </div>
+
                 </div>
               </div>
 
-              <div className="p-4 bg-slate-50/70 border border-slate-100 rounded-xl flex flex-col justify-between">
-                <div>
-                  <div className="text-blue-600 font-bold mb-2 text-sm">
+              <div className="mt-6 p-3.5 bg-[#020b06]/60 border border-emerald-900/30 rounded-xl">
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  Find a quiet spot and close anything you don't need. You'll have a chance to check your camera and microphone on the next screen.
+                </p>
+              </div>
+            </div>
+
+            {/* Right Column: What's included */}
+            <div className="lg:col-span-5 bg-[#06170e]/60 border border-emerald-900/30 rounded-2xl p-6 shadow-sm">
+              <div className="flex justify-between items-center mb-5">
+                <h3 className="text-sm font-bold text-slate-100">What's included</h3>
+                <span className="text-[10px] font-bold text-emerald-600 tracking-wider uppercase">6 Questions</span>
+              </div>
+
+              <div className="space-y-3">
+                
+                {/* Item 1 */}
+                <div className="p-3.5 bg-[#020b06]/50 border border-emerald-900/30 rounded-xl">
+                  <div className="flex items-center space-x-2 text-emerald-400 text-xs font-bold mb-1">
+                    <i className="fa-solid fa-code"></i>
+                    <span>Technical questions</span>
+                  </div>
+                  <p className="text-slate-400 text-[11px] leading-relaxed">
+                    Role-specific questions on DOM performance, async patterns, and state architecture.
+                  </p>
+                  <p className="text-[10px] font-medium text-emerald-600 mt-2">Multiple choice</p>
+                </div>
+
+                {/* Item 2 */}
+                <div className="p-3.5 bg-[#020b06]/50 border border-emerald-900/30 rounded-xl">
+                  <div className="flex items-center space-x-2 text-emerald-400 text-xs font-bold mb-1">
                     <i className="fa-solid fa-microphone"></i>
+                    <span>Spoken response</span>
                   </div>
-                  <h4 className="font-bold text-slate-900 text-xs">Spoken Response</h4>
-                  <p className="text-slate-500 text-[11px] mt-1 leading-relaxed">
-                    Respond to selected scenario questions using your microphone to explain architectural trade-offs.
+                  <p className="text-slate-400 text-[11px] leading-relaxed">
+                    Talk through a scenario and explain the trade-offs you'd consider.
                   </p>
+                  <p className="text-[10px] font-medium text-emerald-600 mt-2">2 audio responses</p>
                 </div>
-                <div className="flex items-center space-x-1.5 text-[11px] font-semibold text-slate-600 mt-4 pt-2 border-t border-slate-200/50">
-                  <span><i className="fa-solid fa-microphone"></i></span>
-                  <span>2 Audio Records</span>
-                </div>
-              </div>
 
-              <div className="p-4 bg-slate-50/70 border border-slate-100 rounded-xl flex flex-col justify-between">
-                <div>
-                  <div className="text-blue-600 font-bold mb-2 text-sm">
+                {/* Item 3 */}
+                <div className="p-3.5 bg-[#020b06]/50 border border-emerald-900/30 rounded-xl">
+                  <div className="flex items-center space-x-2 text-emerald-400 text-xs font-bold mb-1">
                     <i className="fa-solid fa-desktop"></i>
+                    <span>Coding challenge</span>
                   </div>
-                  <h4 className="font-bold text-slate-900 text-xs">Coding Challenge</h4>
-                  <p className="text-slate-500 text-[11px] mt-1 leading-relaxed">
-                    Write, compile, and execute your code directly in the embedded Monaco editor against predefined unit tests.
+                  <p className="text-slate-400 text-[11px] leading-relaxed">
+                    Write and run code in the editor, with built-in checks.
                   </p>
+                  <p className="text-[10px] font-medium text-emerald-600 mt-2">1 live challenge</p>
                 </div>
-                <div className="flex items-center space-x-1.5 text-[11px] font-semibold text-slate-600 mt-4 pt-2 border-t border-slate-200/50">
-                  <span><i className="fa-solid fa-bolt"></i></span>
-                  <span>1 Live Challenge</span>
-                </div>
-              </div>
 
+              </div>
             </div>
+
           </div>
 
-          <div className="flex items-start space-x-3 p-4 bg-slate-50/60 border border-slate-200/80 rounded-xl mb-8">
+          {/* Checkbox confirmation */}
+          <div className="flex items-start space-x-3 p-4 bg-[#06170e]/60 border border-emerald-900/30 rounded-xl mb-8 shadow-sm">
             <input
               type="checkbox"
               id="confirm"
               checked={agreed}
               onChange={(e) => setAgreed(e.target.checked)}
-              className="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer"
+              className="mt-0.5 w-4 h-4 text-emerald-600 bg-[#020b06] rounded border-emerald-800 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
             />
-            <label htmlFor="confirm" className="text-xs text-slate-600 font-medium leading-relaxed cursor-pointer select-none">
-              I confirm that I am in a quiet space, my hardware meets the test requirements, and I agree to complete this assessment without unauthorized aids or third-party collaboration.
+            <label htmlFor="confirm" className="text-xs text-slate-300 font-medium leading-relaxed cursor-pointer select-none">
+              I'm in a quiet space, my camera and microphone are ready, and I'll complete the assessment on my own without outside help.
             </label>
           </div>
 
-          <div className="flex items-center justify-between pt-5 border-t border-slate-100">
-            <button
-              type="button"
-              onClick={() => navigate("/candidate/login")}
-              className="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
-            >
-              Exit Assessment
-            </button>
+          {/* Bottom Action Footer */}
+          <div className="flex flex-col sm:flex-row items-center justify-between pt-6 border-t border-emerald-950/80 gap-4">
+            <p className="text-[11px] text-slate-500">
+              ✦ Your responses are used to assess your application.
+            </p>
 
-            <button
-              type="button"
-              onClick={handleContinue}
-              className={`py-3 px-6 rounded-xl font-medium text-xs transition-all shadow-sm flex items-center space-x-2 ${
-                agreed
-                  ? "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20 cursor-pointer"
-                  : "bg-slate-200 text-slate-400 cursor-not-allowed"
-              }`}
-            >
-              <span>Continue to System Check</span>
-              <span>→</span>
-            </button>
+            <div className="flex items-center space-x-4 w-full sm:w-auto justify-end">
+              <button
+                type="button"
+                onClick={() => navigate("/candidate/login")}
+                className="text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
+              >
+                Exit assessment
+              </button>
+
+              <button
+                type="button"
+                onClick={handleContinue}
+                className={`py-3 px-6 rounded-xl font-medium text-xs transition-all shadow-sm flex items-center space-x-2 ${
+                  agreed
+                    ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40 cursor-pointer"
+                    : "bg-[#06170e] text-slate-500 cursor-not-allowed border border-emerald-950"
+                }`}
+              >
+                <span>Continue to system check</span>
+                <span>→</span>
+              </button>
+            </div>
           </div>
 
-        </div>
-      </main>
+        </main>
 
-      <footer className="py-5 px-8 bg-white border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-400">
-        <p>🔒 Powered by SmartRecruit Candidate Portal • Secure & Confidential</p>
-        <div className="flex space-x-4 mt-2 sm:mt-0">
-          <a href="#" className="hover:text-slate-600 transition-colors">Privacy Policy</a>
-          <span>•</span>
-          <a href="#" className="hover:text-slate-600 transition-colors">Candidate Terms</a>
-        </div>
-      </footer>
+        {/* Footer */}
+        <footer className="py-4 px-8 bg-[#04120a]/40 border-t border-emerald-950/80 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500">
+          <p>SmartRecruit · Secure candidate portal</p>
+          <div className="flex space-x-4 mt-2 sm:mt-0">
+            <a href="#" className="hover:text-slate-300 transition-colors">Privacy</a>
+            <span>·</span>
+            <a href="#" className="hover:text-slate-300 transition-colors">Candidate terms</a>
+          </div>
+        </footer>
+
+      </div>
 
     </div>
   );

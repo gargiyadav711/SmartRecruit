@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 function CandidateActiveAssessment() {
@@ -7,80 +7,160 @@ function CandidateActiveAssessment() {
   // State for dynamic backend data & interactive toggles
   const [loading, setLoading] = useState(true);
   const [assessmentData, setAssessmentData] = useState(null);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); 
   
-  // Toggle state: "written" or "oral" for the current question
-  const [responseMode, setResponseMode] = useState("written");
+  // Selected option state for current question
+  const [selectedOption, setSelectedOption] = useState(null);
 
-  // Written answer state
-  const [answerText, setAnswerText] = useState("");
-  
-  // Oral recording states
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordingTime, setRecordingTime] = useState(0);
-  const [transcript, setTranscript] = useState("");
+  // Timer set to 90 minutes (90 * 60 = 5400 seconds)
+  const [timer, setTimer] = useState(5400);
 
-  const [timer, setTimer] = useState(1475); // e.g. 24:35 in seconds
+  // --- CAMERA STREAM & PROCTORING STATES ---
+  const videoRef = useRef(null);
+  const [cameraActive, setCameraActive] = useState(false);
+  const [cameraError, setCameraError] = useState("");
 
-  // 1. Fetch dynamic questions and initial state from ML/Backend on mount
+  // --- TAB SWITCH / PROCTORING WARNING STATES ---
+  const [tabSwitchCount, setTabSwitchCount] = useState(0);
+  const [warningModalOpen, setWarningModalOpen] = useState(false);
+  const [submittedModalOpen, setSubmittedModalOpen] = useState(false);
+
+  // 1. Initialize Camera Stream on Mount
+  useEffect(() => {
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+        setCameraActive(true);
+      } catch (err) {
+        console.error("Camera access denied or unavailable:", err);
+        setCameraError("Camera access denied or not available. Please allow camera permissions.");
+        setCameraActive(false);
+      }
+    }
+
+    startCamera();
+
+    return () => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const tracks = videoRef.current.srcObject.getTracks();
+        tracks.forEach(track => track.stop());
+      }
+    };
+  }, []);
+
+  // 2. Tab Switch Counter & Visibility Handler
+  useEffect(() => {
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        setTabSwitchCount((prevCount) => {
+          const newCount = prevCount + 1;
+          if (newCount === 1 || newCount === 2) {
+            setWarningModalOpen(true);
+          } else if (newCount >= 3) {
+            setSubmittedModalOpen(true);
+            if (videoRef.current && videoRef.current.srcObject) {
+              const tracks = videoRef.current.srcObject.getTracks();
+              tracks.forEach(track => track.stop());
+            }
+          }
+          return newCount;
+        });
+      }
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  // 3. Fetch dynamic questions on mount (Total 4 questions)
   useEffect(() => {
     async function fetchAssessmentSession() {
       try {
         setLoading(true);
-        // Simulated dynamic payload structure coming from your backend/ML model:
         const mockBackendData = {
           candidateId: "SR-94021",
           assessmentTitle: "Frontend Developer Assessment",
           track: "Frontend Fundamentals",
-          totalQuestions: 6,
+          totalQuestions: 4,
           questions: [
             {
               id: 1,
               type: "TECHNICAL QUESTION",
-              category: "Frontend Fundamentals",
+              category: "Frontend fundamentals",
               points: 5,
-              prompt: "Explain the Virtual DOM reconciliation process in React and how it improves UI rendering performance.",
-              instruction: "Keep your answer concise and explain the concept in your own words. Include performance metrics or real-world comparisons where relevant.",
+              prompt: "Which of the following best describes the primary purpose of React's Virtual DOM?",
+              instruction: "Choose an option below and click Save or Skip.",
               mlCalibratedTag: "AI Interviewer • Question calibrated for Frontend Developer track",
-              allowedModes: ["written", "oral"],
-              defaultMode: "written",
-              savedAnswer: ""
+              options: [
+                { id: "A", title: "To directly manipulate browser DOM nodes", desc: "It replaces native browser APIs entirely to handle styling changes." },
+                { id: "B", title: "To minimize direct, costly DOM manipulations by batching diffs", desc: "It maintains an in-memory representation and updates only what changed." },
+                { id: "C", title: "To store persistent application data locally", desc: "It functions similarly to browser LocalStorage or IndexedDB." },
+                { id: "D", title: "To encrypt client-server API communications", desc: "It secures data payloads before they are sent over HTTPS." }
+              ],
+              status: "unattempted", // 'saved', 'skipped', 'unattempted'
+              savedAnswer: null
             },
             {
               id: 2,
-              type: "STRUCTURAL EVALUATION",
-              stage: "Stage 2. Structured Oral Evaluation",
-              sessionId: "#AP1345678",
-              category: "Architectural Inquiry",
-              maxDuration: "2 min max",
-              prompt: "Explain the difference between synchronous and asynchronous JavaScript.",
-              instruction: "Answer the question clearly and explain your reasoning. Focus on engine concurrency, execution blocking, and modern syntactical semantics.",
-              touchpoints: ["Execution Stack & Event Loop", "Blocking vs Non-blocking I/O", "Promises & async/await"],
-              mlCalibratedTag: "AI Assessment Engine • Role-specific architectural inquiry",
-              rubricWeight: "Weight :20% of Architecture Score",
-              allowedModes: ["written", "oral"],
-              defaultMode: "oral",
-              savedAnswer: ""
+              type: "TECHNICAL QUESTION",
+              category: "Frontend fundamentals",
+              points: 5,
+              prompt: "Which statement best describes a REST API and the GET and POST methods?",
+              instruction: "Choose an option below and click Save or Skip.",
+              mlCalibratedTag: "Frontend Developer track • Question 2",
+              options: [
+                { id: "A", title: "REST APIs use HTTP for client-server communication.", desc: "GET is commonly used to retrieve a resource; POST sends data to the server, often to create a resource." },
+                { id: "B", title: "REST APIs require every request to depend on the previous one.", desc: "GET changes server data, while POST is reserved for reading resources without side effects." },
+                { id: "C", title: "REST is a browser rendering standard.", desc: "GET and POST are methods used only to control how a page is styled and displayed." },
+                { id: "D", title: "REST APIs communicate only through a persistent WebSocket connection.", desc: "GET and POST are not part of the HTTP request-response model." }
+              ],
+              status: "unattempted",
+              savedAnswer: null
             },
             {
               id: 3,
               type: "TECHNICAL QUESTION",
               category: "State Management",
               points: 5,
-              prompt: "What are React Hooks, and what rules must be followed when calling them?",
-              instruction: "Describe useState or useEffect use cases alongside the rules of hooks.",
+              prompt: "What is a primary rule that must be followed when calling React Hooks?",
+              instruction: "Choose an option below and click Save or Skip.",
               mlCalibratedTag: "AI Interviewer • Question calibrated for Frontend Developer track",
-              allowedModes: ["written", "oral"],
-              defaultMode: "written",
-              savedAnswer: ""
+              options: [
+                { id: "A", title: "Call them inside loops and conditional statements.", desc: "Hooks can be executed dynamically based on runtime state checks." },
+                { id: "B", title: "Call them only at the top level of your React function components.", desc: "Never call hooks inside loops, conditions, or nested functions to ensure hook order consistency." },
+                { id: "C", title: "Call them exclusively inside traditional class component methods.", desc: "Hooks were designed to replace lifecycle methods inside class components only." },
+                { id: "D", title: "Call them only from external utility JavaScript files.", desc: "Hooks cannot access React component context unless invoked globally." }
+              ],
+              status: "unattempted",
+              savedAnswer: null
+            },
+            {
+              id: 4,
+              type: "TECHNICAL QUESTION",
+              category: "Hooks & Lifecycle",
+              points: 5,
+              prompt: "When does the cleanup function returned inside a React `useEffect` hook execute?",
+              instruction: "Choose an option below and click Save or Skip.",
+              mlCalibratedTag: "AI Interviewer • Question calibrated for Frontend Developer track",
+              options: [
+                { id: "A", title: "Only when the browser window is closed or refreshed.", desc: "Cleanup routines persist until the entire user session terminates." },
+                { id: "B", title: "Before the component is unmounted and before running the effect on subsequent renders.", desc: "It prevents memory leaks by cleaning up previous subscriptions or timers." },
+                { id: "C", title: "Immediately upon initial component mount before render.", desc: "It executes prior to DOM element creation." },
+                { id: "D", title: "Only when an unhandled JavaScript exception occurs.", desc: "It acts as a global error boundary catch mechanism." }
+              ],
+              status: "unattempted",
+              savedAnswer: null
             }
           ]
         };
 
         setAssessmentData(mockBackendData);
-        const initialQ = mockBackendData.questions[0];
-        setResponseMode(initialQ.defaultMode || "written");
-        setAnswerText(initialQ.savedAnswer || "");
+        setSelectedOption(mockBackendData.questions[0].savedAnswer);
       } catch (error) {
         console.error("Failed to load dynamic assessment questions:", error);
       } finally {
@@ -91,72 +171,105 @@ function CandidateActiveAssessment() {
     fetchAssessmentSession();
   }, []);
 
-  // Timer countdown effect
+  // Sync selectedOption whenever currentQuestionIndex changes
+  useEffect(() => {
+    if (assessmentData && assessmentData.questions[currentQuestionIndex]) {
+      setSelectedOption(assessmentData.questions[currentQuestionIndex].savedAnswer);
+    }
+  }, [currentQuestionIndex, assessmentData]);
+
+  // Timer countdown effect & auto-submit on 0
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setSubmittedModalOpen(true);
+          if (videoRef.current && videoRef.current.srcObject) {
+            const tracks = videoRef.current.srcObject.getTracks();
+            tracks.forEach(track => track.stop());
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
     return () => clearInterval(interval);
   }, []);
 
-  // Oral recording timer effect
-  useEffect(() => {
-    let recInterval;
-    if (isRecording) {
-      recInterval = setInterval(() => {
-        setRecordingTime((prev) => prev + 1);
-        setTranscript(
-          "A synchronous model executes tasks sequentially where each operation blocks subsequent code until execution finishes. In contrast, asynchronous execution handles non-blocking I/O operations via the event loop, callback queues, and promises..."
-        );
-      }, 1000);
-    } else {
-      clearInterval(recInterval);
-    }
-    return () => clearInterval(recInterval);
-  }, [isRecording]);
-
-  // Format seconds to MM:SS
   const formatTime = (totalSeconds) => {
-    const minutes = Math.floor(totalSeconds / 60);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
+    if (hours > 0) {
+      return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    }
     return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  // Handle Navigation between questions
-  async function handleNavigation(direction) {
+  // --- SAVE OPTION HANDLER ---
+  const handleSaveAnswer = () => {
+    if (!assessmentData) return;
+    const updatedQuestions = [...assessmentData.questions];
+    updatedQuestions[currentQuestionIndex] = {
+      ...updatedQuestions[currentQuestionIndex],
+      status: "saved",
+      savedAnswer: selectedOption !== null ? selectedOption : (updatedQuestions[currentQuestionIndex].savedAnswer || "A")
+    };
+    if (selectedOption === null && !updatedQuestions[currentQuestionIndex].savedAnswer) {
+      updatedQuestions[currentQuestionIndex].savedAnswer = "A";
+      setSelectedOption("A");
+    }
+    setAssessmentData({ ...assessmentData, questions: updatedQuestions });
+  };
+
+  // --- SKIP OPTION HANDLER ---
+  const handleSkipQuestion = () => {
+    if (!assessmentData) return;
+    const updatedQuestions = [...assessmentData.questions];
+    updatedQuestions[currentQuestionIndex] = {
+      ...updatedQuestions[currentQuestionIndex],
+      status: "skipped"
+    };
+    setAssessmentData({ ...assessmentData, questions: updatedQuestions });
+    
+    // Auto advance to next question if available
+    if (currentQuestionIndex < assessmentData.questions.length - 1) {
+      const nextIdx = currentQuestionIndex + 1;
+      setCurrentQuestionIndex(nextIdx);
+      setSelectedOption(assessmentData.questions[nextIdx].savedAnswer);
+    }
+  };
+
+  // Navigation handlers
+  const handleNavigation = (direction) => {
     if (direction === "next") {
       if (assessmentData && currentQuestionIndex < assessmentData.questions.length - 1) {
         const nextIdx = currentQuestionIndex + 1;
-        const nextQ = assessmentData.questions[nextIdx];
         setCurrentQuestionIndex(nextIdx);
-        setResponseMode(nextQ.defaultMode || "written");
-        setAnswerText(nextQ.savedAnswer || "");
-        setIsRecording(false);
-        setRecordingTime(0);
-        setTranscript("");
+        setSelectedOption(assessmentData.questions[nextIdx].savedAnswer);
       } else {
-        alert("You have reached the final question. Submit your assessment when ready.");
+        if (videoRef.current && videoRef.current.srcObject) {
+          const tracks = videoRef.current.srcObject.getTracks();
+          tracks.forEach(track => track.stop());
+        }
+        setSubmittedModalOpen(true);
       }
     } else if (direction === "prev") {
       if (currentQuestionIndex > 0) {
         const prevIdx = currentQuestionIndex - 1;
-        const prevQ = assessmentData.questions[prevIdx];
         setCurrentQuestionIndex(prevIdx);
-        setResponseMode(prevQ.defaultMode || "written");
-        setAnswerText(prevQ.savedAnswer || "");
-        setIsRecording(false);
-        setRecordingTime(0);
-        setTranscript("");
+        setSelectedOption(assessmentData.questions[prevIdx].savedAnswer);
       }
     }
-  }
+  };
 
   if (loading || !assessmentData) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center font-sans">
+      <div className="min-h-screen bg-[#060F0A] flex items-center justify-center font-sans text-white">
         <div className="text-center">
-          <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-sm font-bold text-slate-700">Loading dynamic assessment modules...</p>
+          <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+          <p className="text-sm font-bold text-slate-300">Loading dynamic assessment modules...</p>
         </div>
       </div>
     );
@@ -164,348 +277,362 @@ function CandidateActiveAssessment() {
 
   const currentQ = assessmentData.questions[currentQuestionIndex];
 
-  return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-between font-sans">
+  // Calculate stats for overall progress & breakdown box
+  const totalQCount = assessmentData.questions.length;
+  const savedCount = assessmentData.questions.filter(q => q.status === "saved").length;
+  const skippedCount = assessmentData.questions.filter(q => q.status === "skipped").length;
+  const unattemptedCount = assessmentData.questions.filter(q => q.status === "unattempted").length;
+  const progressPercentage = Math.round((savedCount / totalQCount) * 100);
 
-      <header className="bg-white border-b border-slate-200 px-8 py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-sm">
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
-            <span className="text-lg font-bold text-slate-900 tracking-tight">SmartRecruit</span>
+  return (
+    <div className="min-h-screen bg-[#060F0A] text-slate-100 flex flex-col justify-between font-sans selection:bg-emerald-600 selection:text-white relative">
+
+      {/* Warning Modal for 1st and 2nd Tab Switch */}
+      {warningModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#09160E] border border-amber-500/40 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center space-x-3 text-amber-400">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center font-bold text-lg">
+                ⚠
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Proctoring Warning ({tabSwitchCount}/3)</h3>
+                <p className="text-xs text-amber-400/90">Tab switching detected!</p>
+              </div>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Leaving the assessment tab is strictly prohibited and monitored. If you switch tabs <strong className="text-white">3 times</strong>, your assessment will be <strong className="text-red-400">automatically submitted</strong>.
+            </p>
+            <div className="pt-2 flex justify-end">
+              <button
+                onClick={() => setWarningModalOpen(false)}
+                className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition-all shadow-md cursor-pointer"
+              >
+                I Understand, Return to Assessment
+              </button>
+            </div>
           </div>
-          <span className="text-slate-300">|</span>
-          <span className="text-sm font-bold text-slate-900">
-            {assessmentData.assessmentTitle}
-          </span>
+        </div>
+      )}
+
+      {/* Auto-Submitted Modal on 3rd Tab Switch or Final Completion */}
+      {submittedModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#09160E] border border-emerald-900/50 rounded-2xl max-w-md w-full p-6 space-y-4 text-center shadow-2xl">
+            <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto text-xl font-bold">
+              ✓
+            </div>
+            <h3 className="text-base font-bold text-white uppercase tracking-wider">Assessment Submitted</h3>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              {tabSwitchCount >= 3 
+                ? "Your assessment has been automatically submitted due to multiple tab switch violations."
+                : timer === 0
+                ? "Your 90-minute assessment time has expired. Your responses have been submitted automatically."
+                : `Your assessment has been successfully completed and recorded. Saved: ${savedCount}, Skipped: ${skippedCount}. Camera access has been securely terminated.`}
+            </p>
+            <div className="pt-4">
+              <button
+                onClick={() => navigate("/")}
+                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition-all shadow-md cursor-pointer"
+              >
+                Return to Dashboard
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Top Header Bar */}
+      <header className="bg-[#09160E] border-b border-emerald-900/30 px-6 py-3.5 flex items-center justify-between sticky top-0 z-20">
+        <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2.5">
+            <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white font-bold flex items-center justify-center text-sm shadow-md">
+              S
+            </div>
+            <div>
+              <h1 className="text-sm font-bold text-white tracking-tight">SmartRecruit</h1>
+              <p className="text-[9px] font-bold text-emerald-500/70 tracking-wider uppercase">ASSESSMENT SESSION</p>
+            </div>
+          </div>
         </div>
 
-        <div className="hidden md:flex items-center space-x-6">
-          <div className="flex space-x-1.5">
-            {assessmentData.questions.map((_, idx) => (
-              <span
-                key={idx}
-                className={`w-2 h-2 rounded-full ${
-                  idx === currentQuestionIndex ? "bg-blue-600 w-4" : "bg-slate-300"
-                } transition-all`}
-              ></span>
-            ))}
-          </div>
-          <span className="text-xs font-bold text-slate-700">
-            Question {currentQuestionIndex + 1} of {assessmentData.questions.length}
-          </span>
+        <div className="text-sm font-semibold text-slate-200">
+          {assessmentData.assessmentTitle}
         </div>
 
         <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-1.5 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-slate-800">
-            <i className="fa-regular fa-clock text-blue-600"></i>
-            <span>{formatTime(timer)}</span>
+          <div className="hidden lg:flex items-center space-x-1.5 text-xs text-slate-400">
+            <span>● ● ●</span>
+            <span className="ml-2 font-medium text-slate-300">Question {currentQuestionIndex + 1} of {totalQCount}</span>
           </div>
 
-          <div className="flex items-center space-x-2 pl-2 border-l border-slate-200">
-            <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-sm">
-              👤
-            </div>
-            <div className="text-right hidden sm:block">
-              <p className="text-xs font-semibold text-slate-900 leading-tight">Priya Tiwari</p>
-              <p className="text-[10px] text-slate-400 font-medium">candidate</p>
-            </div>
+          <div className="flex items-center space-x-2 bg-[#0D1D13] border border-emerald-950 px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-slate-100">
+            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span>{formatTime(timer)}</span>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl w-full mx-auto px-4 py-8 flex-grow grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Main Body */}
+      <div className="max-w-[1400px] w-full mx-auto px-6 py-6 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-        <div className="lg:col-span-2 space-y-6">
+        {/* Left Sidebar Navigation & Candidate Info */}
+        <aside className="lg:col-span-3 space-y-6">
+          
+          {/* Candidate Card */}
+          <div className="bg-[#09160E] border border-emerald-900/30 rounded-2xl p-4">
+            <p className="text-[10px] font-bold text-emerald-500/60 tracking-wider uppercase mb-3">CANDIDATE</p>
+            <div className="flex items-center space-x-3">
+              <div className="w-9 h-9 bg-emerald-600 text-white rounded-lg flex items-center justify-center font-bold text-xs shadow-sm">
+                YN
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white leading-tight">Your Name</p>
+              </div>
+            </div>
+          </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80">
+          {/* Overall Progress */}
+          <div className="bg-[#09160E] border border-emerald-900/30 rounded-2xl p-4">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-[10px] font-bold text-emerald-500/60 tracking-wider uppercase">Overall progress</span>
+              <span className="text-xs font-bold text-white">{savedCount} of {totalQCount} saved ({progressPercentage}%)</span>
+            </div>
+            <div className="w-full bg-[#0D1D13] h-1.5 rounded-full overflow-hidden mb-3">
+              <div 
+                className="bg-emerald-500 h-full rounded-full transition-all duration-300"
+                style={{ width: `${progressPercentage}%` }}
+              ></div>
+            </div>
+            <p className="text-[11px] text-slate-400">Successfully saved responses</p>
+          </div>
+
+          {/* Technical Questions Nav List (Color-coded based on status) */}
+          <div className="bg-[#09160E] border border-emerald-900/30 rounded-2xl p-4">
+            <p className="text-[10px] font-bold text-emerald-500/60 tracking-wider uppercase mb-3">TECHNICAL QUESTIONS (4)</p>
+            <div className="grid grid-cols-4 gap-2">
+              {assessmentData.questions.map((q, idx) => {
+                const isCurrent = currentQuestionIndex === idx;
+                
+                // Determine styling based on status
+                let buttonStyle = "bg-[#0D1D13] border border-emerald-900/40 text-slate-400 hover:border-emerald-500";
+                if (q.status === "saved") {
+                  buttonStyle = "bg-emerald-600/20 border border-emerald-500 text-emerald-300 font-bold shadow-sm";
+                } else if (q.status === "skipped") {
+                  buttonStyle = "bg-amber-500/20 border border-amber-500/60 text-amber-300 font-bold";
+                }
+
+                if (isCurrent) {
+                  buttonStyle += " ring-2 ring-emerald-400";
+                }
+
+                return (
+                  <button
+                    key={q.id}
+                    onClick={() => setCurrentQuestionIndex(idx)}
+                    className={`h-10 rounded-xl font-bold text-xs flex items-center justify-center transition-all cursor-pointer ${buttonStyle}`}
+                    title={`Q${idx + 1}: ${q.status}`}
+                  >
+                    {q.status === "saved" ? "✓ " + (idx + 1) : idx + 1}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Question Status Legend / Details Box */}
+            <div className="mt-4 pt-3 border-t border-emerald-950 space-y-1.5 text-[11px] text-slate-300">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400 flex items-center space-x-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500"></span><span>Saved:</span></span>
+                <span className="font-bold text-emerald-400">{savedCount}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400 flex items-center space-x-1.5"><span className="w-2 h-2 rounded-full bg-amber-500"></span><span>Skipped:</span></span>
+                <span className="font-bold text-amber-400">{skippedCount}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400 flex items-center space-x-1.5"><span className="w-2 h-2 rounded-full bg-slate-600"></span><span>Unattempted:</span></span>
+                <span className="font-bold text-slate-300">{unattemptedCount}</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Central Question & Answer Area */}
+        <main className="lg:col-span-6 space-y-6">
+
+          {/* Question Box */}
+          <div className="bg-[#09160E] border border-emerald-900/30 rounded-2xl p-6">
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center space-x-2">
-                <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded">
-                  {responseMode === "oral" ? "AI INTERVIEW" : currentQ.type}
+                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded">
+                  {currentQ.type}
                 </span>
-                {responseMode === "oral" && currentQ.sessionId && (
-                  <span className="text-[10px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded border border-slate-200">
-                    Session id- {currentQ.sessionId}
-                  </span>
-                )}
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+                  currentQ.status === 'saved' ? 'bg-emerald-500/20 text-emerald-300' :
+                  currentQ.status === 'skipped' ? 'bg-amber-500/20 text-amber-300' : 'bg-slate-800 text-slate-400'
+                }`}>
+                  Status: {currentQ.status}
+                </span>
               </div>
-              <div className="flex items-center space-x-3 text-xs">
-                <span className="text-slate-500 font-medium">{responseMode === "oral" ? currentQ.maxDuration : currentQ.category}</span>
-                <span className="text-slate-300">|</span>
-                <span className="font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
-                  {responseMode === "oral" ? "Architectural Inquiry" : `${currentQ.points} Pts`}
-                </span>
+              <div className="flex items-center space-x-2 text-xs text-slate-400">
+                <span>{currentQ.category}</span>
+                <span>•</span>
+                <span className="text-emerald-400 font-bold">{currentQ.points} pts</span>
               </div>
             </div>
 
-            {responseMode === "oral" && currentQ.stage && (
-              <p className="text-[11px] font-bold text-blue-600 mb-2 uppercase tracking-wide">
-                {currentQ.stage}
-              </p>
-            )}
-
-            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-              "{currentQ.prompt}"
+            <h2 className="text-xl font-bold text-white tracking-tight leading-snug">
+              {currentQ.prompt}
             </h2>
-            <p className="text-slate-500 text-xs sm:text-sm mt-2 leading-relaxed">
+            <p className="text-slate-400 text-xs mt-2 leading-relaxed">
               {currentQ.instruction}
             </p>
 
-            {responseMode === "oral" && currentQ.touchpoints && (
-              <div className="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold text-slate-500 mr-2">Recommended touchpoints:</span>
-                {currentQ.touchpoints.map((tp, i) => (
-                  <span key={i} className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full flex items-center space-x-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-                    <span>{tp}</span>
-                  </span>
-                ))}
-              </div>
-            )}
-
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center space-x-2 text-[11px] text-slate-400 font-medium">
-              <i className="fa-solid fa-wand-magic-sparkles text-blue-500"></i>
-              <span>{currentQ.mlCalibratedTag}</span>
+            <div className="mt-4 pt-3 border-t border-emerald-950 text-[11px] text-slate-500">
+              {currentQ.mlCalibratedTag}
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-2 shadow-sm border border-slate-200/80 flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-700 pl-3">Select Response Format:</span>
-            <div className="flex bg-slate-100 p-1 rounded-lg space-x-1">
-              <button
-                onClick={() => setResponseMode("written")}
-                className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
-                  responseMode === "written"
-                    ? "bg-white text-blue-600 shadow-sm"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <i className="fa-solid fa-pen-to-square mr-1.5"></i> Written Answer
-              </button>
-              <button
-                onClick={() => setResponseMode("oral")}
-                className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
-                  responseMode === "oral"
-                    ? "bg-white text-blue-600 shadow-sm"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <i className="fa-solid fa-microphone mr-1.5"></i> Oral Evaluation
-              </button>
+          {/* Answer Options Section */}
+          <div className="bg-[#09160E] border border-emerald-900/30 rounded-2xl p-6 space-y-4">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-xs font-bold text-white uppercase tracking-wider">Your answer</span>
+              <span className="text-[10px] font-bold text-emerald-500/70 tracking-wider">SELECT ONE</span>
             </div>
-          </div>
 
-          {responseMode === "oral" ? (
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-6">
+            <div className="space-y-3">
+              {currentQ.options.map((opt) => {
+                const isSelected = selectedOption === opt.id;
+                return (
+                  <div
+                    key={opt.id}
+                    onClick={() => setSelectedOption(opt.id)}
+                    className={`p-4 rounded-xl border cursor-pointer transition-all flex items-start space-x-3.5 ${
+                      isSelected 
+                        ? "bg-[#0D1D13] border-emerald-500 shadow-md shadow-emerald-950" 
+                        : "bg-[#060F0A] border-emerald-950 hover:border-emerald-800/60"
+                    }`}
+                  >
+                    <div className="mt-0.5">
+                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs font-bold ${
+                        isSelected ? "border-emerald-400 bg-emerald-500/20 text-emerald-300" : "border-slate-600 text-slate-500"
+                      }`}>
+                        {opt.id}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-white leading-snug">{opt.title}</p>
+                      <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{opt.desc}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* SAVE & SKIP ACTION BUTTONS */}
+            <div className="pt-4 mt-2 border-t border-emerald-950 flex items-center justify-between">
+              <span className="text-xs text-slate-400">
+                {currentQ.status === "saved" ? <span className="text-emerald-400 font-semibold">✓ Response saved successfully</span> : "Select an option and save or skip."}
+              </span>
               
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Your Oral Response</h3>
-                  <p className="text-slate-500 text-xs mt-0.5">Speak clearly and naturally. High-fidelity audio is processed for analysis.</p>
-                </div>
-                <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-lg flex items-center space-x-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
-                  <span>Microphone connected. 48kHz</span>
-                </span>
-              </div>
-
-              <div className="flex flex-col items-center justify-center py-6 bg-slate-50/70 border border-slate-200/80 rounded-2xl space-y-4">
+              <div className="flex items-center space-x-3">
                 <button
-                  onClick={() => setIsRecording(!isRecording)}
-                  className={`w-20 h-20 rounded-full flex flex-col items-center justify-center text-white shadow-lg transition-all cursor-pointer ${
-                    isRecording ? "bg-red-600 hover:bg-red-700 shadow-red-500/30 animate-pulse" : "bg-blue-600 hover:bg-blue-700 shadow-blue-500/30"
-                  }`}
+                  type="button"
+                  onClick={handleSkipQuestion}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 transition-all cursor-pointer"
                 >
-                  <i className={`fa-solid ${isRecording ? "fa-stop" : "fa-microphone"} text-xl mb-1`}></i>
-                  <span className="text-[10px] font-bold tracking-wider">{isRecording ? "STOP" : "START"}</span>
+                  Skip Question
                 </button>
 
-                <div className="h-12 bg-white border border-slate-200 rounded-xl px-4 flex items-center justify-between space-x-1.5 shadow-sm w-full max-w-md">
-                  <div className="w-1.5 h-3 bg-blue-500 rounded-full"></div>
-                  <div className={`w-1.5 h-6 bg-blue-500 rounded-full ${isRecording ? "animate-bounce" : ""}`}></div>
-                  <div className="w-1.5 h-4 bg-blue-500 rounded-full"></div>
-                  <div className={`w-1.5 h-8 bg-blue-600 rounded-full ${isRecording ? "animate-pulse" : ""}`}></div>
-                  <div className="w-1.5 h-5 bg-blue-500 rounded-full"></div>
-                  <div className={`w-1.5 h-10 bg-blue-600 rounded-full ${isRecording ? "animate-bounce" : ""}`}></div>
-                  <div className="w-1.5 h-7 bg-blue-500 rounded-full"></div>
-                  <div className={`w-1.5 h-9 bg-blue-600 rounded-full ${isRecording ? "animate-pulse" : ""}`}></div>
-                  <div className="w-1.5 h-4 bg-blue-400 rounded-full"></div>
-                  <div className="w-1.5 h-6 bg-blue-500 rounded-full"></div>
-                  <div className="w-1.5 h-3 bg-slate-300 rounded-full"></div>
-                  <div className="w-1.5 h-2 bg-slate-200 rounded-full"></div>
-                </div>
-
-                <div className="flex items-center space-x-4 text-xs font-mono text-slate-500">
-                  <span>Press the button when ready to record</span>
-                  <span>•</span>
-                  <span className="font-bold text-slate-800">{formatTime(recordingTime)} / 2 min cap</span>
-                  <span className="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[10px] font-sans font-bold">optimal input</span>
-                </div>
-              </div>
-
-              <div className="bg-slate-50/70 border border-slate-200 rounded-xl p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <div className="flex items-center space-x-2 text-xs font-bold text-slate-800">
-                    <i className="fa-regular fa-closed-captioning text-blue-600"></i>
-                    <span>Live Speech-to-Text Transcription</span>
-                  </div>
-                  <div className="flex items-center space-x-3 text-[11px]">
-                    <span className="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded">WHISPER AI</span>
-                    <label className="flex items-center space-x-1.5 text-slate-600 cursor-pointer">
-                      <input type="checkbox" defaultChecked className="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
-                      <span>Show live captions</span>
-                    </label>
-                  </div>
-                </div>
-                <div className="bg-white border border-slate-200 rounded-lg p-3 text-xs text-slate-700 min-h-[80px] leading-relaxed shadow-inner">
-                  {transcript || "Your spoken response will appear here in real-time as you formulate your thoughts...."}
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-2 text-[11px] text-slate-500">
-                <i className="fa-solid fa-lock text-blue-600"></i>
-                <span>Audio is encrypted in transit and securely evaluated against rubric benchmarks.</span>
-              </div>
-
-            </div>
-          ) : (
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 flex flex-col justify-between">
-              <div>
-                <div className="flex justify-between items-center mb-3">
-                  <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
-                    <span>Your Written Answer</span>
-                    <span className="text-[10px] font-normal text-slate-400 bg-slate-100 px-2 py-0.5 rounded">PLAIN TEXT</span>
-                  </span>
-                  <div className="flex items-center space-x-2 text-slate-400 text-xs">
-                    <i className="fa-solid fa-list-ul hover:text-slate-700 cursor-pointer"></i>
-                    <i className="fa-solid fa-code hover:text-slate-700 cursor-pointer"></i>
-                    <i className="fa-solid fa-expand hover:text-slate-700 cursor-pointer"></i>
-                  </div>
-                </div>
-
-                <textarea
-                  rows="8"
-                  value={answerText}
-                  onChange={(e) => setAnswerText(e.target.value)}
-                  placeholder="Type your structured answer here..."
-                  className="w-full p-4 bg-slate-50/70 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 leading-relaxed shadow-inner resize-y"
-                ></textarea>
-              </div>
-
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 pt-3 border-t border-slate-100 text-xs text-slate-400 gap-2">
-                <div className="flex items-center space-x-4">
-                  <button onClick={() => setAnswerText("")} className="hover:text-slate-700 transition-colors flex items-center space-x-1 cursor-pointer">
-                    <i className="fa-solid fa-rotate-right text-[10px]"></i>
-                    <span>Clear answer</span>
-                  </button>
-                  <span className="flex items-center space-x-1 text-emerald-600 font-medium">
-                    <i className="fa-solid fa-cloud text-[10px]"></i>
-                    <span>Auto-saves every 5 seconds</span>
-                  </span>
-                </div>
-                <span className="font-mono">{answerText.length} / 1000</span>
+                <button
+                  type="button"
+                  onClick={handleSaveAnswer}
+                  className="px-5 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/30 transition-all cursor-pointer"
+                >
+                  Save Answer
+                </button>
               </div>
             </div>
-          )}
 
-        </div>
+          </div>
 
-        <div className="space-y-6">
+        </main>
 
-          <div className="bg-slate-900 rounded-2xl p-4 border border-slate-800 shadow-sm">
+        {/* Right Sidebar: Active Live Camera Feed & Tips */}
+        <aside className="lg:col-span-3 space-y-6">
+
+          {/* Live Camera Card */}
+          <div className="bg-[#09160E] border border-emerald-900/30 rounded-2xl p-4">
             <div className="flex justify-between items-center text-white mb-3">
               <span className="text-xs font-semibold flex items-center space-x-2">
-                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                <span>Camera active</span>
+                <span className={`w-2 h-2 rounded-full ${cameraActive ? "bg-emerald-400 animate-pulse" : "bg-red-500"}`}></span>
+                <span>{cameraActive ? "Camera active" : "Camera inactive"}</span>
               </span>
-              <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">720p HD</span>
+              <span className="text-[10px] bg-[#0D1D13] border border-emerald-950 text-slate-300 px-2 py-0.5 rounded font-mono">720p HD</span>
             </div>
 
-            <div className="relative rounded-xl overflow-hidden bg-slate-950 h-48 flex items-center justify-center border border-slate-800">
-              <div className="absolute top-2 right-2 bg-emerald-500/20 text-emerald-400 text-[9px] px-2 py-0.5 rounded flex items-center space-x-1">
-                <i className="fa-solid fa-wifi text-[8px]"></i>
+            {/* Live Video Element */}
+            <div className="relative rounded-xl overflow-hidden bg-[#060F0A] h-44 flex items-center justify-center border border-emerald-950">
+              {cameraError ? (
+                <div className="p-3 text-center text-xs text-red-400">
+                  {cameraError}
+                </div>
+              ) : (
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="w-full h-full object-cover transform -scale-x-100"
+                />
+              )}
+
+              <div className="absolute top-2 right-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] px-2 py-0.5 rounded flex items-center space-x-1">
+                <span>Wi-Fi</span>
                 <span>Stable</span>
               </div>
 
-              <div className="flex flex-col items-center justify-center text-slate-600">
-                <i className="fa-solid fa-user-circle text-5xl text-slate-700"></i>
-                <p className="text-[11px] text-slate-500 mt-1">Proctor AI Active</p>
-              </div>
-
-              <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center text-[10px] text-slate-300 bg-black/50 px-2 py-1 rounded">
-                <span>Camera active • Encrypted</span>
+              <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center text-[10px] text-slate-400 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-lg">
+                <span>Proctored feed</span>
+                <span>Encrypted</span>
               </div>
             </div>
-            <p className="text-[10px] text-slate-400 mt-2">Video encrypted for candidate review</p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
-            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center space-x-1.5">
-              <i className="fa-solid fa-lightbulb text-blue-600"></i>
-              <span>{responseMode === "oral" ? "Speaking Tips" : "Assessment Tips"}</span>
-            </h3>
-
-            <div className="space-y-3 text-xs text-slate-600 leading-relaxed">
-              {responseMode === "oral" ? (
-                <>
-                  <div className="flex items-start space-x-2.5">
-                    <i className="fa-solid fa-check text-emerald-600 mt-0.5"></i>
-                    <span>Structure your thought (context, implementation, edge-case) before beginning.</span>
-                  </div>
-                  <div className="flex items-start space-x-2.5">
-                    <i className="fa-regular fa-clock text-blue-600 mt-0.5"></i>
-                    <span>Maintain an even, conversational pace; the AI focuses on technical depth and reasoning.</span>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-start space-x-2.5">
-                    <i className="fa-solid fa-check text-emerald-600 mt-0.5"></i>
-                    <span>Focus on clarity and real-world examples from actual frontend projects.</span>
-                  </div>
-                  <div className="flex items-start space-x-2.5">
-                    <i className="fa-regular fa-clock text-blue-600 mt-0.5"></i>
-                    <span>The assessment timer runs continuously across questions.</span>
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-slate-100">
-              <a href="#" className="text-[11px] font-semibold text-blue-600 hover:underline flex items-center space-x-1">
-                <span>Audio & Video Hardware Settings</span>
-                <span>→</span>
-              </a>
+            
+            <div className="mt-3 flex items-center justify-between text-[10px] text-slate-500">
+              <span className="flex items-center space-x-1">
+                <span className="text-emerald-500">🛡️</span>
+                <span>Tab Switches: <strong className="text-white">{tabSwitchCount}/3</strong></span>
+              </span>
+              <span>Proctored session</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-200/80 flex items-center justify-between">
-            <div className="flex items-center space-x-2.5 text-xs font-semibold text-slate-700">
-              <i className="fa-solid fa-clipboard-check text-blue-600"></i>
-              <div>
-                <p className="font-bold text-slate-900">Assessment Rubric</p>
-                <p className="text-[10px] text-slate-400">{responseMode === "oral" ? "Weight :20% of Architecture Score" : "Standard Question Weight"}</p>
-              </div>
+          {/* Assessment Tips Card */}
+          <div className="bg-[#09160E] border border-emerald-900/30 rounded-2xl p-5 space-y-3">
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-2">Assessment tips</h3>
+            <div className="space-y-2.5 text-xs text-slate-400 leading-relaxed">
+              <p>• You have 4 questions and 90 minutes total.</p>
+              <p>• Click <strong className="text-emerald-400">Save Answer</strong> after selecting your choice.</p>
+              <p>• Click <strong className="text-amber-400">Skip Question</strong> to jump past items.</p>
+              <p>• Avoid switching tabs to prevent auto-submission.</p>
             </div>
-            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded">
-              Active
-            </span>
           </div>
 
-        </div>
+        </aside>
 
-      </main>
+      </div>
 
-      <footer className="bg-white border-t border-slate-200 px-8 py-4 flex flex-col sm:flex-row items-center justify-between text-xs sticky bottom-0 z-20 shadow-md">
-        <div className="flex items-center space-x-2 text-slate-500 mb-2 sm:mb-0">
-          <span className="font-bold text-slate-800">Question {currentQuestionIndex + 1} of {assessmentData.questions.length}</span>
+      {/* Bottom Sticky Action Footer */}
+      <footer className="bg-[#09160E] border-t border-emerald-900/30 px-8 py-4 flex flex-col sm:flex-row items-center justify-between text-xs sticky bottom-0 z-20">
+        <div className="flex items-center space-x-3 text-slate-400 mb-2 sm:mb-0">
+          <span className="font-bold text-white">Question {currentQuestionIndex + 1} of {totalQCount}</span>
           <span>•</span>
-          <span>{responseMode === "oral" ? "Oral Evaluation Section" : "Technical Section"}</span>
+          <span>Saved: {savedCount} | Skipped: {skippedCount} | Unattempted: {unattemptedCount}</span>
         </div>
 
-        <div className="flex items-center space-x-2 text-emerald-600 font-medium mb-2 sm:mb-0">
-          <i className="fa-solid fa-cloud-arrow-up"></i>
-          <span>Answer saved automatically</span>
+        <div className="flex items-center space-x-2 text-emerald-400 font-medium mb-2 sm:mb-0">
+          <span>✓</span>
+          <span>Total Questions: 4</span>
         </div>
 
         <div className="flex items-center space-x-3">
@@ -513,8 +640,8 @@ function CandidateActiveAssessment() {
             type="button"
             onClick={() => handleNavigation("prev")}
             disabled={currentQuestionIndex === 0}
-            className={`px-4 py-2 rounded-xl font-semibold border border-slate-200 transition-colors flex items-center space-x-1.5 ${
-              currentQuestionIndex === 0 ? "opacity-50 cursor-not-allowed bg-slate-100 text-slate-400" : "bg-white text-slate-700 hover:bg-slate-50 cursor-pointer"
+            className={`px-4 py-2 rounded-xl font-semibold border border-emerald-900/40 transition-colors flex items-center space-x-1.5 ${
+              currentQuestionIndex === 0 ? "opacity-50 cursor-not-allowed bg-[#0D1D13] text-slate-500" : "bg-[#0D1D13] text-slate-300 hover:bg-emerald-950 cursor-pointer"
             }`}
           >
             <span>←</span>
@@ -524,9 +651,9 @@ function CandidateActiveAssessment() {
           <button
             type="button"
             onClick={() => handleNavigation("next")}
-            className="px-5 py-2 rounded-xl font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-sm shadow-blue-500/20 transition-all flex items-center space-x-1.5 cursor-pointer"
+            className="px-5 py-2 rounded-xl font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/30 transition-all flex items-center space-x-1.5 cursor-pointer"
           >
-            <span>Next Question</span>
+            <span>{currentQuestionIndex === totalQCount - 1 ? "Submit assessment" : "Next question"}</span>
             <span>→</span>
           </button>
         </div>
