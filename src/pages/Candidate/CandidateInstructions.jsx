@@ -1,9 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
+function CandidateInstructions() {
   const navigate = useNavigate();
   const [agreed, setAgreed] = useState(false);
+  const [candidateName, setCandidateName] = useState("Priya Tiwari");
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser && parsedUser.name) {
+          setCandidateName(parsedUser.name);
+        }
+      }
+    } catch (error) {
+      console.error("Error reading user from localStorage:", error);
+    }
+  }, []);
+  const getInitials = (name) => {
+    const parts = name.trim().split(" ");
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  };
+
+  const initials = getInitials(candidateName);
 
   function handleContinue() {
     if (!agreed) {
@@ -15,11 +38,8 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
 
   return (
     <div className="min-h-screen bg-[#020b06] text-slate-100 flex font-sans selection:bg-emerald-500 selection:text-white">
-      
-      {/* Sidebar */}
       <aside className="w-72 bg-[#04120a]/80 border-r border-emerald-950/80 p-6 flex flex-col justify-between hidden lg:flex select-none">
         <div>
-          {/* Logo */}
           <div className="flex items-center space-x-3 mb-10">
             <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-white text-sm shadow-sm shadow-emerald-900/50">
               S
@@ -33,15 +53,13 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
               </span>
             </div>
           </div>
-
-          {/* Candidate Card */}
           <div className="mb-8">
             <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-2">
               Your Assessment
             </p>
             <div className="flex items-center space-x-3 bg-[#06170e] border border-emerald-900/40 p-3 rounded-xl">
               <div className="w-9 h-9 bg-emerald-600 text-white rounded-lg flex items-center justify-center font-bold text-xs shadow-sm shadow-emerald-900/50">
-                PT
+                {initials}
               </div>
               <div className="overflow-hidden">
                 <p className="text-sm font-semibold text-slate-100 truncate">{candidateName}</p>
@@ -49,15 +67,12 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
               </div>
             </div>
           </div>
-
-          {/* Assessment Steps */}
           <div>
             <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-3">
               Assessment Steps
             </p>
             <div className="space-y-2">
               
-              {/* Step 1: Active */}
               <div className="p-3 bg-emerald-950/40 border border-emerald-800/40 rounded-xl">
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shadow-sm shadow-emerald-900/50">
@@ -70,7 +85,6 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
                 </div>
               </div>
 
-              {/* Step 2 */}
               <div className="p-3 opacity-60">
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 rounded-full bg-emerald-950/50 text-slate-400 font-bold text-xs flex items-center justify-center border border-emerald-900/30">
@@ -83,7 +97,6 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
                 </div>
               </div>
 
-              {/* Step 3 */}
               <div className="p-3 opacity-60">
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 rounded-full bg-emerald-950/50 text-slate-400 font-bold text-xs flex items-center justify-center border border-emerald-900/30">
@@ -96,7 +109,6 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
                 </div>
               </div>
 
-              {/* Step 4 */}
               <div className="p-3 opacity-60">
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 rounded-full bg-emerald-950/50 text-slate-400 font-bold text-xs flex items-center justify-center border border-emerald-900/30">
@@ -104,7 +116,7 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
                   </div>
                   <div>
                     <p className="text-xs font-medium text-slate-300">Assessment</p>
-                    <p className="text-[11px] text-slate-500">30 minutes</p>
+                    <p className="text-[11px] text-slate-500">90 minutes</p>
                   </div>
                 </div>
               </div>
@@ -113,7 +125,6 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
           </div>
         </div>
 
-        {/* Support Section */}
         <div className="space-y-4 pt-6 border-t border-emerald-950/80">
           <div className="p-3.5 bg-[#06170e]/50 border border-emerald-900/30 rounded-xl">
             <p className="text-xs font-bold text-slate-200 mb-1">Need a hand?</p>
@@ -125,34 +136,25 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
               <span>→</span>
             </a>
           </div>
-          <p className="text-[10px] text-emerald-700/80 text-center">🔒 Secure and confidential session</p>
         </div>
       </aside>
-
-      {/* Main Content Area */}
       <div className="flex-1 flex flex-col justify-between min-h-screen">
-        
-        {/* Top Navbar */}
         <header className="bg-[#04120a]/40 border-b border-emerald-950/80 px-8 py-4 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md">
           <div className="text-xs text-slate-400 font-medium">
             Candidate portal <span className="text-emerald-800 mx-2">/</span> <span className="text-slate-200">Assessment</span>
           </div>
-
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-2.5">
-              <span className="text-xs text-slate-400">Frontend Developer role</span>
               <div className="w-7 h-7 bg-emerald-600 text-white rounded-full flex items-center justify-center font-bold text-[10px] shadow-sm shadow-emerald-900/50">
-                PT
+                {initials}
               </div>
               <span className="text-xs font-semibold text-slate-200">{candidateName}</span>
             </div>
           </div>
         </header>
 
-        {/* Content Body */}
         <main className="max-w-5xl w-full mx-auto px-6 py-8 flex-grow">
 
-          {/* Heading Section */}
           <div className="mb-8">
             <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-950/80 px-2.5 py-1 rounded border border-emerald-800/50 shadow-sm">
               • BEFORE YOU BEGIN
@@ -164,10 +166,7 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
               Take a minute to get comfortable and check the details below. When you're ready, we'll make sure your setup is working before the assessment starts.
             </p>
           </div>
-
-          {/* Stat Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-
             <div className="bg-[#06170e]/60 border border-emerald-900/30 rounded-xl p-4 flex items-center space-x-3.5 shadow-sm">
               <div className="w-10 h-10 bg-[#020b06] border border-emerald-900/40 rounded-xl flex items-center justify-center text-emerald-400 text-base">
                 <i className="fa-regular fa-clock"></i>
@@ -200,19 +199,15 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
 
           </div>
 
-          {/* Two-Column Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-            
-            {/* Left Column: A few things to prepare */}
             <div className="lg:col-span-7 bg-[#06170e]/60 border border-emerald-900/30 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
               <div>
                 <div className="flex justify-between items-center mb-5">
                   <h3 className="text-sm font-bold text-slate-100">A few things to prepare</h3>
                   <span className="text-[10px] font-bold text-emerald-600 tracking-wider uppercase">Please read</span>
                 </div>
-
                 <div className="space-y-4">
-                  
+                
                   <div className="flex items-start space-x-3 text-slate-300 text-xs font-medium">
                     <span className="text-emerald-400 mt-0.5"><i className="fa-regular fa-circle-check"></i></span>
                     <span className="leading-relaxed">Check that your camera and microphone are working.</span>
@@ -243,7 +238,6 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
               </div>
             </div>
 
-            {/* Right Column: What's included */}
             <div className="lg:col-span-5 bg-[#06170e]/60 border border-emerald-900/30 rounded-2xl p-6 shadow-sm">
               <div className="flex justify-between items-center mb-5">
                 <h3 className="text-sm font-bold text-slate-100">What's included</h3>
@@ -251,8 +245,6 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
               </div>
 
               <div className="space-y-3">
-                
-                {/* Item 1 */}
                 <div className="p-3.5 bg-[#020b06]/50 border border-emerald-900/30 rounded-xl">
                   <div className="flex items-center space-x-2 text-emerald-400 text-xs font-bold mb-1">
                     <i className="fa-solid fa-code"></i>
@@ -263,20 +255,6 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
                   </p>
                   <p className="text-[10px] font-medium text-emerald-600 mt-2">Multiple choice</p>
                 </div>
-
-                {/* Item 2 */}
-                <div className="p-3.5 bg-[#020b06]/50 border border-emerald-900/30 rounded-xl">
-                  <div className="flex items-center space-x-2 text-emerald-400 text-xs font-bold mb-1">
-                    <i className="fa-solid fa-microphone"></i>
-                    <span>Spoken response</span>
-                  </div>
-                  <p className="text-slate-400 text-[11px] leading-relaxed">
-                    Talk through a scenario and explain the trade-offs you'd consider.
-                  </p>
-                  <p className="text-[10px] font-medium text-emerald-600 mt-2">2 audio responses</p>
-                </div>
-
-                {/* Item 3 */}
                 <div className="p-3.5 bg-[#020b06]/50 border border-emerald-900/30 rounded-xl">
                   <div className="flex items-center space-x-2 text-emerald-400 text-xs font-bold mb-1">
                     <i className="fa-solid fa-desktop"></i>
@@ -292,8 +270,6 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
             </div>
 
           </div>
-
-          {/* Checkbox confirmation */}
           <div className="flex items-start space-x-3 p-4 bg-[#06170e]/60 border border-emerald-900/30 rounded-xl mb-8 shadow-sm">
             <input
               type="checkbox"
@@ -306,13 +282,10 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
               I'm in a quiet space, my camera and microphone are ready, and I'll complete the assessment on my own without outside help.
             </label>
           </div>
-
-          {/* Bottom Action Footer */}
           <div className="flex flex-col sm:flex-row items-center justify-between pt-6 border-t border-emerald-950/80 gap-4">
             <p className="text-[11px] text-slate-500">
-              ✦ Your responses are used to assess your application.
+               Your responses are used to assess your application.
             </p>
-
             <div className="flex items-center space-x-4 w-full sm:w-auto justify-end">
               <button
                 type="button"
@@ -321,7 +294,6 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
               >
                 Exit assessment
               </button>
-
               <button
                 type="button"
                 onClick={handleContinue}
@@ -332,14 +304,12 @@ function CandidateInstructions({ candidateName = "Priya Tiwari" }) {
                 }`}
               >
                 <span>Continue to system check</span>
-                <span>→</span>
               </button>
             </div>
           </div>
 
         </main>
 
-        {/* Footer */}
         <footer className="py-4 px-8 bg-[#04120a]/40 border-t border-emerald-950/80 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500">
           <p>SmartRecruit · Secure candidate portal</p>
           <div className="flex space-x-4 mt-2 sm:mt-0">

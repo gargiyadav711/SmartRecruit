@@ -1,38 +1,42 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import signupImage from "./SignUp.jpeg";
 
 function SignUp() {
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
+    agreeTerms: false,
   });
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // Handle normal signup
+  const [userType, setUserType] = useState("candidate");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Check empty fields
     if (
       !formData.name ||
       !formData.email ||
       !formData.password ||
       !formData.confirmPassword
-    ) {
+    ){
       setMessage("Please fill all the fields.");
       return;
     }
 
-    // Check password match
     if (formData.password !== formData.confirmPassword) {
       setMessage("Passwords do not match.");
+      return;
+    }
+
+    if (!formData.agreeTerms) {
+      setMessage("Please agree to the Terms of Service and Privacy Policy.");
       return;
     }
 
@@ -40,8 +44,7 @@ function SignUp() {
     setMessage("");
 
     try {
-      // Send data to backend
-      const response = await fetch(
+        const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/register`,
         {
           method: "POST",
@@ -59,26 +62,21 @@ function SignUp() {
 
       const data = await response.json();
 
-      // Backend returned an error
       if (!response.ok) {
         throw new Error(
           data.message || "Registration failed."
         );
       }
 
-      // Registration successful
-      setMessage("Account created successfully!");
-
+      setMessage("Account created successfully! Redirecting to OTP verification...");
       console.log("Backend response:", data);
 
-      // Navigate to login
       setTimeout(() => {
-        navigate("/candidate/login");
+        navigate("/candidate/verify-otp", { state: { email: formData.email } });
       }, 1500);
 
     } catch (error) {
       console.error("Signup error:", error);
-
       setMessage(
         error.message ||
           "Something went wrong. Please try again."
@@ -89,183 +87,149 @@ function SignUp() {
     }
   };
 
-  // Google signup
-  const handleGoogleSignUp = () => {
-    console.log("Google sign up clicked");
-
-    // Google OAuth backend integration
-    // will be added here
-  };
-
   return (
     <StyledWrapper>
-
-      <div className="container">
-
-        {/* Heading */}
-        <div className="heading">
-          Create Account
-        </div>
-
-        <p className="subtitle">
-          Sign up to get started
-        </p>
-
-        {/* Signup Form */}
-        <form
-          className="form"
-          onSubmit={handleSubmit}
-        >
-
-          {/* Full Name */}
-          <input
-            required
-            className="input"
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            value={formData.name}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                name: e.target.value,
-              })
-            }
-          />
-
-          {/* Email */}
-          <input
-            required
-            className="input"
-            type="email"
-            name="email"
-            placeholder="E-mail"
-            value={formData.email}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                email: e.target.value,
-              })
-            }
-          />
-
-          {/* Password */}
-          <input
-            required
-            className="input"
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                password: e.target.value,
-              })
-            }
-          />
-
-          {/* Confirm Password */}
-          <input
-            required
-            className="input"
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                confirmPassword: e.target.value,
-              })
-            }
-          />
-
-          {/* Signup Button */}
-          <button
-            className="signup-button"
-            type="submit"
-            disabled={loading}
-          >
-            {loading
-              ? "Creating Account..."
-              : "Sign Up"}
-          </button>
-
-        </form>
-
-        {/* Success / Error Message */}
-        {message && (
-          <p className="message">
-            {message}
-          </p>
-        )}
-
-        {/* Social Signup */}
-        <div className="social-account-container">
-
-          <span className="title">
-            Or Sign up with
-          </span>
-
-          <div className="social-accounts">
-
-            {/* Google */}
-            <button
-              type="button"
-              className="social-button google"
-              onClick={handleGoogleSignUp}
-            >
-              <svg
-                className="svg"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="#4285F4"
-                  d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
-                />
-
-                <path
-                  fill="#34A853"
-                  d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.19v3.15C3.17 21.36 7.22 24 12 24z"
-                />
-
-                <path
-                  fill="#FBBC05"
-                  d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.19C.43 8.12 0 9.87 0 11.7s.43 3.58 1.19 5.12l4.09-2.55z"
-                />
-
-                <path
-                  fill="#EA4335"
-                  d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.17 2.64 1.19 6.58l4.09 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
-                />
-              </svg>
-            </button>
-
+      <div className="main-layout">
+         <div className="illustration-section">
+          <div className="illustration-container">
+            <img  src={signupImage} alt="SignUp Illustration"  className="illustration-img"/>
           </div>
         </div>
 
-        {/* Login */}
-        <p className="login-text">
-          Already have an account?{" "}
-          <span
-            onClick={() =>
-              navigate("/candidate/login")
-            }
-          >
-            Login
-          </span>
-        </p>
+        <div className="form-container-wrapper">
+          <div className="container">
+           <div className="role-tabs">
+              <button type="button"
+                className={`role-tab ${userType === "candidate" ? "active" : ""}`}
+                onClick={() => setUserType("candidate")}>
+                 I'm a Candidate
+              </button>
+              <button type="button"
+                className={`role-tab ${userType === "recruiter" ? "active" : ""}`}
+                onClick={() => setUserType("recruiter")}>
+              I'm a Recruiter
+              </button>
+            </div>
+            <div className="heading">
+              Create your candidate account
+            </div>
+            <p className="subtitle">
+              Create an account to participate in technical assessments.
+            </p>
+            <form className="form" onSubmit={handleSubmit}>
+              <div className="input-group">
+                <label className="input-label">Full Name</label>
+                <input required
+                  className="input"
+                  type="text"
+                  name="name"
+                  placeholder="Enter your full name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                />
+              </div>
+              <div className="input-group">
+                <label className="input-label">Email</label>
+                <input
+                  required
+                  className="input"
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={(e) =>setFormData({...formData,email: e.target.value,})}
+                />
+              </div>
+
+              <div className="input-group">
+                <label className="input-label">Password</label>
+                <div className="password-wrapper">
+                  <input
+                    required
+                    className="input password-input"
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    placeholder="Create a password"
+                    value={formData.password}
+                    onChange={(e) =>setFormData({ ...formData,password: e.target.value,})}
+                  />
+                  <button
+                    type="button"
+                    className="eye-toggle"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    <i className={showPassword ? "fa-solid fa-eye" : "fa-solid fa-eye-slash"}></i>
+                  </button>
+                </div>
+              </div>
+              <div className="input-group">
+                <label className="input-label">Confirm Password</label>
+                <div className="password-wrapper">
+                  <input
+                    required
+                    className="input password-input"
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    placeholder="Confirm your password"
+                    value={formData.confirmPassword}
+                    onChange={(e) =>setFormData({...formData,  confirmPassword: e.target.value,})}
+                  />
+                  <button
+                    type="button"
+                    className="eye-toggle"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    <i className={showConfirmPassword ? "fa-solid fa-eye" : "fa-solid fa-eye-slash"}></i>
+                  </button>
+                </div>
+              </div>
+              <div className="terms-container">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={formData.agreeTerms}
+                    onChange={(e) =>  setFormData({...formData, agreeTerms: e.target.checked,})}
+                  />
+                  <span>
+                    I agree to the <a href="#terms">Terms of Service</a> and <a href="#privacy">Privacy Policy</a>
+                  </span>
+                </label>
+              </div>
+
+              <button
+                className="signup-button"
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? "Creating Account...": "Create Account →"}
+              </button>
+            </form>
+
+            {message && (
+              <p className="message">
+                {message}
+              </p>
+            )}
+            <p className="login-text">
+              Already have an account?{" "}
+              <span
+                onClick={() =>navigate("/candidate/login")}>
+                Log in
+              </span>
+            </p>
+            <div className="shield-footer">
+              Protected by SmartRecruit Shield • Privacy & Terms
+            </div>
+          </div>
+        </div>
 
       </div>
-
     </StyledWrapper>
   );
 }
 
-
 // ===============================
-// STYLED COMPONENT (GREEN & BLACK)
+// STYLED COMPONENT
 // ===============================
 
 const StyledWrapper = styled.div`
@@ -273,159 +237,280 @@ const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  background: #000000;
+  padding: 24px;
+  background: #f8fafc;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  .main-layout {
+    display: flex;
+    max-width: 1200px;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    padding: 40px;
+    gap: 60px;
+
+    @media (max-width: 900px) {
+      flex-direction: column;
+      padding: 24px;
+      gap: 30px;
+    }
+  }
+
+  .illustration-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+    @media (max-width: 900px) {
+      display: none;
+    }
+  }
+
+  .illustration-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    height: 540px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+  }
+
+  .illustration-img {
+    width: 85%;
+    height: 85%;
+    object-fit: contain;
+    z-index: 5;
+    position: relative;
+  }
+
+  .form-container-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
 
   .container {
     width: 100%;
-    max-width: 390px;
-    background: linear-gradient(0deg, #09090b 0%, #000000 100%);
-    border-radius: 40px;
-    padding: 30px 35px;
-    border: 2px solid #1f2937;
-    box-shadow: rgba(16, 185, 129, 0.15) 0px 30px 30px -20px;
+    max-width: 440px;
+    background: #ffffff;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+  }
+
+  .role-tabs {
+    display: flex;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+  }
+
+  .role-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &.active {
+      background: #059669;
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
   }
 
   .heading {
-    text-align: center;
-    font-weight: 900;
-    font-size: 30px;
-    color: #10B981;
+    text-align: left;
+    font-weight: 700;
+    font-size: 24px;
+    color: #0f172a;
+    letter-spacing: -0.5px;
   }
 
   .subtitle {
-    text-align: center;
+    text-align: left;
     font-size: 13px;
-    color: #9ca3af;
-    margin-top: 5px;
+    color: #64748b;
+    margin-top: 4px;
+    margin-bottom: 20px;
   }
 
   .form {
-    margin-top: 20px;
+    margin-top: 10px;
+  }
+
+  .input-group {
+    margin-bottom: 14px;
+  }
+
+  .input-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
   }
 
   .form .input {
     width: 100%;
     box-sizing: border-box;
-    background: #18181b;
-    color: #ffffff;
-    border: 1px solid #27272a;
-    padding: 15px 20px;
-    border-radius: 20px;
-    margin-top: 15px;
-    font-size: 14px;
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
     transition: all 0.2s ease-in-out;
   }
 
   .form .input::placeholder {
-    color: #71717a;
+    color: #94a3b8;
   }
 
   .form .input:focus {
     outline: none;
-    border-color: #10B981;
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+  }
+
+  .password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .password-input {
+    padding-right: 40px !important;
+  }
+
+  .eye-toggle {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .terms-container {
+    margin: 16px 0;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #475569;
+    cursor: pointer;
+
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #059669;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    a {
+      color: #059669;
+      text-decoration: none;
+      font-weight: 500;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 
   .signup-button {
     display: block;
     width: 100%;
-    font-weight: bold;
-    background: linear-gradient(45deg, #10B981 0%, #059669 100%);
+    font-weight: 600;
+    background: #059669;
     color: white;
-    padding: 15px;
-    margin: 25px auto 20px;
-    border-radius: 20px;
-    box-shadow: rgba(16, 185, 129, 0.3) 0px 20px 10px -15px;
+    padding: 11px;
+    margin: 16px 0 0 0;
+    border-radius: 8px;
     border: none;
+    font-size: 14px;
     transition: all 0.2s ease-in-out;
     cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
 
   .signup-button:hover {
-    transform: scale(1.03);
-    box-shadow: rgba(16, 185, 129, 0.4) 0px 23px 10px -20px;
+    background: #047857;
   }
 
   .signup-button:active {
-    transform: scale(0.95);
+    transform: scale(0.99);
   }
 
   .signup-button:disabled {
     opacity: 0.7;
     cursor: not-allowed;
-    transform: none;
   }
 
   .message {
     text-align: center;
     font-size: 13px;
-    margin-top: 10px;
-    color: #d1d5db;
-  }
-
-  .social-account-container {
-    margin-top: 25px;
-  }
-
-  .social-account-container .title {
-    display: block;
-    text-align: center;
-    font-size: 11px;
-    color: #71717a;
-  }
-
-  .social-accounts {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 10px;
-  }
-
-  .social-button {
-    background: linear-gradient(45deg, #18181b 0%, #27272a 100%);
-    border: 2px solid #3f3f46;
-    padding: 7px;
-    border-radius: 50%;
-    width: 48px;
-    height: 48px;
-    display: grid;
-    place-content: center;
-    box-shadow: 0px 12px 10px -8px rgba(0, 0, 0, 0.5);
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
-  }
-
-  .social-button:hover {
-    transform: scale(1.15);
-    border-color: #10B981;
-  }
-
-  .social-button:active {
-    transform: scale(0.9);
-  }
-
-  .social-button .svg {
-    width: 22px;
-    height: 22px;
+    margin-top: 12px;
+    color: #059669;
+    font-weight: 500;
   }
 
   .login-text {
     text-align: center;
     font-size: 13px;
-    color: #9ca3af;
-    margin-top: 25px;
+    color: #64748b;
+    margin-top: 20px;
   }
 
   .login-text span {
-    color: #10B981;
+    color: #059669;
     font-weight: 600;
     cursor: pointer;
   }
 
   .login-text span:hover {
     text-decoration: underline;
+  }
+
+  .shield-footer {
+    text-align: center;
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 24px;
   }
 `;
 

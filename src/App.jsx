@@ -8,6 +8,9 @@ import CandidateSystemCheck from "./pages/Candidate/CandidateSystemCheck";
 import RecruiterLogin from "./pages/Recruiter/RecruiterLogin";
 import CandidateAssessmentOverview from "./pages/Candidate/CandidateAssessmentOverview";
 import CandidateActiveAssessment from "./pages/Candidate/CandidateActiveAssessment";
+import AssessmentComplete from "./pages/Candidate/AssessmentComplete";
+import CandidateVerifyOtp from "./pages/Candidate/CandidateVerifyOtp";
+import CandidateResetPassword from "./pages/Candidate/CandidateResetPassword";
 
 function App() {
   return (
@@ -16,12 +19,15 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/candidate/SignUpPage" element={<SignUpPage />} />
         <Route path="/candidate/login" element={<CandidateLogin />} />
+        <Route path="/candidate/reset-password" element={<CandidateResetPassword />} />
+        <Route path="/candidate/verify-otp" element={<CandidateVerifyOtp />} />
         <Route path="/candidate/profile" element={<CandidateProfileCompletion />} />
         <Route path="/candidate/instructions" element={<CandidateInstructions />} />
         <Route path="/candidate/system-check" element={<CandidateSystemCheck />} />
         <Route path="/candidate/assessment-overview" element={<CandidateAssessmentOverview />} />
         <Route path="/candidate/assessment" element={<CandidateActiveAssessment />} />
         <Route path="/recruiter/login" element={<RecruiterLogin />} />
+        <Route path="/candidate/assessment-complete" element={<AssessmentComplete />} />
       </Routes>
     </Router>
   );
