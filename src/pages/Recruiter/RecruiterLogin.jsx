@@ -1,19 +1,38 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import loginImage from "./Login.jpeg";
+import loginImage from "../Candidate/Login.jpeg";
 
 function RecruiterLogin() {
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
-  function handleLogin(e) {
-    e.preventDefault();
-    console.log("Recruiter Email:", email);
-    console.log("Recruiter Password:", password);
-    navigate("/recruiter/dashboard");
+  function handleLogin(event) {
+    event.preventDefault();
+    setLoading(true);
+    setMessage("");
+
+    try {
+      localStorage.setItem("token", "mock-jwt-token-recruiter");
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          email,
+          name: "Recruiter",
+          role: "recruiter",
+        })
+      );
+      setMessage("Login successful!");
+      setTimeout(() => navigate("/"), 800);
+    } catch (error) {
+      console.error("Recruiter login error:", error);
+      setMessage("Unable to login. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -25,16 +44,13 @@ function RecruiterLogin() {
           className="absolute inset-0 w-full h-full object-cover"
         />
       </div>
-
       <div className="w-full md:w-[42%] min-h-screen flex items-center justify-center px-6 sm:px-12 py-12 overflow-y-auto">
         <div className="w-full max-w-md">
-
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
-            Welcome to SmartRecruit
+            Welcome to <span className="text-emerald-700">SmartRecruit</span>
           </h1>
-
           <p className="mt-2 text-slate-500 text-sm">
-            Login to continue to your assessment platform.
+            Login to continue to your recruiter workspace.
           </p>
 
           <div className="flex p-1 bg-slate-100 border border-slate-200 rounded-xl mt-6">
@@ -45,10 +61,9 @@ function RecruiterLogin() {
             >
               I'm a Candidate
             </button>
-
             <button
               type="button"
-              className="w-1/2 py-2.5 bg-blue-600 text-white font-medium rounded-lg shadow-sm transition-all"
+              className="w-1/2 py-2.5 bg-emerald-700 text-white font-medium rounded-lg shadow-sm transition-all"
               onClick={() => navigate("/recruiter/login")}
             >
               I'm a Recruiter
@@ -56,23 +71,22 @@ function RecruiterLogin() {
           </div>
 
           <form onSubmit={handleLogin} className="mt-6 space-y-4">
-
-              <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-600 mb-1.5">
                 Email
               </label>
               <input
                 type="email"
                 placeholder="Enter your email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-11 bg-slate-100 border border-slate-200 rounded-xl px-4 text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                onChange={(event) => setEmail(event.target.value)}
+                className="w-full h-11 bg-white border border-slate-200 rounded-xl px-4 text-slate-800 placeholder-slate-400 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-700 transition-all"
                 required
               />
             </div>
 
-              <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-600 mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -80,23 +94,26 @@ function RecruiterLogin() {
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-11 bg-slate-100 border border-slate-200 rounded-xl px-4 pr-12 text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                  onChange={(event) => setPassword(event.target.value)}
+                  className="w-full h-11 bg-white border border-slate-200 rounded-xl px-4 pr-12 text-slate-800 placeholder-slate-400 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-700 transition-all"
                   required
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword((visible) => !visible)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                   className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 text-sm"
                 >
-                  {showPassword ? "🙈" : "👁"}
+                  {showPassword ? "<i class=\"fa-regular fa-eye-slash\"></i>" : "<i class=\"fa-regular fa-eye\"></i>"}
                 </button>
               </div>
             </div>
+
             <div className="text-right">
               <button
                 type="button"
-                className="text-xs text-blue-600 font-semibold hover:underline"
+                onClick={() => navigate("/candidate/reset-password")}
+                className="text-xs text-emerald-700 font-semibold hover:underline cursor-pointer"
               >
                 Forgot password?
               </button>
@@ -104,33 +121,39 @@ function RecruiterLogin() {
 
             <button
               type="submit"
-              className="w-full h-11 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white rounded-xl font-medium shadow-md shadow-blue-500/20 transition-all"
+              disabled={loading}
+              className="w-full h-11 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.99] text-white rounded-xl font-medium shadow-md shadow-emerald-700/20 transition-all cursor-pointer disabled:bg-emerald-400 disabled:cursor-not-allowed"
             >
-              Login →
+              {loading ? "Logging in..." : "Login"}
             </button>
-
           </form>
 
+          {message && (
+            <div
+              className={`mt-4 text-center text-sm ${
+                message.includes("successful") ? "text-emerald-700" : "text-red-600"
+              }`}
+              role="status"
+            >
+              {message}
+            </div>
+          )}
+
           <div className="text-center mt-6 text-sm">
-            <span className="text-slate-500">
-              Don't have an account?
-            </span>
-            <button 
-              type="button" 
-              onClick={() => navigate("/candidate/SignUpPage")}
-              className="ml-1.5 text-blue-600 font-semibold hover:underline cursor-pointer"
+            <span className="text-slate-500">Don't have an account?</span>
+            <button
+              type="button"
+              onClick={() => navigate("/recruiter/signup")}
+              className="ml-1.5 text-emerald-700 font-semibold hover:underline cursor-pointer"
             >
               Create Account
             </button>
           </div>
-
           <p className="text-center text-[11px] text-slate-400 mt-12">
             Protected by SmartRecruit Shield • Privacy & Terms
           </p>
-
         </div>
       </div>
-
     </div>
   );
 }

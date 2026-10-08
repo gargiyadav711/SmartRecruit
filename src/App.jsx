@@ -6,6 +6,7 @@ import CandidateProfileCompletion from "./pages/Candidate/CandidateProfileComple
 import CandidateInstructions from "./pages/Candidate/CandidateInstructions";
 import CandidateSystemCheck from "./pages/Candidate/CandidateSystemCheck";
 import RecruiterLogin from "./pages/Recruiter/RecruiterLogin";
+import RecruiterSignUpPage from "./pages/Recruiter/RecruiterSignUpPage";
 import CandidateAssessmentOverview from "./pages/Candidate/CandidateAssessmentOverview";
 import CandidateActiveAssessment from "./pages/Candidate/CandidateActiveAssessment";
 import AssessmentComplete from "./pages/Candidate/AssessmentComplete";
@@ -27,6 +28,7 @@ function App() {
         <Route path="/candidate/assessment-overview" element={<CandidateAssessmentOverview />} />
         <Route path="/candidate/assessment" element={<CandidateActiveAssessment />} />
         <Route path="/recruiter/login" element={<RecruiterLogin />} />
+        <Route path="/recruiter/signup" element={<RecruiterSignUpPage />} />
         <Route path="/candidate/assessment-complete" element={<AssessmentComplete />} />
       </Routes>
     </Router>

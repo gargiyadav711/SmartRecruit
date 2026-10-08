@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import signupImage from "./SignUp.jpeg";
 
-function SignUp() {
+function SignUp({ role = "candidate" }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -15,7 +15,6 @@ function SignUp() {
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [userType, setUserType] = useState("candidate");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const handleSubmit = async (e) => {
@@ -55,7 +54,8 @@ function SignUp() {
             name: formData.name,
             email: formData.email,
             password: formData.password,
-            confirmPassword: formData.confirmPassword
+            confirmPassword: formData.confirmPassword,
+            role,
           }),
         }
       );
@@ -72,7 +72,9 @@ function SignUp() {
       console.log("Backend response:", data);
 
       setTimeout(() => {
-        navigate("/candidate/verify-otp", { state: { email: formData.email } });
+        navigate("/candidate/verify-otp", {
+          state: { email: formData.email, role },
+        });
       }, 1500);
 
     } catch (error) {
@@ -100,21 +102,23 @@ function SignUp() {
           <div className="container">
            <div className="role-tabs">
               <button type="button"
-                className={`role-tab ${userType === "candidate" ? "active" : ""}`}
-                onClick={() => setUserType("candidate")}>
+                className={`role-tab ${role === "candidate" ? "active" : ""}`}
+                onClick={() => navigate("/candidate/SignUpPage")}>
                  I'm a Candidate
               </button>
               <button type="button"
-                className={`role-tab ${userType === "recruiter" ? "active" : ""}`}
-                onClick={() => setUserType("recruiter")}>
+                className={`role-tab ${role === "recruiter" ? "active" : ""}`}
+                onClick={() => navigate("/recruiter/signup")}>
               I'm a Recruiter
               </button>
             </div>
             <div className="heading">
-              Create your candidate account
+              Create your {role} account
             </div>
             <p className="subtitle">
-              Create an account to participate in technical assessments.
+              {role === "recruiter"
+                ? "Create an account to manage technical hiring and candidate reviews."
+                : "Create an account to participate in technical assessments."}
             </p>
             <form className="form" onSubmit={handleSubmit}>
               <div className="input-group">
@@ -213,7 +217,7 @@ function SignUp() {
             <p className="login-text">
               Already have an account?{" "}
               <span
-                onClick={() =>navigate("/candidate/login")}>
+                onClick={() => navigate(role === "recruiter" ? "/recruiter/login" : "/candidate/login")}>
                 Log in
               </span>
             </p>

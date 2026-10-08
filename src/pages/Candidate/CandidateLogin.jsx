@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import signupImage from "./SignUp.jpeg";
+import loginImage from "./Login.jpeg";
 
 function CandidateLogin() {
   const navigate = useNavigate();
@@ -48,7 +48,7 @@ function CandidateLogin() {
   return (
     <div className="min-h-screen flex w-full overflow-hidden bg-white">
       <div className="hidden md:block w-[58%] relative min-h-screen">
-        <img src={signupImage} alt="SignUp illustration"
+        <img src={loginImage} alt="Login illustration"
           className="absolute inset-0 w-full h-full object-cover scale-95 origin-center"/>
       </div>
       <div className="w-full md:w-[42%] min-h-screen flex items-center justify-center px-6 sm:px-12 py-12 overflow-y-auto">

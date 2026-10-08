@@ -173,7 +173,7 @@ function CandidateInstructions() {
               </div>
               <div>
                 <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Time available</p>
-                <p className="text-sm font-bold text-slate-100 mt-0.5">30 minutes</p>
+                <p className="text-sm font-bold text-slate-100 mt-0.5">90 minutes</p>
               </div>
             </div>
 
@@ -183,7 +183,7 @@ function CandidateInstructions() {
               </div>
               <div>
                 <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Question count</p>
-                <p className="text-sm font-bold text-slate-100 mt-0.5">6 questions</p>
+                <p className="text-sm font-bold text-slate-100 mt-0.5">45 questions</p>
               </div>
             </div>
 
@@ -215,7 +215,7 @@ function CandidateInstructions() {
 
                   <div className="flex items-start space-x-3 text-slate-300 text-xs font-medium">
                     <span className="text-emerald-400 mt-0.5"><i className="fa-regular fa-circle-check"></i></span>
-                    <span className="leading-relaxed">Set aside about 30 minutes so you can finish in one sitting.</span>
+                    <span className="leading-relaxed">Set aside about 90 minutes so you can finish in one sitting.</span>
                   </div>
 
                   <div className="flex items-start space-x-3 text-slate-300 text-xs font-medium">
