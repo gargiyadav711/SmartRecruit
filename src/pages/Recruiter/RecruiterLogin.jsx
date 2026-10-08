@@ -26,7 +26,7 @@ function RecruiterLogin() {
         })
       );
       setMessage("Login successful!");
-      setTimeout(() => navigate("/"), 800);
+      setTimeout(() => navigate("/recruiter/dashboard"), 800);
     } catch (error) {
       console.error("Recruiter login error:", error);
       setMessage("Unable to login. Please try again.");
@@ -112,7 +112,7 @@ function RecruiterLogin() {
             <div className="text-right">
               <button
                 type="button"
-                onClick={() => navigate("/candidate/reset-password")}
+                onClick={() => navigate("/recruiter/reset-password")}
                 className="text-xs text-emerald-700 font-semibold hover:underline cursor-pointer"
               >
                 Forgot password?

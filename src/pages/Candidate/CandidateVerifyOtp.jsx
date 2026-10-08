@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-function CandidateVerifyOtp() {
+function CandidateVerifyOtp({ role = "candidate" }) {
   const navigate = useNavigate();
   const location = useLocation();
   const passedEmail = location.state?.email || "";
-  const userType = location.state?.role || "candidate";
+  const userType = location.state?.role || role;
 
   const [email] = useState(passedEmail);
   const [otp, setOtp] = useState("");

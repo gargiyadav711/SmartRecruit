@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function CandidateResetPassword() {
+function CandidateResetPassword({ role = "candidate" }) {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   
@@ -50,7 +50,7 @@ function CandidateResetPassword() {
     try {
       setSuccessMsg("Password reset successfully!");
       setTimeout(() => {
-        navigate("/candidate/login");
+        navigate(role === "recruiter" ? "/recruiter/login" : "/candidate/login");
       }, 1500);
     } catch (err) {
       setError("Password reset failed. Invalid OTP.");

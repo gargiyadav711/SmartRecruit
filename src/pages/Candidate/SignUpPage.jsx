@@ -72,7 +72,7 @@ function SignUp({ role = "candidate" }) {
       console.log("Backend response:", data);
 
       setTimeout(() => {
-        navigate("/candidate/verify-otp", {
+        navigate(role === "recruiter" ? "/recruiter/verify-otp" : "/candidate/verify-otp", {
           state: { email: formData.email, role },
         });
       }, 1500);
