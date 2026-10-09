@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -385,8 +384,18 @@ function CandidateProfileCompletion() {
                                             }
 
                                             const fileUrl = URL.createObjectURL(resumeFile);
-                                            window.open(fileUrl, "_blank", "noopener,noreferrer");
-                                            setTimeout(() => URL.revokeObjectURL(fileUrl), 60000);
+                                            const newWindow = window.open(fileUrl, "_blank", "noopener,noreferrer");
+
+                                            if (newWindow) {
+                                                const checkClosed = setInterval(() => {
+                                                    if (newWindow.closed) {
+                                                        clearInterval(checkClosed);
+                                                        URL.revokeObjectURL(fileUrl);
+                                                    }
+                                                }, 1000);
+                                            } else {
+                                                setTimeout(() => URL.revokeObjectURL(fileUrl), 120000);
+                                            }
                                         }}
                                         className="text-emerald-400 hover:underline cursor-pointer bg-transparent border-none"
                                     >
