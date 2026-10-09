@@ -18,17 +18,33 @@ function CandidateResetPassword({ role = "candidate" }) {
     setError("");
     setLoading(true);
 
-    const payload = { email };
-    console.log("Forgot Password Request Payload:", payload);
+    const apiUrl = import.meta.env.VITE_API_URL;
+    if (!apiUrl) {
+      setError("Password reset is unavailable because the API URL is not configured.");
+      setLoading(false);
+      return;
+    }
 
     try {
+      const res = await fetch(`${apiUrl.replace(/\/$/, "")}/api/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data?.message || "Failed to send reset OTP.");
+      }
+
       setSuccessMsg("OTP sent to your email!");
       setTimeout(() => {
         setSuccessMsg("");
         setStep(2);
       }, 1200);
     } catch (err) {
-      setError("Failed to send OTP. Please check your email.");
+      setError(err.message || "Failed to send OTP. Please check your email.");
     } finally {
       setLoading(false);
     }
@@ -44,16 +60,35 @@ function CandidateResetPassword({ role = "candidate" }) {
     }
 
     setLoading(true);
+
+    const apiUrl = import.meta.env.VITE_API_URL;
+    if (!apiUrl) {
+      setError("Password reset is unavailable because the API URL is not configured.");
+      setLoading(false);
+      return;
+    }
+
     const payload = { email, otp, newPassword, confirmPassword };
-    console.log("Reset Password Payload:", payload);
 
     try {
+      const res = await fetch(`${apiUrl.replace(/\/$/, "")}/api/auth/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data?.message || "Password reset failed. Invalid OTP.");
+      }
+
       setSuccessMsg("Password reset successfully!");
       setTimeout(() => {
         navigate(role === "recruiter" ? "/recruiter/login" : "/candidate/login");
       }, 1500);
     } catch (err) {
-      setError("Password reset failed. Invalid OTP.");
+      setError(err.message || "Password reset failed. Invalid OTP.");
     } finally {
       setLoading(false);
     }

@@ -4,8 +4,8 @@ import loginImage from "./Login.jpeg";
 
 function CandidateLogin() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("gargiyadav711@gmail.com");
-  const [password, setPassword] = useState("123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -20,29 +20,43 @@ function CandidateLogin() {
     setLoading(true);
     setMessage("");
 
-    setTimeout(() => {
-      try {
-        localStorage.setItem("token", "mock-jwt-token-gargi-123");
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            email: email,
-            name: "Gargi Yadav",
-            role: "candidate",
-          })
-        );
+    const apiUrl = import.meta.env.VITE_API_URL;
+    if (!apiUrl) {
+      setMessage("Login is unavailable because the API URL is not configured.");
+      setLoading(false);
+      return;
+    }
 
-        setMessage("Login successful!");
-        setTimeout(() => {
-          navigate("/");
-        }, 800);
-      } catch (error) {
-        console.error("Login error:", error);
-        setMessage("Unable to login. Please try again.");
-      } finally {
-        setLoading(false);
+    try {
+      const response = await fetch(`${apiUrl.replace(/\/$/, "")}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Invalid email or password.");
       }
-    }, 600);
+
+      if (data?.token) {
+        localStorage.setItem("token", data.token);
+      }
+      if (data?.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+      }
+
+      setMessage("Login successful!");
+      setTimeout(() => {
+        navigate("/");
+      }, 800);
+    } catch (error) {
+      console.error("Login error:", error);
+      setMessage(error.message || "Unable to login. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (

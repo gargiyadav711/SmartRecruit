@@ -1,19 +1,100 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function CandidateAssessmentOverview() {
   const navigate = useNavigate();
+  const [candidateName, setCandidateName] = useState("Your Name");
+  const [candidateEmail, setCandidateEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  function handleStartAssessment() {
-    navigate("/candidate/assessment");
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser) {
+          if (parsedUser.name) setCandidateName(parsedUser.name);
+          if (parsedUser.email) setCandidateEmail(parsedUser.email);
+        }
+      }
+    } catch (error) {
+      console.error("Error reading user from localStorage:", error);
+    }
+  }, []);
+
+  const getInitials = (name) => {
+    const parts = name.trim().split(" ").filter(Boolean);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  };
+
+  const initials = getInitials(candidateName);
+
+  async function handleStartAssessment() {
+    setErrorMsg("");
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const token = localStorage.getItem("token");
+
+    if (!apiUrl) {
+      setErrorMsg("The backend URL is not configured. Set VITE_API_URL in your frontend environment variables.");
+      return;
+    }
+
+    if (!token) {
+      setErrorMsg("Your login session was not found. Please log in again before starting the assessment.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        `${apiUrl.replace(/\/+$/, "")}/api/assessments/start`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json().catch(() => ({}));
+
+      if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem("token");
+        setErrorMsg("Your login session has expired. Please log in again.");
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Unable to start the assessment session.");
+      }
+
+      if (data?.sessionId) {
+        sessionStorage.setItem("smart_recruit_session_id", data.sessionId);
+      }
+
+      navigate("/candidate/assessment");
+    } catch (error) {
+      console.error("Assessment start error:", error);
+      setErrorMsg(
+        error.message ||
+          "Unable to connect to the backend. Check your internet connection and try again."
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <div className="min-h-screen bg-[#060F0A] text-slate-100 flex font-sans selection:bg-emerald-600 selection:text-white">
       
-      {/* Sidebar */}
       <aside className="w-72 bg-[#09160E] border-r border-emerald-900/30 flex flex-col justify-between p-6 hidden lg:flex sticky top-0 h-screen overflow-y-auto">
         <div>
-          {/* Logo */}
           <div className="flex items-center space-x-3 mb-8">
             <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white font-bold flex items-center justify-center text-sm shadow-md">
               S
@@ -24,21 +105,19 @@ function CandidateAssessmentOverview() {
             </div>
           </div>
 
-          {/* Your Assessment Section */}
           <div className="mb-8">
             <p className="text-[10px] font-bold text-emerald-500/60 tracking-wider uppercase mb-3">YOUR ASSESSMENT</p>
             <div className="bg-[#0D1D13] border border-emerald-900/40 rounded-xl p-3.5 flex items-center space-x-3">
               <div className="w-9 h-9 bg-emerald-600 text-white rounded-lg flex items-center justify-center font-bold text-xs shadow-sm">
-                YN
+                {initials}
               </div>
-              <div>
-                <p className="text-sm font-semibold text-white leading-tight">Your Name</p>
-                <p className="text-xs text-slate-400">Candidate</p>
+              <div className="overflow-hidden">
+                <p className="text-sm font-semibold text-white leading-tight truncate">{candidateName}</p>
+                <p className="text-xs text-slate-400 truncate">{candidateEmail || "Candidate"}</p>
               </div>
             </div>
           </div>
 
-          {/* Assessment Steps */}
           <div>
             <p className="text-[10px] font-bold text-emerald-500/60 tracking-wider uppercase mb-3">ASSESSMENT STEPS</p>
             <div className="space-y-2">
@@ -60,7 +139,7 @@ function CandidateAssessmentOverview() {
                 className="flex items-start space-x-3 p-2.5 rounded-xl cursor-pointer hover:bg-emerald-950/40 transition-colors"
               >
                 <div className="w-6 h-6 rounded-full bg-[#0D1D13] border border-emerald-900/40 text-slate-400 font-semibold text-xs flex items-center justify-center mt-0.5">
-                  ✓
+                  <i className="fa-solid fa-cog text-[10px]"></i>
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-slate-300">Permission check</p>
@@ -91,7 +170,6 @@ function CandidateAssessmentOverview() {
           </div>
         </div>
 
-        {/* Need Help Card */}
         <div className="bg-[#0D1D13] border border-emerald-900/40 rounded-xl p-4 mt-6">
           <p className="text-xs font-bold text-white mb-1">Need a help?</p>
           <p className="text-[11px] text-slate-400 leading-relaxed mb-3">
@@ -104,10 +182,8 @@ function CandidateAssessmentOverview() {
         </div>
       </aside>
 
-      {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-h-screen">
 
-        {/* Top Bar */}
         <header className="bg-[#09160E] border-b border-emerald-900/30 px-8 py-3.5 flex items-center justify-between sticky top-0 z-20">
           <div className="text-xs text-slate-400 font-medium">
             Candidate portal <span className="text-slate-600 mx-2">/</span> <span className="text-slate-200">Assessment overview</span>
@@ -115,16 +191,14 @@ function CandidateAssessmentOverview() {
 
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2.5 bg-[#0D1D13] border border-emerald-950 px-3 py-1.5 rounded-lg">
-              <span className="w-6 h-6 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xs font-bold">👤</span>
-              <span className="text-xs font-semibold text-white">YourName</span>
+              <span className="w-6 h-6 bg-emerald-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">{initials}</span>
+              <span className="text-xs font-semibold text-white">{candidateName}</span>
             </div>
           </div>
         </header>
 
-        {/* Main Body */}
         <main className="max-w-5xl w-full mx-auto px-8 py-8 flex-grow flex flex-col justify-center">
 
-          {/* Heading Section */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
               <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
@@ -136,7 +210,6 @@ function CandidateAssessmentOverview() {
             </div>
           </div>
 
-          {/* Verification Status Banner */}
           <div className="bg-[#0D1D13] border border-emerald-900/40 rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-8">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-400">
@@ -153,7 +226,6 @@ function CandidateAssessmentOverview() {
             </span>
           </div>
 
-          {/* Core Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
 
             <div className="bg-[#0D1D13] border border-emerald-900/40 rounded-2xl p-4 flex items-center space-x-3.5">
@@ -188,7 +260,6 @@ function CandidateAssessmentOverview() {
 
           </div>
 
-          {/* Assessment Modules Section */}
           <div className="bg-[#0D1D13] border border-emerald-900/40 rounded-2xl p-6 mb-8">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-sm font-bold text-white">What you'll be assessed on</h3>
@@ -229,7 +300,6 @@ function CandidateAssessmentOverview() {
             </div>
           </div>
 
-          {/* Assessment Sequence & Flow */}
           <div className="bg-[#0D1D13] border border-emerald-900/40 rounded-2xl p-6 mb-8">
             <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-4">Assessment Sequence & Flow</h3>
 
@@ -281,7 +351,6 @@ function CandidateAssessmentOverview() {
             </div>
           </div>
 
-          {/* Notice Banner */}
           <div className="flex items-start space-x-3 p-4 bg-[#0D1D13] border border-emerald-900/40 rounded-xl mb-8 text-xs text-slate-400 leading-relaxed">
             <i className="fa-solid fa-shield-halved text-emerald-400 mt-0.5"></i>
             <div>
@@ -290,7 +359,12 @@ function CandidateAssessmentOverview() {
             </div>
           </div>
 
-          {/* Bottom Actions */}
+          {errorMsg && (
+            <div role="alert" className="mb-6 p-4 bg-red-950/30 border border-red-900/50 rounded-xl text-red-300 text-xs leading-relaxed">
+              {errorMsg}
+            </div>
+          )}
+
           <div className="flex items-center justify-between pt-5 border-t border-emerald-900/30">
             <button
               type="button"
@@ -305,9 +379,14 @@ function CandidateAssessmentOverview() {
               <button
                 type="button"
                 onClick={handleStartAssessment}
-                className="py-3 px-6 rounded-xl font-medium text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/25 transition-all flex items-center space-x-2 cursor-pointer"
+                disabled={loading}
+                className={`py-3 px-6 rounded-xl font-medium text-xs transition-all flex items-center space-x-2 ${
+                  !loading
+                    ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/25 cursor-pointer"
+                    : "bg-emerald-900/30 text-slate-500 border border-emerald-900/30 cursor-not-allowed"
+                }`}
               >
-                <span>Start Assessment</span>
+                <span>{loading ? "Starting session..." : "Start Assessment"}</span>
                 <span>→</span>
               </button>
               <p className="text-[10px] text-slate-400 mt-1.5">Your timed evaluation session will begin immediately.</p>
@@ -316,12 +395,11 @@ function CandidateAssessmentOverview() {
 
         </main>
 
-        {/* Footer */}
         <footer className="py-5 px-8 bg-[#09160E] border-t border-emerald-900/30 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-400">
           <div className="flex space-x-4 mt-2 sm:mt-0">
-            <a href="#" className="hover:text-slate-200 transition-colors">Privacy policy</a>
+            <a href="#" onClick={(e) => e.preventDefault()} className="hover:text-slate-200 transition-colors">Privacy policy</a>
             <span>•</span>
-            <a href="#" className="hover:text-slate-200 transition-colors">Candidate terms</a>
+            <a href="#" onClick={(e) => e.preventDefault()} className="hover:text-slate-200 transition-colors">Candidate terms</a>
           </div>
         </footer>
 

@@ -47,9 +47,20 @@ function CandidateVerifyOtp({ role = "candidate" }) {
         throw new Error(data?.message || "OTP verification failed");
       }
 
+      if (data?.token) {
+        localStorage.setItem("token", data.token);
+      }
+      if (data?.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+      }
+
       setSuccessMsg("OTP verified successfully!");
       setTimeout(() => {
-        navigate(userType === "recruiter" ? "/recruiter/login" : "/candidate/login");
+        if (data?.token) {
+          navigate(userType === "recruiter" ? "/recruiter/dashboard" : "/candidate/system-check");
+        } else {
+          navigate(userType === "recruiter" ? "/recruiter/login" : "/candidate/login");
+        }
       }, 1500);
     } catch (err) {
       console.error(err);
