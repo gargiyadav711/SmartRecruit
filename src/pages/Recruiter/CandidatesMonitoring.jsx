@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function CandidatesMonitoring() {
@@ -7,8 +7,7 @@ function CandidatesMonitoring() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [progressFilter, setProgressFilter] = useState("All");
   const [sortOrder, setSortOrder] = useState("Latest activity");
-
-  const candidatesList = [
+  const [candidatesList, setCandidatesList] = useState([
     {
       initials: "RS",
       name: "Rahul Sharma",
@@ -64,7 +63,39 @@ function CandidatesMonitoring() {
       lastActivity: "42 min ago",
       progressWidth: "83%"
     }
-  ];
+  ]);
+
+  useEffect(() => {
+    async function fetchCandidates() {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/recruiter/candidates`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
+        const data = await response.json();
+        if (response.ok && data.candidates) {
+          setCandidatesList(data.candidates);
+        }
+      } catch (err) {
+        console.error("Failed to fetch candidates:", err);
+      }
+    }
+    fetchCandidates();
+  }, []);
+
+  const filteredCandidates = candidatesList.filter((candidate) => {
+    const matchesSearch = candidate.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          candidate.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === "All" || candidate.status === statusFilter;
+    const numericPercentage = parseInt(candidate.percentage, 10) || 0;
+    const matchesProgress = progressFilter === "All" || 
+                            (progressFilter === "50%" && numericPercentage >= 50) || 
+                            (progressFilter === "100%" && numericPercentage === 100);
+    return matchesSearch && matchesStatus && matchesProgress;
+  });
 
   return (
     <div className="min-h-screen bg-[#0e1915] text-[#e4e8e3] flex flex-col md:flex-row selection:bg-[#83b58a] selection:text-[#15231d] scroll-smooth font-sans">
@@ -105,7 +136,7 @@ function CandidatesMonitoring() {
               <div className="flex items-center gap-3">
                 <i className="fa-solid fa-user text-xs"></i> Candidates
               </div>
-              <span className="bg-[#10B981] text-black font-bold px-1.5 py-0.2 rounded text-[10px]">13</span>            </button>
+              <span className="bg-[#10B981] text-black font-bold px-1.5 py-0.2 rounded text-[10px]">13</span>           </button>
             <button
               className="flex items-center gap-3 text-xs font-mono text-slate-400 hover:text-white py-2 px-3 rounded-lg hover:bg-emerald-950/40 transition-colors text-left cursor-pointer"
             >
@@ -326,12 +357,12 @@ function CandidatesMonitoring() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#2a3932] text-xs">
-                  {candidatesList.map((candidate, index) => (
+                  {filteredCandidates.map((candidate, index) => (
                     <tr key={index} className="hover:bg-[#202f28] transition-colors">
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-3">
                           <div className={`w-7 h-7 rounded-lg ${index % 2 === 0 ? "bg-[#30483c]" : "bg-[#303e4d]"} text-[#dce5dd] flex items-center justify-center font-mono font-bold text-xs shrink-0`}>
-                            {candidate.initials}
+                            {candidate.initials || (candidate.name ? candidate.name.substring(0, 2).toUpperCase() : "CN")}
                           </div>
                           <div className="flex flex-col min-w-0">
                             <span className="font-bold text-white truncate">{candidate.name}</span>
@@ -351,16 +382,16 @@ function CandidatesMonitoring() {
                       <td className="py-3.5 px-4 font-mono">
                         <div className="flex flex-col gap-1 w-36">
                           <div className="flex justify-between items-center text-[10px] text-slate-400">
-                            <span>{candidate.tasksCompleted}</span>
-                            <span>{candidate.percentage}</span>
+                            <span>{candidate.tasksCompleted || "0 / 6 tasks"}</span>
+                            <span>{candidate.percentage || "0%"}</span>
                           </div>
                           <div className="w-full bg-[#34443b] h-1.5 rounded-full overflow-hidden">
-                            <div className="bg-[#a2c4a9] h-full rounded-full" style={{ width: candidate.progressWidth }}></div>
+                            <div className="bg-[#a2c4a9] h-full rounded-full" style={{ width: candidate.progressWidth || candidate.percentage || "0%" }}></div>
                           </div>
                         </div>
                       </td>
                       <td className="py-3.5 px-4 font-mono text-slate-400">
-                        {candidate.lastActivity}
+                        {candidate.lastActivity || "Just now"}
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <button
@@ -372,12 +403,19 @@ function CandidatesMonitoring() {
                       </td>
                     </tr>
                   ))}
+                  {filteredCandidates.length === 0 && (
+                    <tr>
+                      <td colSpan="6" className="py-6 text-center text-slate-500 font-mono text-xs">
+                        No candidates found matching your criteria.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
 
             <div className="p-4 border-t border-[#2a3932] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-[#a4aea8]">
-              <span>Showing 1-5 of 48 candidates</span>
+              <span>Showing 1-{filteredCandidates.length} of {candidatesList.length} candidates</span>
               <div className="flex items-center gap-2">
                 <span className="text-[#728078] cursor-pointer">Previous</span>
                 <span className="w-6 h-6 rounded bg-[#30483c] text-[#dce5dd] font-bold flex items-center justify-center">1</span>

@@ -37,35 +37,61 @@ const [submissionData, setSubmissionData] = useState({
   });
 
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem("user");
-      let userData = {};
-      if (storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-        if (parsedUser) {
-          userData = {
-            candidateName: parsedUser.name || userData.candidateName,
-            candidateEmail: parsedUser.email || userData.candidateEmail,
-            candidateId: parsedUser.id || parsedUser.candidateId || "SR-2026-9482"
-          };
+    async function fetchSubmissionDetails() {
+      try {
+        const token = localStorage.getItem("token");
+        const profileId = sessionStorage.getItem("candidateProfileId");
+        if (token && profileId) {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/assessment/result/${profileId}`, {
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json"
+            }
+          });
+          const data = await response.json();
+          if (response.ok && data.submission) {
+            setSubmissionData((prev) => ({
+              ...prev,
+              ...data.submission
+            }));
+            return;
+          }
         }
+      } catch (err) {
+        console.error(err);
       }
-      const savedSession = localStorage.getItem("assessmentSubmission");
-      if (savedSession) {
-        const parsedSession = JSON.parse(savedSession);
-        setSubmissionData((prev) => ({
-          ...prev,
-          ...userData,
-          ...parsedSession,
-          submissionTime: parsedSession.submissionTime || prev.submissionTime,
-          proctoringAnalytics: parsedSession.proctoringAnalytics || prev.proctoringAnalytics
-        }));
-      } else if (storedUser) {
-        setSubmissionData((prev) => ({ ...prev, ...userData }));
+
+      try {
+        const storedUser = localStorage.getItem("user");
+        let userData = {};
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          if (parsedUser) {
+            userData = {
+              candidateName: parsedUser.name || userData.candidateName,
+              candidateEmail: parsedUser.email || userData.candidateEmail,
+              candidateId: parsedUser.id || parsedUser.candidateId || "SR-2026-9482"
+            };
+          }
+        }
+        const savedSession = localStorage.getItem("assessmentSubmission");
+        if (savedSession) {
+          const parsedSession = JSON.parse(savedSession);
+          setSubmissionData((prev) => ({
+            ...prev,
+            ...userData,
+            ...parsedSession,
+            submissionTime: parsedSession.submissionTime || prev.submissionTime,
+            proctoringAnalytics: parsedSession.proctoringAnalytics || prev.proctoringAnalytics
+          }));
+        } else if (storedUser) {
+          setSubmissionData((prev) => ({ ...prev, ...userData }));
+        }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error("Failed to parse localStorage data:", e);
     }
+    fetchSubmissionDetails();
   }, []);
 
   const proctoring = submissionData.proctoringAnalytics || {};

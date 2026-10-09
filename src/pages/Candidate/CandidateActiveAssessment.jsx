@@ -87,6 +87,28 @@ function CandidateActiveAssessment() {
   const [selectedOption, setSelectedOption] = useState(null);
   const currentQ = assessmentData.questions[currentQuestionIndex];
   const totalQCount = assessmentData.questions.length;
+
+  useEffect(() => {
+    async function fetchAssessment() {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/assessment/active`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
+        const data = await response.json();
+        if (response.ok && data.assessment) {
+          setAssessmentData(data.assessment);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchAssessment();
+  }, []);
+
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem("user");
@@ -98,9 +120,10 @@ function CandidateActiveAssessment() {
         }
       }
     } catch (error) {
-      console.error("Error reading user from localStorage:", error);
+      console.error(error);
     }
   }, []);
+
   const getInitials = (name) => {
     const parts = name.trim().split(" ");
     if (parts.length >= 2) {
@@ -110,6 +133,7 @@ function CandidateActiveAssessment() {
   };
 
   const initials = getInitials(candidateName);
+
   useEffect(() => {
     async function startCamera() {
       try {
@@ -119,7 +143,7 @@ function CandidateActiveAssessment() {
         }
         setCameraActive(true);
       } catch (err) {
-        console.error("Webcam access error:", err);
+        console.error(err);
         setCameraError("Camera access denied or unavailable.");
         setCameraActive(false);
       }
@@ -133,6 +157,7 @@ function CandidateActiveAssessment() {
       }
     };
   }, []);
+
   useEffect(() => {
     if (!cameraActive) return;
 
@@ -158,12 +183,13 @@ function CandidateActiveAssessment() {
         }));
 
       } catch (err) {
-        console.error("Proctoring API sync error:", err);
+        console.error(err);
       }
     }, 4000);
 
     return () => clearInterval(proctoringInterval);
   }, [cameraActive]);
+
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
@@ -197,6 +223,7 @@ function CandidateActiveAssessment() {
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, []);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setTimer((prev) => {
@@ -260,7 +287,8 @@ function CandidateActiveAssessment() {
     setCurrentQuestionIndex(newIndex);
     setSelectedOption(assessmentData.questions[newIndex].savedAnswer);
   };
-  const handleFinalSubmit = () => {
+
+  const handleFinalSubmit = async () => {
     if (videoRef.current && videoRef.current.srcObject) {
       const tracks = videoRef.current.srcObject.getTracks();
       tracks.forEach(track => track.stop());
@@ -280,6 +308,7 @@ function CandidateActiveAssessment() {
       savedResponsesCount: currentSavedCount,
       receiptRef: `REC-${Math.floor(10000 + Math.random() * 90000)}-SR`,
       submissionTime: liveTimestamp,
+      answers: assessmentData.questions.map(q => ({ questionId: q.id, answer: q.savedAnswer })),
       proctoringAnalytics: {
         facePresencePct: proctoringState.facePresencePct,
         gazeDistribution: proctoringState.gazeDistribution,
@@ -293,6 +322,21 @@ function CandidateActiveAssessment() {
         flagReason: proctoringState.flagReason
       }
     };
+
+    try {
+      const token = localStorage.getItem("token");
+      const profileId = sessionStorage.getItem("candidateProfileId");
+      await fetch(`${import.meta.env.VITE_API_URL}/api/assessment/submit`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ ...sessionSummary, profileId })
+      });
+    } catch (err) {
+      console.error(err);
+    }
 
     localStorage.setItem("assessmentSubmission", JSON.stringify(sessionSummary));
     navigate("/candidate/assessment-complete");

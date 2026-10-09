@@ -10,26 +10,45 @@ function RecruiterLogin() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  function handleLogin(event) {
+  async function handleLogin(event) {
     event.preventDefault();
     setLoading(true);
     setMessage("");
 
     try {
-      localStorage.setItem("token", "mock-jwt-token-recruiter");
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          role: "recruiter",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed.");
+      }
+
+      localStorage.setItem("token", data.token);
       localStorage.setItem(
         "user",
         JSON.stringify({
-          email,
-          name: "Recruiter",
+          email: data.user?.email || email,
+          name: data.user?.name || "Recruiter",
           role: "recruiter",
         })
       );
+
       setMessage("Login successful!");
       setTimeout(() => navigate("/recruiter/dashboard"), 800);
     } catch (error) {
       console.error("Recruiter login error:", error);
-      setMessage("Unable to login. Please try again.");
+      setMessage(error.message || "Unable to login. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -104,7 +123,7 @@ function RecruiterLogin() {
                   aria-label={showPassword ? "Hide password" : "Show password"}
                   className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 text-sm"
                 >
-                  {showPassword ? "<i class=\"fa-regular fa-eye-slash\"></i>" : "<i class=\"fa-regular fa-eye\"></i>"}
+                  {showPassword ? <i className="fa-regular fa-eye-slash"></i> : <i className="fa-regular fa-eye"></i>}
                 </button>
               </div>
             </div>

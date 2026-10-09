@@ -13,6 +13,8 @@ function CreateAssessment() {
     "mannu.singh@email",
     "aman.verma@email"
   ]);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleAddCandidate = (e) => {
     e.preventDefault();
@@ -24,6 +26,42 @@ function CreateAssessment() {
 
   const removeCandidate = (indexToRemove) => {
     setCandidatesList(candidatesList.filter((_, index) => index !== indexToRemove));
+  };
+
+  const handlePublishAssessment = async () => {
+    setLoading(true);
+    setErrorMessage("");
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/assessments/create`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          assessmentName,
+          targetRole,
+          timeLimit,
+          recruitmentDrive,
+          candidates: candidatesList
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to create assessment.");
+      }
+
+      navigate("/recruiter/candidates");
+    } catch (error) {
+      console.error(error);
+      setErrorMessage(error.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -350,7 +388,7 @@ function CreateAssessment() {
                 <span className="w-6 h-6 rounded-md bg-[#91b5a2] text-[#16241e] font-bold flex items-center justify-center text-xs font-mono">3</span>
                 <h2 className="text-sm font-bold text-white uppercase tracking-wider">Invite candidates</h2>
               </div>
-              <span className="text-[10px] font-mono text-slate-400">3 candidates</span>
+              <span className="text-[10px] font-mono text-slate-400">{candidatesList.length} candidates</span>
             </div>
             <p className="text-xs text-slate-400">Add people who should receive the assessment link.</p>
             <form onSubmit={handleAddCandidate} className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -395,15 +433,22 @@ function CreateAssessment() {
               <span className="text-xs font-mono text-slate-300">On by default</span>
             </div>
           </div>
+
+          {errorMessage && (
+            <div className="text-xs text-red-400 font-mono text-center">
+              {errorMessage}
+            </div>
+          )}
+
           <div className="pt-6 border-t border-emerald-950 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
               <span className="text-[#91b5a2] font-bold">Ready to publish</span>
               <span>·</span>
-              <span>Frontend Developer</span>
+              <span>{assessmentName}</span>
               <span>·</span>
               <span>6 questions</span>
               <span>·</span>
-              <span>3 candidates</span>
+              <span>{candidatesList.length} candidates</span>
             </div>
 
             <div className="flex items-center gap-3">
@@ -411,10 +456,12 @@ function CreateAssessment() {
                 Save draft
               </button>
               <button
-                onClick={() => navigate("/recruiter/candidates")}
-                className="bg-[#91b5a2] hover:bg-[#a1c0ae] text-[#16241e] px-5 py-2 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer shadow-lg shadow-emerald-900/30"
+                type="button"
+                onClick={handlePublishAssessment}
+                disabled={loading}
+                className="bg-[#91b5a2] hover:bg-[#a1c0ae] text-[#16241e] px-5 py-2 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer shadow-lg shadow-emerald-900/30 disabled:opacity-50"
               >
-                Create assessment →
+                {loading ? "Creating..." : "Create assessment →"}
               </button>
             </div>
           </div>

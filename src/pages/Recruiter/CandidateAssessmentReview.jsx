@@ -5,7 +5,6 @@ function CandidateAssessmentReview() {
   const navigate = useNavigate();
   const [selectedDecision, setSelectedDecision] = useState("review");
   const [recruiterNote, setRecruiterNote] = useState("");
-
   const [candidateData, setCandidateData] = useState({
     name: "Rahul Sharma",
     email: "rahul.sharma@example.com",
@@ -43,19 +42,75 @@ function CandidateAssessmentReview() {
       }
     ]
   });
+
   useEffect(() => {
-    const storedSubmission = localStorage.getItem("candidateAssessmentSubmission");
-    if (storedSubmission) {
+    async function fetchCandidateDetails() {
       try {
-        const parsed = JSON.parse(storedSubmission);
-        setCandidateData((prev) => ({...prev,...parsed}));
-      } catch (e) {
-        console.error("Failed to parse candidate submission data", e);
+        const token = localStorage.getItem("token");
+        const candidateId = sessionStorage.getItem("currentCandidateId");
+        if (token && candidateId) {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/recruiter/candidate/${candidateId}`, {
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json"
+            }
+          });
+          const data = await response.json();
+          if (response.ok && data.candidate) {
+            setCandidateData((prev) => ({
+              ...prev,
+              ...data.candidate
+            }));
+            if (data.candidate.recruiterNote) {
+              setRecruiterNote(data.candidate.recruiterNote);
+            }
+            if (data.candidate.decision) {
+              setSelectedDecision(data.candidate.decision);
+            }
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch candidate assessment review from API:", err);
+      }
+
+      const storedSubmission = localStorage.getItem("candidateAssessmentSubmission");
+      if (storedSubmission) {
+        try {
+          const parsed = JSON.parse(storedSubmission);
+          setCandidateData((prev) => ({...prev,...parsed}));
+        } catch (e) {
+          console.error("Failed to parse candidate submission data", e);
+        }
       }
     }
+    fetchCandidateDetails();
   }, []);
 
-  const handleSaveDecision = () => {
+  const handleSaveDecision = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const candidateId = sessionStorage.getItem("currentCandidateId");
+      if (token && candidateId) {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/recruiter/candidate/${candidateId}/decision`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            decision: selectedDecision,
+            note: recruiterNote
+          })
+        });
+        if (response.ok) {
+          alert(`Decision saved: ${selectedDecision} for ${candidateData.name}`);
+          return;
+        }
+      }
+    } catch (err) {
+      console.error("Failed to save decision via API:", err);
+    }
     alert(`Decision saved: ${selectedDecision} for ${candidateData.name}`);
   };
 
@@ -456,7 +511,6 @@ function CandidateAssessmentReview() {
               <span className="hover:text-white cursor-pointer">Candidate information · Privacy details</span>
             </div>
           </footer>
-
         </div>
       </main>
     </div>

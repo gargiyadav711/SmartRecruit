@@ -1,10 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import RecruiterProfile from "../Candidate/Recruiter.jpeg";
 function RecruiterDashboard() {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
-    const activeAssessmentsList = [
+    const [recruiterName, setRecruiterName] = useState("Your Name");
+    const [stats, setStats] = useState({
+        activeAssessments: 4,
+        totalCandidates: 126,
+        inProgress: 13,
+        readyForReview: 84
+    });
+    const [activeAssessmentsList, setActiveAssessmentsList] = useState([
         {
             name: "Frontend Developer",
             details: "React · TypeScript · Web Vitals",
@@ -33,9 +40,9 @@ function RecruiterDashboard() {
             candidates: 20,
             status: "Active"
         }
-    ];
+    ]);
 
-    const recentActivityList = [
+    const [recentActivityList, setRecentActivityList] = useState([
         {
             text: "Priya Tiwari completed the Frontend Developer assessment.",
             time: "12 minutes ago",
@@ -56,7 +63,42 @@ function RecruiterDashboard() {
             time: "2 hours ago",
             icon: "fa-solid fa-microphone text-slate-400"
         }
-    ];
+    ]);
+
+    useEffect(() => {
+        try {
+            const storedUser = localStorage.getItem("user");
+            if (storedUser) {
+                const parsedUser = JSON.parse(storedUser);
+                if (parsedUser && parsedUser.name) {
+                    setRecruiterName(parsedUser.name);
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        }
+
+        async function fetchDashboardData() {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/recruiter/dashboard`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    if (data.stats) setStats(data.stats);
+                    if (data.activeAssessmentsList) setActiveAssessmentsList(data.activeAssessmentsList);
+                    if (data.recentActivityList) setRecentActivityList(data.recentActivityList);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        fetchDashboardData();
+    }, []);
 
     return (
         <div className="min-h-screen bg-[#021810] text-white flex flex-col md:flex-row selection:bg-[#10B981] selection:text-white scroll-smooth font-sans">
@@ -87,10 +129,10 @@ function RecruiterDashboard() {
                     <div className="flex items-center justify-between p-3.5 bg-[#0f1715]">
                         <div className="flex items-center gap-3 min-w-0">
                             <div className="w-7 h-7 rounded-full bg-emerald-900/80 border border-emerald-700 text-emerald-200 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
-                                GS
+                                {recruiterName.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase()}
                             </div>
                             <div className="flex flex-col min-w-0">
-                                <span className="text-xs font-bold text-white truncate">Your Name</span>
+                                <span className="text-xs font-bold text-white truncate">{recruiterName}</span>
                                 <span className="text-[10px] font-mono text-slate-400 truncate">Lead technical recruiter</span>
                             </div>
                         </div>
@@ -172,7 +214,7 @@ function RecruiterDashboard() {
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex flex-col gap-1">
                             <span className="text-[12px] font-mono text-white uppercase tracking-widest">Hiring overview</span>
-                            <h1 className="text-3xl sm:text-4xl  text-white tracking-tight">Good morning, Your Name.</h1>
+                            <h1 className="text-3xl sm:text-4xl  text-white tracking-tight">Good morning, {recruiterName}.</h1>
                             <p className="text-xs text-slate-400">Here's what's happening across your assessments today.</p>
                         </div>
                         <div className="flex items-center gap-3">
@@ -197,7 +239,7 @@ function RecruiterDashboard() {
                                 </div>
                             </div>
                             <div className="flex flex-col gap-0.5">
-                                <span className="text-3xl font-bold text-white font-mono">4<span className="text-[11px] font-mono text-[#D1D5DB]">  2 added this week</span></span>
+                                <span className="text-3xl font-bold text-white font-mono">{stats.activeAssessments}<span className="text-[11px] font-mono text-[#D1D5DB]">  2 added this week</span></span>
                             </div>
                         </div>
 
@@ -209,7 +251,7 @@ function RecruiterDashboard() {
                                 </div>
                             </div>
                             <div className="flex flex-col gap-0.5">
-                                <span className="text-3xl font-bold text-white font-mono">126<span className="text-[11px] font-mono text-[#D1D5DB]">  Across all roles</span></span>
+                                <span className="text-3xl font-bold text-white font-mono">{stats.totalCandidates}<span className="text-[11px] font-mono text-[#D1D5DB]">  Across all roles</span></span>
                             </div>
                         </div>
 
@@ -221,7 +263,7 @@ function RecruiterDashboard() {
                                 </div>
                             </div>
                             <div className="flex flex-col gap-0.5">
-                                <span className="text-3xl font-bold text-white font-mono">13<span className="text-[11px] font-mono text-[#D1D5DB]">  Currently taking assessments</span></span>
+                                <span className="text-3xl font-bold text-white font-mono">{stats.inProgress}<span className="text-[11px] font-mono text-[#D1D5DB]">  Currently taking assessments</span></span>
                             </div>
                         </div>
 
@@ -233,7 +275,7 @@ function RecruiterDashboard() {
                                 </div>
                             </div>
                             <div className="flex flex-col gap-0.5">
-                                <span className="text-3xl font-bold text-white font-mono">84<span className="text-[11px] font-mono text-[#D1D5DB]">  Completed assessments</span></span>
+                                <span className="text-3xl font-bold text-white font-mono">{stats.readyForReview}<span className="text-[11px] font-mono text-[#D1D5DB]">  Completed assessments</span></span>
 
                             </div>
                         </div>
@@ -293,7 +335,7 @@ function RecruiterDashboard() {
                             </div>
 
                             <div className="flex items-center justify-between pt-6 mt-4 border-t border-emerald-950 text-[11px] font-mono text-slate-500">
-                                <span>4 active assessments</span>
+                                <span>{activeAssessmentsList.length} active assessments</span>
                                 <span>Updated a few minutes ago</span>
                             </div>
                         </div>

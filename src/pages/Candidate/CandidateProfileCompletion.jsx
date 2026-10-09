@@ -488,7 +488,7 @@ function CandidateProfileCompletion() {
                                 <span>
                                     {loading ? "Saving profile..." : "Save and continue"}
                                 </span>
-                                <span>{loading ? "..." : "→"}</span>
+                                <span>{loading ? "..." : <i className="fa-solid fa-arrow-right"></i>}</span>
                             </button>
                         </div>
                     </form>
@@ -515,11 +515,7 @@ function CandidateProfileCompletion() {
                     >
                         Privacy
                     </a>
-                    <a
-                        href="#support"
-                        onClick={(e) => e.preventDefault()}
-                        className="hover:text-white transition-colors"
-                    >
+                    <a href="#support" onClick={(e) => e.preventDefault()} className="hover:text-white transition-colors">
                         Support
                     </a>
                 </div>
