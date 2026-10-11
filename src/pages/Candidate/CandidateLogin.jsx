@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import loginImage from "./Login.jpeg";
+import { api } from "../../services/api";
 
 function CandidateLogin() {
   const navigate = useNavigate();
@@ -20,37 +21,19 @@ function CandidateLogin() {
     setLoading(true);
     setMessage("");
 
-    const apiUrl = import.meta.env.VITE_API_URL;
-    if (!apiUrl) {
-      setMessage("Login is unavailable because the API URL is not configured.");
-      setLoading(false);
-      return;
-    }
-
     try {
-      const response = await fetch(`${apiUrl.replace(/\/$/, "")}/api/auth/login`, {
+      const data = await api("/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: email.trim(), password, role: "candidate" }),
       });
 
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(data?.message || "Invalid email or password.");
-      }
-
-      if (data?.token) {
-        localStorage.setItem("token", data.token);
-      }
-      if (data?.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-      }
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
 
       setMessage("Login successful!");
       setTimeout(() => {
-        navigate("/");
-      }, 800);
+        navigate("/candidate/profile", { replace: true });
+      }, 500);
     } catch (error) {
       console.error("Login error:", error);
       setMessage(error.message || "Unable to login. Please try again.");
@@ -68,7 +51,7 @@ function CandidateLogin() {
       <div className="w-full md:w-[42%] min-h-screen flex items-center justify-center px-6 sm:px-12 py-12 overflow-y-auto">
         <div className="w-full max-w-md">
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
-            Welcome to <span className="text-emerald-700">SmartRecruit</span>
+            Welcome to <span className="text-[#2563EB]">SmartRecruit</span>
           </h1>
           <p className="mt-2 text-slate-500 text-sm">
             Login to continue to your assessment platform.
@@ -76,7 +59,7 @@ function CandidateLogin() {
 
           <div className="flex p-1 bg-slate-100 border border-slate-200 rounded-xl mt-6">
             <button type="button"
-              className="w-1/2 py-2.5 bg-emerald-700 text-white font-medium rounded-lg shadow-sm transition-all"
+              className="w-1/2 py-2.5 bg-[#2563EB] text-white font-medium rounded-lg shadow-sm transition-all"
               onClick={() => navigate("/candidate/login")}>
               I'm a Candidate
             </button>
@@ -95,7 +78,7 @@ function CandidateLogin() {
               </label>
               <input type="email" placeholder="Enter your email" value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-11 bg-white border border-slate-200 rounded-xl px-4 text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-700 transition-all"
+                className="w-full h-11 bg-white border border-slate-200 rounded-xl px-4 text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] transition-all"
                 required/>
             </div>
 
@@ -108,7 +91,7 @@ function CandidateLogin() {
                 <input type={showPassword ? "text" : "password"} placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-11 bg-white border border-slate-200 rounded-xl px-4 pr-12 text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-700 transition-all"
+                  className="w-full h-11 bg-white border border-slate-200 rounded-xl px-4 pr-12 text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] transition-all"
                   required/>
                 <button type="button" onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 text-sm"
@@ -119,12 +102,12 @@ function CandidateLogin() {
             </div>
             <div className="text-right">
               <button type="button" onClick={() => navigate("/candidate/reset-password")}
-                className="text-xs text-emerald-700 font-semibold hover:underline cursor-pointer">
+                className="text-xs text-[#2563EB] font-semibold hover:underline cursor-pointer">
                 Forgot password?
               </button>
             </div>
             <button type="submit" disabled={loading}
-              className="w-full h-11 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.99] text-white rounded-xl font-medium shadow-md shadow-emerald-700/20 transition-all cursor-pointer disabled:bg-emerald-400 disabled:cursor-not-allowed"
+              className="w-full h-11 bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.99] text-white rounded-xl font-medium shadow-md shadow-blue-700/20 transition-all cursor-pointer disabled:bg-blue-400 disabled:cursor-not-allowed"
             >
               {loading ? "Logging in..." : "Login"}
             </button>
@@ -132,7 +115,7 @@ function CandidateLogin() {
 
           {message && (
             <div className={`mt-4 text-center text-sm ${
-                message.toLowerCase().includes("successful") ? "text-emerald-700" : "text-red-600"}`}
+                message.toLowerCase().includes("successful") ? "text-[#2563EB]" : "text-red-600"}`}
             >
               {message}
             </div>
@@ -143,7 +126,7 @@ function CandidateLogin() {
               Don't have an account?
             </span>
             <button type="button" onClick={() => navigate("/candidate/SignUpPage")}
-              className="ml-1.5 text-emerald-700 font-semibold hover:underline cursor-pointer">
+              className="ml-1.5 text-[#2563EB] font-semibold hover:underline cursor-pointer">
               Create Account
             </button>
           </div>

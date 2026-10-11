@@ -1,28 +1,36 @@
-const API_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from "../config";
 
+// JSON helper. Automatically sends the saved login token (if any).
 export const api = async (endpoint, options = {}) => {
-  const headers = {
-    ...options.headers,
-  };
-
-  if (options.body && !(options.body instanceof FormData)) {
-    headers["Content-Type"] = "application/json";
-  }
-
   const token = localStorage.getItem("token");
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
 
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...options.headers,
+    },
   });
-
-  const contentType = response.headers.get("content-type");
-  const data = contentType && contentType.includes("application/json") ? await response.json() : null;
+  const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(data?.message || data?.error || "Something went wrong");
+    throw new Error(data.message || "Something went wrong");
+  }
+  return data;
+};
+
+// Multipart helper (file uploads). Lets the browser set the Content-Type boundary.
+export const apiUpload = async (endpoint, formData) => {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: formData,
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.message || "Upload failed");
   }
   return data;
 };

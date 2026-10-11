@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { API_URL } from "../../config";
 
-function CandidateVerifyOtp({ role = "candidate" }) {
+function CandidateVerifyOtp() {
   const navigate = useNavigate();
   const location = useLocation();
   const passedEmail = location.state?.email || "";
-  const userType = location.state?.role || role;
+  const userType = location.state?.role || "candidate";
 
   const [email] = useState(passedEmail);
   const [otp, setOtp] = useState("");
@@ -25,17 +26,10 @@ function CandidateVerifyOtp({ role = "candidate" }) {
       return;
     }
 
-    const apiUrl = import.meta.env.VITE_API_URL;
-    if (!apiUrl) {
-      setErrorMsg("OTP verification is unavailable because the API URL is not configured.");
-      setLoading(false);
-      return;
-    }
-
     const payload = { email, otp };
 
     try {
-      const res = await fetch(`${apiUrl.replace(/\/$/, "")}/api/auth/verify-otp`, {
+      const res = await fetch(`${API_URL}/api/auth/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -47,20 +41,9 @@ function CandidateVerifyOtp({ role = "candidate" }) {
         throw new Error(data?.message || "OTP verification failed");
       }
 
-      if (data?.token) {
-        localStorage.setItem("token", data.token);
-      }
-      if (data?.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-      }
-
       setSuccessMsg("OTP verified successfully!");
       setTimeout(() => {
-        if (data?.token) {
-          navigate(userType === "recruiter" ? "/recruiter/dashboard" : "/candidate/system-check");
-        } else {
-          navigate(userType === "recruiter" ? "/recruiter/login" : "/candidate/login");
-        }
+        navigate(userType === "recruiter" ? "/recruiter/login" : "/candidate/login");
       }, 1500);
     } catch (err) {
       console.error(err);
@@ -71,30 +54,30 @@ function CandidateVerifyOtp({ role = "candidate" }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#060F0A] text-slate-100 flex items-center justify-center p-4 font-sans">
-      <div className="max-w-md w-full bg-[#09160E] border border-[#12281D] rounded-2xl p-8 shadow-2xl space-y-6">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex items-center justify-center p-4 font-sans">
+      <div className="max-w-md w-full bg-white border border-blue-100 rounded-2xl p-8 shadow-xl space-y-6">
         <div className="text-center space-y-2">
-          <h2 className="text-xl font-bold text-white">Verify Your Email</h2>
-          <p className="text-xs text-slate-400">
-            Enter the 6-digit verification code sent to <span className="text-emerald-400 font-mono">{email}</span>
+          <h2 className="text-xl font-bold text-[#0F172A]">Verify Your Email</h2>
+          <p className="text-xs text-slate-500">
+            Enter the 6-digit verification code sent to <span className="text-[#2563EB] font-mono font-semibold">{email}</span>
           </p>
         </div>
 
         {successMsg && (
-          <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-xs text-center font-medium">
+          <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-[#2563EB] text-xs text-center font-medium">
             {successMsg}
           </div>
         )}
 
         {errorMsg && (
-          <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs text-center font-medium">
+          <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-xs text-center font-medium">
             {errorMsg}
           </div>
         )}
 
         <form onSubmit={handleVerify} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-emerald-400">OTP Code</label>
+            <label className="text-[11px] font-bold uppercase tracking-wider text-[#2563EB]">OTP Code</label>
             <input
               type="text"
               maxLength="6"
@@ -102,14 +85,14 @@ function CandidateVerifyOtp({ role = "candidate" }) {
               value={otp}
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
               placeholder="282760"
-              className="w-full px-4 py-3 bg-[#060F0A] border border-[#12281D] rounded-xl text-center text-lg font-mono tracking-widest text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition-all"
+              className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-center text-lg font-mono tracking-widest text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-500/20 transition-all"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-black font-bold text-xs rounded-xl shadow-lg shadow-emerald-500/20 transition-all cursor-pointer mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full py-3 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/20 transition-all cursor-pointer mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? "Verifying..." : "Verify OTP →"}
           </button>
