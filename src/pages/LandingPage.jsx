@@ -32,7 +32,7 @@ function LandingPage() {
 
   const featuresList = [
     {
-      icon: "fa-solid fa-arrow-right text-white rotate-[-45deg]",
+      icon: "fa-solid fa-arrow-right rotate-[-45deg]",
       title: "Guided assessment flow",
       description: "Help candidates prepare, check their setup, and move through each section with clear instructions.",
       action: "See how it works →",
@@ -58,95 +58,151 @@ function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F4F7FC] text-[#172554] flex flex-col md:flex-row selection:bg-[#2563EB] selection:text-white scroll-smooth font-sans">
-      <aside className="w-full md:w-64 border-b md:border-b-0 md:border-r border-blue-100 bg-white p-6 flex flex-col justify-between md:sticky md:top-0 md:h-screen shrink-0">
-        <div className="flex flex-col gap-10">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate(userRole === "recruiter" ? "/recruiter/dashboard" : "/")}>
-            <div className="w-7 h-7 bg-[#2563EB] text-white rounded-lg flex items-center justify-center font-black text-sm shadow-md shadow-blue-500/20">
+    <div className="min-h-screen bg-[#F5F7FB] text-[#172554] flex flex-col md:flex-row selection:bg-[#2563EB] selection:text-white scroll-smooth font-sans">
+
+      <aside className="w-full md:w-[240px] h-auto md:h-[800px] bg-[#142B43] text-slate-400 border-b md:border-b-0 md:border-r border-[#CBD5E1] pt-[23px] pr-[17px] pb-[18px] pl-[17px] flex flex-col justify-between md:sticky md:top-0 shrink-0">
+        <div className="flex flex-col gap-5">
+          <div
+            className="w-full h-[56px] flex items-start gap-[10px] px-[6px] pb-[20px] border-b border-[#CBD5E1] cursor-pointer"
+            onClick={() => navigate(userRole === "recruiter" ? "/recruiter/dashboard" : "/")}>
+            <div className="w-9 h-9 bg-[#2866B9] text-white rounded-xl flex items-center justify-center font-black text-sm border border-blue-300/40 shrink-0">
               S
             </div>
-            <div className="flex flex-col">
-              <span className="text-base font-bold tracking-tight text-[#172554] leading-none">
+
+            <div className="flex flex-col pt-1">
+              <span className="text-base font-bold tracking-tight text-[#FFFFFF] leading-none">
                 SmartRecruit
               </span>
-              <span className="text-[9px] font-mono tracking-widest text-[#2563EB] uppercase mt-1">
+
+              <span className="text-[9px] font-mono tracking-[1.5px] text-slate-500 uppercase mt-2">
                 Technical Hiring
               </span>
             </div>
           </div>
-
-          <div className="hidden md:flex flex-col gap-4">
-            <span className="text-[20px] font-mono text-slate-500 tracking-widest font-normal">
+          <div className="hidden md:flex flex-col gap-2">
+            <span className="text-[9px] font-mono text-slate-400 tracking-[1.5px] font-normal px-2 mb-1">
               ON THIS PAGE
             </span>
-            <nav className="flex flex-col gap-3 text-sm font-mono text-slate-500">
-              <a href="#overview" className="hover:text-[#2563EB] transition-colors flex items-center gap-2">
-                <span className="text-xs"><i className="fa-solid fa-users"></i></span> Overview
+
+            <nav className="flex flex-col gap-1 text-[10px] font-mono">
+
+              <a
+                href="#overview"
+                className="h-[35px] px-3 rounded-xl bg-[#193653] text-[#3985F5] flex items-center gap-3 transition-colors"
+              >
+                <i className="fa-solid fa-house text-[9px] w-3"></i>
+                Overview
               </a>
-              <a href="#features" className="hover:text-[#2563EB] transition-colors flex items-center gap-2">
-                <span className="text-xs"><i className="fa-solid fa-list"></i></span> What we offer
+
+              <a
+                href="#features"
+                className="h-[35px] px-3 rounded-xl hover:bg-[#193653] hover:text-[#3985F5] flex items-center gap-3 transition-colors"
+              >
+                <i className="fa-solid fa-list text-[9px] w-3"></i>
+                What we offer
               </a>
-              <a href="#approach" className="hover:text-[#2563EB] transition-colors flex items-center gap-2">
-                <span className="text-xs"><i className="fa-solid fa-arrow-right"></i></span> Our approach
+
+              <a
+                href="#approach"
+                className="h-[35px] px-3 rounded-xl hover:bg-[#193653] hover:text-[#3985F5] flex items-center gap-3 transition-colors"
+              >
+                <i className="fa-solid fa-arrow-right text-[9px] w-3"></i>
+                Our approach
               </a>
+
               {isLoggedIn && userRole === "candidate" && (
-                <button 
+                <button
                   onClick={() => navigate("/candidate/results")}
-                  className="hover:text-[#2563EB] transition-colors flex items-center gap-2 text-left bg-transparent border-none p-0 cursor-pointer font-mono text-sm text-slate-500"
+                  className="h-[35px] px-3 rounded-xl hover:bg-[#193653] hover:text-[#3985F5] flex items-center gap-3 text-left transition-colors"
                 >
-                  <span className="text-xs"><i className="fa-solid fa-square-poll-result"></i></span> View Result
+                  <i className="fa-solid fa-square-poll-vertical text-[9px] w-3"></i>
+                  View Result
                 </button>
               )}
-              <a href="#contact" className="hover:text-[#2563EB] transition-colors flex items-center gap-2">
-                <span className="text-xs"><i className="fa-solid fa-envelope"></i></span> Contact
+
+              <a
+                href="#contact"
+                className="h-[35px] px-3 rounded-xl hover:bg-[#193653] hover:text-[#3985F5] flex items-center gap-3 transition-colors"
+              >
+                <i className="fa-solid fa-envelope text-[9px] w-3"></i>
+                Contact
               </a>
+
             </nav>
           </div>
         </div>
+        <div className="hidden md:flex flex-col gap-[14px]">
 
-        <div className="hidden md:flex flex-col p-4 bg-[#EFF6FF] border border-blue-100 rounded-xl gap-2 mt-6">
-          <span className="text-[10px] font-mono text-[#2563EB] uppercase tracking-wider">
-            For hiring teams
-          </span>
-          <p className="text-sm text-[#172554] tracking-tight">
-            Make space for better conversations.
-          </p>
-          <p className="text-[11px] text-slate-600 leading-normal">
-            Bring candidate work and reviewer feedback into one clear process.
-          </p>
-          <a href="#contact" className="text-[11px] font-mono text-[#2563EB] hover:underline mt-1">
-            Talk with our team
-          </a>
+          <div className="flex flex-col p-[14px] bg-[#1B3651] border border-slate-300 rounded-xl gap-2 min-h-[161px]">
+
+            <span className="text-[9px] font-mono text-[#3985F5] uppercase tracking-[1px]">
+              For hiring teams
+            </span>
+
+            <p className="text-[15px] font-serif text-[#1FFFFFF] leading-snug">
+              Make space for better conversations.
+            </p>
+
+            <p className="text-[9px] text-slate-400 leading-[1.5]">
+              Bring candidate work and reviewer feedback into one clear process.
+            </p>
+
+            <a
+              href="#contact"
+              className="text-[9px] font-mono text-blue-400 hover:text-blue-300 mt-1 transition-colors"
+            >
+              Talk with our team →
+            </a>
+          </div>
+
+          <div className="border-t border-slate-300 pt-3 px-1 flex items-center justify-between gap-2 text-[8px] font-mono text-slate-400">
+            <span>© SmartRecruit</span>
+
+            <button
+              onClick={() => navigate("/recruiter/dashboard")}
+              className="text-blue-400 hover:text-blue-300 whitespace-nowrap"
+            >
+              <i className="fa-solid fa-circle text-[5px] mr-1"></i>
+              Recruiter portal
+            </button>
+          </div>
+
         </div>
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFF]">
         <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFF]">
-          <header className="w-full border-b border-blue-100 bg-white/90 backdrop-blur-md sticky top-0 z-50">
-            <div className="max-w-5xl mx-auto px-6 h-10 flex items-center justify-between">
-              <div className="flex items-center gap-4 ml-auto">
+          <header className="w-full h-[62px] border-b border-slate-200/60 bg-[#f8faef]/30 backdrop-blur-md sticky top-0 z-50">
+            <div className="max-w-[1040px] h-full mx-auto px-[51.2px] flex items-center justify-between gap-4">
+
+              <div className="flex items-center gap-6 ml-auto">
                 {isLoggedIn ? (
                   <>
-                    <button onClick={() => navigate(userRole === "recruiter" ? "/recruiter/dashboard" : "/candidate/profile")}
-                      className="text-xs font-mono text-slate-600 hover:text-[#2563EB] px-3 py-1 rounded-md hover:bg-blue-50 transition-colors cursor-pointer"
+                    <button
+                      onClick={() => navigate(userRole === "recruiter" ? "/recruiter/dashboard" : "/candidate/profile")}
+                      className="text-sm font-sans text-slate-600 hover:text-blue-600 transition-colors cursor-pointer"
                     >
                       {userName}
                     </button>
-                    <button onClick={handleLogout}
-                      className="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider transition-all border border-red-200 cursor-pointer"
+                    <button
+                      onClick={handleLogout}
+                      className="px-4 py-2 text-sm font-sans font-medium text-blue-600 bg-transparent border border-blue-400 rounded-lg hover:bg-blue-50 transition-all cursor-pointer"
                     >
                       Log Out
                     </button>
                   </>
                 ) : (
-                  <div className="flex items-center gap-3">
-                    <button onClick={() => navigate("/candidate/SignUpPage")}
-                      className="text-xs font-mono text-[#1E40AF] hover:text-[#1D4ED8] bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3 py-1 rounded-full transition-all cursor-pointer uppercase tracking-wider">
+                  <div className="flex items-center gap-6">
+                    <button
+                      onClick={() => navigate("/candidate/SignUpPage")}
+                      className="text-sm font-sans text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+                    >
                       Sign up
                     </button>
-                    <span className="text-blue-300">/</span>
-                    <button onClick={() => navigate("/candidate/login")}
-                      className="text-xs font-mono text-[#1E40AF] hover:text-[#1D4ED8] bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3 py-1 rounded-full transition-all cursor-pointer uppercase tracking-wider">
+                    <button
+                      onClick={() => navigate("/candidate/login")}
+                      className="px-4 py-2 text-sm font-sans font-medium text-blue-600 bg-transparent border border-blue-300 rounded-lg hover:bg-blue-50 transition-all cursor-pointer"
+                    >
                       Login
                     </button>
                   </div>
@@ -164,12 +220,13 @@ function LandingPage() {
                 A more thoughtful way to hire
               </div>
 
-              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#172554] leading-[1.1]">
-                Assess skills beyond the resume.
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-medium text-[#111e2e] leading-[1.1] tracking-tight">
+                Assess skills beyond
+                the résumé.
               </h1>
 
               <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
-                Give candidates a fair chance to show how they think, communicate, and build. <span className="text-[#2563EB] font-medium">SmartRecruit</span> brings technical questions, coding exercises, and spoken responses into one clear review for your team.
+                Give candidates a fair chance to show how they think, communicate, and build.SmartRecruit brings technical questions, coding exercises, and spoken responses into one clear review for your team.
               </p>
 
               <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -184,7 +241,7 @@ function LandingPage() {
                     const featuresEl = document.getElementById("features");
                     featuresEl?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="bg-white hover:bg-blue-50 text-[#1E40AF] border border-blue-200 px-6 py-3 rounded-lg font-mono font-bold tracking-wider transition-all cursor-pointer"
+                  className="bg-white hover:bg-blue-50 text-[black] border border-blue-200 px-6 py-3 rounded-lg font-mono font-bold tracking-wider transition-all cursor-pointer"
                 >
                   Explore the platform
                 </button>
@@ -198,144 +255,18 @@ function LandingPage() {
             </div>
 
             <div className="w-full lg:w-1/2 flex justify-center items-center relative">
-              <div className="absolute inset-0 rounded-full"></div>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%" className="max-w-md h-auto object-contain relative z-10">
-                <defs>
-                  <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-                    <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#1e3a8a" floodOpacity="0.15"/>
-                  </filter>
-                </defs>
-
-                <rect width="800" height="600" fill="#F8FAFC"/>
-
-                <rect x="100" y="80" width="260" height="300" fill="#F1F5F9" stroke="#E2E8F0" strokeWidth="2"/>
-                <rect x="380" y="80" width="220" height="300" fill="#F1F5F9" stroke="#E2E8F0" strokeWidth="2"/>
-
-                <ellipse cx="400" cy="490" rx="320" ry="25" fill="#E2E8F0"/>
-
-                <rect x="150" y="205" width="170" height="6" rx="3" fill="#94A3B8"/>
-                <path d="M 180 205 Q 183 190 175 175 Q 185 180 190 205 Z" fill="#2563EB"/>
-                <path d="M 180 205 Q 177 190 185 175 Q 175 180 170 205 Z" fill="#3B82F6"/>
-                <path d="M 172 205 L 188 205 L 185 195 L 175 195 Z" fill="#1E3A8A"/>
-                
-                <rect x="222" y="167" width="10" height="38" rx="2" fill="#2563EB"/>
-                <rect x="234" y="167" width="14" height="38" rx="2" fill="#1D4ED8"/>
-                <rect x="250" y="175" width="10" height="30" rx="2" fill="#3B82F6"/>
-                <rect x="262" y="170" width="12" height="35" rx="2" fill="#60A5FA"/>
-                <rect x="276" y="167" width="10" height="38" rx="2" fill="#1E3A8A"/>
-                <rect x="288" y="172" width="14" height="33" rx="2" fill="#2563EB"/>
-                <rect x="304" y="167" width="12" height="38" rx="2" fill="#3B82F6"/>
-
-                <rect x="150" y="305" width="170" height="6" rx="3" fill="#94A3B8"/>
-                <rect x="156" y="272" width="12" height="33" rx="2" fill="#2563EB"/>
-                <rect x="170" y="275" width="10" height="30" rx="2" fill="#1D4ED8"/>
-                <rect x="182" y="270" width="14" height="35" rx="2" fill="#3B82F6"/>
-                <rect x="198" y="272" width="12" height="33" rx="2" fill="#60A5FA"/>
-                <rect x="212" y="275" width="10" height="30" rx="2" fill="#1E3A8A"/>
-                <rect x="224" y="272" width="14" height="33" rx="2" fill="#2563EB"/>
-                <rect x="240" y="275" width="12" height="30" rx="2" fill="#3B82F6"/>
-                <rect x="270" y="285" width="38" height="20" rx="3" fill="#1E3A8A"/>
-
-                <circle cx="490" cy="130" r="18" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="2"/>
-                <line x1="490" y1="130" x2="490" y2="120" stroke="#1E3A8A" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="490" y1="130" x2="498" y2="134" stroke="#1E3A8A" strokeWidth="2" strokeLinecap="round"/>
-
-                <g filter="url(#shadow)">
-                  <rect x="336" y="170" width="260" height="235" rx="6" fill="#FFFFFF" stroke="#93C5FD" strokeWidth="1.5"/>
-                  <path d="M 337 176 C 337 172.686 339.686 170 343 170 L 590 170 C 593.314 170 596 172.686 596 176 L 596 200 L 337 200 Z" fill="#1E3A8A"/>
-                  <circle cx="349" cy="185" r="3" fill="#EF4444"/>
-                  <circle cx="359" cy="185" r="3" fill="#F59E0B"/>
-                  <circle cx="369" cy="185" r="3" fill="#10B981"/>
-                  <text x="385" y="190" fontFamily="sans-serif" fontSize="11" fill="#FFFFFF" fontWeight="bold">Online Test</text>
-                  <circle cx="578" cy="185" r="10" fill="#3B82F6" opacity="0.4"/>
-                  
-                  <rect x="348" y="215" width="14" height="14" rx="3" fill="#DBEAFE"/>
-                  <text x="353" y="226" fontFamily="sans-serif" fontSize="9" fill="#1E3A8A" fontWeight="bold">1</text>
-                  <rect x="370" y="217" width="180" height="5" rx="2.5" fill="#CBD5E1"/>
-                  <circle cx="355" cy="242" r="4" fill="none" stroke="#94A3B8" strokeWidth="1.5"/>
-                  <rect x="368" y="240" width="50" height="4" rx="2" fill="#E2E8F0"/>
-                  <circle cx="435" cy="242" r="4" fill="#3B82F6" stroke="#2563EB" strokeWidth="1.5"/>
-                  <rect x="448" y="240" width="50" height="4" rx="2" fill="#93C5FD"/>
-                  <circle cx="515" cy="242" r="4" fill="none" stroke="#94A3B8" strokeWidth="1.5"/>
-                  <rect x="528" y="240" width="50" height="4" rx="2" fill="#E2E8F0"/>
-
-                  <line x1="348" y1="260" x2="584" y2="260" stroke="#F1F5F9" strokeWidth="1"/>
-
-                  <rect x="348" y="272" width="14" height="14" rx="3" fill="#DBEAFE"/>
-                  <text x="353" y="283" fontFamily="sans-serif" fontSize="9" fill="#1E3A8A" fontWeight="bold">2</text>
-                  <rect x="370" y="274" width="160" height="5" rx="2.5" fill="#CBD5E1"/>
-                  <circle cx="355" cy="299" r="4" fill="none" stroke="#94A3B8" strokeWidth="1.5"/>
-                  <rect x="368" y="297" width="50" height="4" rx="2" fill="#E2E8F0"/>
-                  <circle cx="435" cy="299" r="4" fill="none" stroke="#94A3B8" strokeWidth="1.5"/>
-                  <rect x="448" y="297" width="50" height="4" rx="2" fill="#E2E8F0"/>
-                  <circle cx="515" cy="299" r="4" fill="#3B82F6" stroke="#2563EB" strokeWidth="1.5"/>
-                  <rect x="528" y="297" width="50" height="4" rx="2" fill="#93C5FD"/>
-
-                  <line x1="348" y1="317" x2="584" y2="317" stroke="#F1F5F9" strokeWidth="1"/>
-
-                  <rect x="348" y="330" width="14" height="14" rx="3" fill="#DBEAFE"/>
-                  <text x="353" y="341" fontFamily="sans-serif" fontSize="9" fill="#1E3A8A" fontWeight="bold">3</text>
-                  <rect x="370" y="332" width="140" height="5" rx="2.5" fill="#CBD5E1"/>
-                  <circle cx="355" cy="357" r="4" fill="none" stroke="#94A3B8" strokeWidth="1.5"/>
-                  <rect x="368" y="355" width="50" height="4" rx="2" fill="#E2E8F0"/>
-                  <circle cx="435" cy="357" r="4" fill="none" stroke="#94A3B8" strokeWidth="1.5"/>
-                  <rect x="448" y="355" width="50" height="4" rx="2" fill="#E2E8F0"/>
-                </g>
-
-                <g>
-                  <path d="M 235 480 L 255 480 L 245 465 Z" fill="#64748B"/>
-                  <line x1="245" y1="465" x2="210" y2="475" stroke="#475569" strokeWidth="3" strokeLinecap="round"/>
-                  <line x1="245" y1="465" x2="280" y2="478" stroke="#475569" strokeWidth="3" strokeLinecap="round"/>
-                  <line x1="245" y1="465" x2="245" y2="445" stroke="#475569" strokeWidth="4" strokeLinecap="round"/>
-                  <path d="M 220 425 Q 260 420 295 425 L 290 440 Q 255 445 225 440 Z" fill="#334155"/>
-                  <path d="M 185 365 C 175 390 175 420 185 440 L 225 440 C 220 410 220 380 225 365 Z" fill="#1E293B"/>
-                  <path d="M 188 368 C 180 390 180 415 188 435 L 222 435 C 218 410 218 385 222 368 Z" fill="#334155"/>
-                </g>
-
-                <rect x="295" y="500" width="8" height="60" fill="#1E3A8A"/>
-                <rect x="425" y="500" width="8" height="60" fill="#1E3A8A"/>
-                <path d="M 285 558 L 315 558 L 315 562 L 285 562 Z" fill="#1E3A8A"/>
-                <path d="M 415 558 L 445 558 L 445 562 L 415 562 Z" fill="#1E3A8A"/>
-                <polygon points="250,500 480,500 505,518 275,518" fill="#3B82F6"/>
-                <polygon points="250,496 480,496 480,500 250,500" fill="#60A5FA"/>
-
-                <polygon points="340,500 415,500 425,508 330,508" fill="#CBD5E1"/>
-                <polygon points="342,500 413,500 405,458 350,458" fill="#93C5FD"/>
-                <polygon points="345,498 410,498 403,462 352,462" fill="#FFFFFF"/>
-                <text x="365" y="482" fontFamily="sans-serif" fontSize="8" fill="#1E3A8A" fontWeight="bold">CODE</text>
-
-                <circle cx="282" cy="340" r="14" fill="#FDBA74"/>
-                <path d="M 268 338 C 268 325 285 322 295 332 C 298 335 298 342 295 348 L 290 348 C 292 342 290 338 285 336 Z" fill="#1E293B"/>
-                <path d="M 260 360 C 255 385 260 410 275 425 L 305 425 C 315 410 315 385 305 360 Z" fill="#2563EB"/>
-                <path d="M 285 375 Q 320 380 345 490" fill="none" stroke="#2563EB" strokeWidth="8" strokeLinecap="round"/>
-                <circle cx="345" cy="492" r="5" fill="#FDBA74"/>
-                <path d="M 275 422 L 255 495 L 275 498 L 295 450 Z" fill="#64748B"/>
-                <path d="M 305 422 L 345 495 L 365 492 L 325 435 Z" fill="#64748B"/>
-                <path d="M 252 495 C 245 495 240 500 248 502 L 278 502 L 278 495 Z" fill="#1E293B"/>
-                <path d="M 342 495 C 335 495 330 500 338 502 L 368 502 L 368 495 Z" fill="#1E293B"/>
-
-                <g transform="translate(610, 430)">
-                  <path d="M 15 40 L 45 40 L 52 70 L 8 70 Z" fill="#1E3A8A"/>
-                  <path d="M 30 40 Q 20 15 5 0 Q 20 15 30 40 Z" fill="#2563EB"/>
-                  <path d="M 30 40 Q 40 10 55 -5 Q 40 15 30 40 Z" fill="#3B82F6"/>
-                  <path d="M 30 40 Q 30 5 30 -15 Q 30 5 30 40 Z" fill="#1D4ED8"/>
-                  <path d="M 30 40 Q 55 20 70 10 Q 50 25 30 40 Z" fill="#60A5FA"/>
-                  <path d="M 30 40 Q 10 25 -5 15 Q 15 25 30 40 Z" fill="#2563EB"/>
-                </g>
-              </svg>
             </div>
           </div>
         </section>
-
-        <section id="features" className="max-w-5xl mx-auto w-full px-6 py-20 border-t border-blue-100">
-          <div className="flex flex-col gap-3 mb-12">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
-              Built for technical teams
+        <section id="features" className="max-w-6xl mx-auto w-full px-6 py-20 border-t border-slate-100">
+          <div className="flex flex-col gap-2 mb-12">
+            <span className="text-xs font-mono font-bold text-blue-600 uppercase tracking-widest">
+              BUILT FOR TECHNICAL TEAMS
             </span>
-            <h2 className="text-4xl sm:text-4xl lg:text-5xl tracking-tight text-[#172554]">
+            <h2 className="text-4xl sm:text-5xl font-serif text-[#111e2e] tracking-tight">
               Everything you need for a clearer review.
             </h2>
-            <p className="text-sm font-mono text-slate-500">
+            <p className="text-sm font-sans text-slate-500 mt-1">
               Keep the process focused on useful evidence, clear expectations, and thoughtful decisions.
             </p>
           </div>
@@ -344,27 +275,34 @@ function LandingPage() {
             {featuresList.map((feature, index) => (
               <div
                 key={index}
-                className="p-8 bg-white border border-blue-100 rounded-2xl backdrop-blur-sm flex flex-col justify-between hover:border-[#2563EB]/50 hover:shadow-lg hover:shadow-blue-100/60 transition-all group"
+                className="p-8 bg-white border border-slate-100 rounded-2xl flex flex-col justify-between hover:shadow-md transition-all"
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-[#2563EB] text-white flex items-center justify-center mb-4 border border-blue-200 group-hover:bg-[#1D4ED8] transition-all">
-                    <i className={`${feature.icon} text-sm`}></i>
+                  <div className="w-10 h-10 rounded-xl bg-blue-50/80 text-blue-600 flex items-center justify-center mb-6">
+                    <i className={`${feature.icon} text-base`}></i>
                   </div>
-                  <h3 className="text-xl font-bold text-[#172554] mb-2 tracking-tight group-hover:text-[#2563EB] transition-colors">
+
+                  <h3 className="text-2xl font-serif text-[#111e2e] mb-3 font-normal">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-slate-600 leading-relaxed font-normal">
+
+                  <p className="text-sm text-slate-500 leading-relaxed font-sans">
                     {feature.description}
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-blue-100 flex items-center text-xs font-mono text-[#2563EB]">
-                  <span className="cursor-pointer hover:underline">{feature.action}</span>
+
+                <div className="mt-8">
+                  <div className="w-12 h-[1px] bg-slate-200/60 mb-4"></div>
+                  <div className="flex items-center text-xs font-sans text-blue-600 font-medium">
+                    <span className="cursor-pointer hover:underline flex items-center gap-1">
+                      {feature.action} &rarr;
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </section>
-
         <section id="approach" className="max-w-5xl mx-auto w-full px-6 py-20 border-t border-blue-100">
           <div className="flex flex-col gap-3 mb-12">
             <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest font-semibold">
@@ -420,23 +358,21 @@ function LandingPage() {
         </section>
 
         <section className="max-w-5xl mx-auto w-full px-6 py-16">
-          <div className="p-10 bg-gradient-to-r from-[#1E40AF] to-[#2563EB] border border-blue-200 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl shadow-blue-200/40">
+          <div className="p-10 bg-[#edf3fd] border border-blue-100 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="flex flex-col gap-2 text-left">
-              <span className="text-[10px] font-mono text-blue-100 uppercase tracking-wider">
+              <span className="text-sm font-sans text-slate-600 font-normal">
                 For engineering teams
               </span>
-              <h3 className="text-2xl sm:text-3xl text-white">
+              <h3 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-[#111e2e] tracking-tight">
                 Ready for a more useful first review?
               </h3>
-              <p className="text-xs text-blue-100">
+              <p className="text-xs text-slate-500 font-sans mt-1">
                 See how SmartRecruit can fit your team's hiring process.
               </p>
             </div>
-            <button
-              onClick={() => navigate(isLoggedIn ? (userRole === "recruiter" ? "/recruiter/dashboard" : "/candidate/profile") : "/candidate/SignUpPage")}
-              className="bg-white hover:bg-blue-50 text-[#1D4ED8] px-8 py-3.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all shadow-lg shadow-blue-900/20 cursor-pointer whitespace-nowrap"
-            >
-              {isLoggedIn ? "Profile" : "Get started"}
+
+            <button className="px-6 py-3 bg-[#3b82f6] hover:bg-[#2563eb] text-white text-sm font-sans font-medium rounded-xl transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer shadow-sm">
+              Get started &rarr;
             </button>
           </div>
         </section>
