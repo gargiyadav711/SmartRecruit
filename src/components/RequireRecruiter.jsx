@@ -3,16 +3,15 @@ import { Navigate } from "react-router-dom";
 import { api } from "../services/api";
 
 export default function RequireRecruiter({ children }) {
-  const [state, setState] = useState("checking");
+  const [state, setState] = useState(() => {
+    return localStorage.getItem("token") ? "checking" : "unauthenticated";
+  });
 
   useEffect(() => {
-    let active = true;
     const token = localStorage.getItem("token");
-    if (!token) {
-      setState("unauthenticated");
-      return () => { active = false; };
-    }
+    if (!token) return;
 
+    let active = true;
     api("/api/auth/me")
       .then(({ user }) => {
         if (!active) return;

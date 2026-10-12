@@ -8,12 +8,12 @@ function CandidateActiveAssessment() {
   const videoRef = useRef(null);
   const handleFinalSubmitRef = useRef(() => {});
   const submissionLockRef = useRef(false);
-  const interviewSessionIdRef = useRef("");
-  if (!interviewSessionIdRef.current) {
-    interviewSessionIdRef.current = globalThis.crypto?.randomUUID
+  const [interviewSessionId] = useState(() => {
+    return globalThis.crypto?.randomUUID
       ? globalThis.crypto.randomUUID()
       : `sr-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  }
+  });
+  const interviewSessionIdRef = useRef(interviewSessionId);
   const [candidateName] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("user") || "null")?.name || "";

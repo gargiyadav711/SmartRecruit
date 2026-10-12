@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { api } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
@@ -61,7 +61,10 @@ function AssessmentComplete() {
     }
   });
 
-  const proctoring = submissionData.proctoringAnalytics || {};
+  const proctoring = useMemo(
+    () => submissionData.proctoringAnalytics || {},
+    [submissionData.proctoringAnalytics]
+  );
   const [legacySyncMessage, setLegacySyncMessage] = useState("");
 
   useEffect(() => {
