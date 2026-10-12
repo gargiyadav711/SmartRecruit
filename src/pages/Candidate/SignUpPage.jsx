@@ -15,6 +15,7 @@ function SignUp({ role = "candidate" }) {
   });
 
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -27,7 +28,14 @@ function SignUp({ role = "candidate" }) {
       !formData.password ||
       !formData.confirmPassword
     ) {
+      setIsError(true);
       setMessage("Please fill all the fields.");
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      setIsError(true);
+      setMessage("Password must contain at least 8 characters.");
       return;
     }
 
@@ -35,22 +43,26 @@ function SignUp({ role = "candidate" }) {
     const hasDigit = /\d/.test(formData.password);
 
     if (!hasLetter || !hasDigit) {
+      setIsError(true);
       setMessage("Password must contain at least one letter and one digit.");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
+      setIsError(true);
       setMessage("Passwords do not match.");
       return;
     }
 
     if (!formData.agreeTerms) {
+      setIsError(true);
       setMessage("Please agree to the Terms of Service and Privacy Policy.");
       return;
     }
 
     setLoading(true);
     setMessage("");
+    setIsError(false);
 
     try {
       const response = await fetch(
@@ -70,7 +82,7 @@ function SignUp({ role = "candidate" }) {
         }
       );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
         throw new Error(
@@ -78,17 +90,19 @@ function SignUp({ role = "candidate" }) {
         );
       }
 
-      setMessage("Account created successfully! Redirecting to OTP verification...");
+      setIsError(false);
+      setMessage(data.message || "Account created successfully! Redirecting to OTP verification...");
       console.log("Backend response:", data);
 
       setTimeout(() => {
-        navigate("/candidate/verify-otp", {
+        navigate(role === "recruiter" ? "/recruiter/verify-otp" : "/candidate/verify-otp", {
           state: { email: formData.email, role },
         });
       }, 1500);
 
     } catch (error) {
       console.error("Signup error:", error);
+      setIsError(true);
       setMessage(
         error.message ||
           "Something went wrong. Please try again."
@@ -220,9 +234,9 @@ function SignUp({ role = "candidate" }) {
             </form>
 
             {message && (
-              <p className="message">
+              <div className={`message ${isError ? "error" : "success"}`}>
                 {message}
-              </p>
+              </div>
             )}
             <p className="login-text">
               Already have an account?{" "}
@@ -513,9 +527,22 @@ const StyledWrapper = styled.div`
   .message {
     text-align: center;
     font-size: 13px;
-    margin-top: 12px;
-    color: #2563EB;
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
     font-weight: 500;
+  }
+
+  .message.success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #15803d;
+  }
+
+  .message.error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
   }
 
   .login-text {
