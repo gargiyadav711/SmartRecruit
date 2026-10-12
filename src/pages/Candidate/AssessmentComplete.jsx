@@ -99,174 +99,210 @@ function AssessmentComplete() {
   }, [submissionData, proctoring]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex flex-col justify-between font-sans selection:bg-[#2563EB] selection:text-white">
-      <header className="bg-white border-b border-blue-100 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-[#2563EB] rounded-xl flex items-center justify-center font-black text-white text-xs shadow-md shadow-blue-500/20">
-            S
+    <div 
+      className="min-h-screen bg-[#F8FAFC] text-slate-800 flex selection:bg-[#2563EB] selection:text-white"
+      style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
+    >
+      <aside className="w-80 bg-[#0F172A] text-white p-6 flex flex-col justify-between hidden lg:flex select-none shadow-xl relative overflow-hidden sticky top-0 h-screen">
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div className="relative z-10 space-y-8">
+          <div className="flex items-center space-x-3">
+            <div className="w-9 h-9 rounded-xl bg-[#2563EB] text-white font-bold flex items-center justify-center text-base shadow-lg shadow-blue-500/30">
+              S
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-white tracking-tight leading-none">SmartRecruit</h1>
+              <p className="text-[10px] font-bold text-blue-400 tracking-wider uppercase mt-1">EVALUATION PORTAL</p>
+            </div>
           </div>
+
           <div>
-            <span className="font-bold text-sm tracking-tight text-[#0F172A] block">SmartRecruit</span>
-            <span className="text-[10px] text-[#2563EB] font-semibold uppercase tracking-wider">Candidate Portal</span>
+            <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-2.5">YOUR ASSESSMENT</p>
+            <div className="bg-slate-800/80 border border-slate-700/60 rounded-xl p-3.5 flex items-center space-x-3 backdrop-blur-md shadow-inner">
+              <div className="w-9 h-9 bg-[#2563EB] text-white rounded-lg flex items-center justify-center font-bold text-xs shadow-md">
+                {getInitials(submissionData.candidateName)}
+              </div>
+              <div className="overflow-hidden">
+                <p className="text-sm font-semibold text-white truncate">{submissionData.candidateName}</p>
+                <p className="text-xs text-slate-400 truncate">{submissionData.candidateEmail}</p>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="flex items-center space-x-4">
-          <span className="text-xs text-slate-500 hidden sm:inline">Assessment Complete & Verified</span>
-          
-          <div className="flex items-center space-x-2.5 bg-[#EFF6FF] border border-blue-100 pl-2 pr-3 py-1 rounded-xl">
-            <div className="w-7 h-7 bg-[#2563EB] text-white rounded-lg flex items-center justify-center text-xs font-bold shadow-sm">
-              {getInitials(submissionData.candidateName)}
-            </div>
-            <div className="text-left">
-              <span className="text-xs font-semibold text-[#0F172A] block leading-tight">{submissionData.candidateName}</span>
-              <span className="text-[9px] text-slate-500 block leading-tight">{submissionData.candidateEmail}</span>
-            </div>
-          </div>
-        </div>
-      </header>
-      {legacySyncMessage && (
-        <div role="status" className="max-w-7xl w-full mx-auto mt-4 px-4 sm:px-6 text-xs text-[#2563EB]">
-          {legacySyncMessage}
-        </div>
-      )}
-      <div className="max-w-7xl w-full mx-auto p-4 sm:p-6 my-6 flex flex-col lg:flex-row gap-6 flex-grow">
-        <aside className="w-full lg:w-80 bg-white border border-blue-100 rounded-2xl p-5 flex flex-col justify-between space-y-6 shadow-sm">
-          <div className="space-y-6">
-            
-            <div className="bg-[#EFF6FF] border border-blue-100 rounded-xl p-4 space-y-2">
-              <div className="flex items-center space-x-3">
+          <div>
+            <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-3">ASSESSMENT STEPS</p>
+            <div className="space-y-2.5">
+              <div className="flex items-start space-x-3 p-3 rounded-xl opacity-60">
+                <div className="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 text-blue-400 font-semibold text-xs flex items-center justify-center mt-0.5">
+                  ✓
+                </div>
                 <div>
-                  <span className="font-bold text-xs text-[#0F172A] block">{submissionData.candidateName}</span>
-                  <span className="text-[10px] text-slate-500 block">{submissionData.candidateEmail}</span>
+                  <p className="text-xs font-semibold text-slate-300">Instructions</p>
+                  <p className="text-[11px] text-slate-500">Completed</p>
                 </div>
               </div>
-              <div className="pt-2 border-t border-blue-100 flex justify-between text-[10px] text-slate-500">
-                <span>Candidate ID:</span>
-                <span className="font-mono text-[#2563EB] font-semibold">{submissionData.candidateId || "Not assigned"}</span>
-              </div>
-            </div>
 
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs font-semibold">
-                <span className="text-slate-500">Assessment Status</span>
-                <span className="text-[#2563EB] font-bold">Completed</span>
-              </div>
-              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden border border-slate-200">
-                <div className="bg-[#2563EB] h-full w-full"></div>
-              </div>
-              <p className="text-[11px] text-slate-500">All sections submitted successfully.</p>
-            </div>
-            <div className="space-y-3 pt-2">
-              <span className="text-[10px] font-bold tracking-wider uppercase text-[#2563EB] block">Session Summary</span>
-              <div className="space-y-2.5 text-xs">
-                <div className="flex items-center space-x-3 text-slate-700">
-                  <div className="w-5 h-5 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-[#2563EB] text-[10px]">✓</div>
-                  <div>
-                    <p className="font-semibold text-[#0F172A]">Technical Evaluation</p>
-                    <p className="text-[10px] text-slate-500">{submissionData.savedResponsesCount} responses recorded</p>
-                  </div>
+              <div className="flex items-start space-x-3 p-3 rounded-xl opacity-60">
+                <div className="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 text-blue-400 font-semibold text-xs flex items-center justify-center mt-0.5">
+                  ✓
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-slate-300">Permission check</p>
+                  <p className="text-[11px] text-slate-500">Verified</p>
                 </div>
               </div>
-            </div>
 
-            <div className="bg-[#EFF6FF] border border-blue-100 rounded-xl p-3 space-y-1">
-              <span className="text-[10px] text-slate-500 block uppercase">Receipt Reference</span>
-              <span className="font-mono font-bold text-xs text-[#2563EB]">{submissionData.receiptRef || "Not available"}</span>
+              <div className="flex items-start space-x-3 p-3 rounded-xl opacity-60">
+                <div className="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 text-blue-400 font-semibold text-xs flex items-center justify-center mt-0.5">
+                  ✓
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-slate-300">Assessment overview</p>
+                  <p className="text-[11px] text-slate-500">Completed</p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3 p-3.5 bg-blue-600/15 border border-blue-500/30 rounded-xl shadow-sm">
+                <div className="w-6 h-6 rounded-full bg-[#2563EB] text-white font-bold text-xs flex items-center justify-center mt-0.5 shadow-md shadow-blue-500/30">
+                  4
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-blue-400">Submission & Receipt</p>
+                  <p className="text-[11px] text-slate-300">Evaluation Saved</p>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
 
-        </aside>
-        <main className="flex-grow bg-white border border-blue-100 rounded-2xl p-6 sm:p-10 flex flex-col justify-between space-y-8 shadow-sm">
-          <div className="space-y-8">
-            
-            <div className="text-center space-y-4 py-4">
-              <div className="space-y-2 max-w-xl mx-auto">
-                <h1 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight">
-                  Assessment Submitted Successfully
-                </h1>
+        <div className="p-4 bg-slate-800/60 border border-slate-700/50 rounded-xl relative z-10 mt-6">
+          <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider mb-1">Receipt Reference</span>
+          <span className="font-mono font-bold text-xs text-blue-400 block truncate">{submissionData.receiptRef || "Not available"}</span>
+        </div>
+      </aside>
+      <div className="flex-1 flex flex-col min-h-screen">
+        <header className="bg-white/90 border-b border-blue-100 px-8 py-4 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md shadow-sm">
+          <div className="text-xs text-slate-500 font-medium flex items-center space-x-2">
+            <span>Candidate portal</span>
+            <span className="text-slate-300">/</span>
+            <span className="text-slate-800 font-semibold">Assessment Complete</span>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <span className="text-xs text-slate-500 hidden sm:inline font-medium">Verified Submission</span>
+            <div className="flex items-center space-x-2.5 bg-[#EFF6FF] border border-blue-100 px-3 py-1.5 rounded-xl">
+              <div className="w-7 h-7 bg-[#2563EB] text-white rounded-lg flex items-center justify-center font-bold text-xs shadow-sm">
+                {getInitials(submissionData.candidateName)}
               </div>
+              <span className="text-xs font-semibold text-[#0F172A]">{submissionData.candidateName}</span>
             </div>
-            <div className="bg-[#EFF6FF] border border-blue-100 rounded-xl overflow-hidden">
-              <div className="grid grid-cols-2 sm:grid-cols-4 p-4 text-[10px] font-bold text-[#2563EB] uppercase tracking-wider border-b border-blue-100">
-                <span>Assessment Title</span>
-                <span>Status</span>
-                <span>Responses Saved</span>
-                <span>Verification</span>
+          </div>
+        </header>
+
+        {legacySyncMessage && (
+          <div role="status" className="max-w-5xl w-full mx-auto mt-4 px-8 text-xs text-[#2563EB]">
+            {legacySyncMessage}
+          </div>
+        )}
+
+        <main className="max-w-5xl w-full mx-auto px-8 py-10 flex-grow flex flex-col justify-center space-y-8">
+          
+          <div>
+            <span className="text-[10px] font-bold text-[#2563EB] uppercase tracking-widest bg-blue-50 border border-blue-200 px-3 py-1 rounded-lg shadow-sm">
+              • STEP 4 OF 4 • COMPLETE
+            </span>
+            <h1 className="text-4xl sm:text-5xl font-black text-[#0F172A] mt-4 tracking-tight">
+              Assessment Submitted.
+            </h1>
+            <p className="text-slate-600 text-xs sm:text-sm mt-2 max-w-2xl leading-relaxed">
+              Your evaluation answers and proctoring telemetry logs have been saved securely.
+            </p>
+          </div>
+
+          <div className="bg-white border border-blue-100 rounded-2xl p-6 shadow-sm transition-all duration-300 hover:border-[#2563EB] hover:ring-4 hover:ring-blue-500/10">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-semibold text-[#0F172A]">
+              <div>
+                <span className="text-[10px] font-bold text-[#2563EB] uppercase tracking-wider block mb-1">Title</span>
+                <span className="text-slate-700 truncate block">{submissionData.assessmentTitle || "Technical Assessment"}</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 p-4 text-xs font-semibold text-[#0F172A] items-center">
-                <span className="text-slate-700 truncate pr-2">{submissionData.assessmentTitle}</span>
+              <div>
+                <span className="text-[10px] font-bold text-[#2563EB] uppercase tracking-wider block mb-1">Status</span>
                 <div className="flex items-center space-x-1.5 text-[#2563EB]">
                   <span className="w-2 h-2 rounded-full bg-[#2563EB] animate-pulse"></span>
                   <span>Evaluated</span>
                 </div>
-                <span className="font-mono text-slate-800">{submissionData.savedResponsesCount} Questions</span>
-                <span className="text-[#2563EB] font-mono">SECURE</span>
+              </div>
+              <div>
+                <span className="text-[10px] font-bold text-[#2563EB] uppercase tracking-wider block mb-1">Responses</span>
+                <span className="font-mono text-slate-800">{submissionData.savedResponsesCount} Saved</span>
+              </div>
+              <div>
+                <span className="text-[10px] font-bold text-[#2563EB] uppercase tracking-wider block mb-1">Security</span>
+                <span className="text-[#2563EB] font-mono">ENCRYPTED</span>
               </div>
             </div>
-            <div className="bg-[#EFF6FF] border border-blue-100 rounded-xl p-5 space-y-4">
-              <div className="flex items-center justify-between border-b border-blue-100 pb-3">
-                <div className="flex items-center space-x-2">
-                  <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#2563EB]">Proctoring Telemetry & Integrity Report</h3>
-                </div>
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-                  proctoring.visualActivityFlag === 'YES' ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-blue-100 text-[#2563EB] border border-blue-200'
-                }`}>
-                  Flag: {proctoring.visualActivityFlag || "NO"}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-                <div className="bg-white p-3 rounded-xl border border-blue-100 space-y-1">
-                  <span className="text-[10px] text-slate-500 block">Face Presence</span>
-                  <span className="font-mono font-bold text-[#0F172A] text-sm">{proctoring.facePresencePct ?? 0}%</span>
-                </div>
-                <div className="bg-white p-3 rounded-xl border border-blue-100 space-y-1">
-                  <span className="text-[10px] text-slate-500 block">Tab Switches</span>
-                  <span className={`font-mono font-bold text-sm ${proctoring.tabSwitchesCount > 0 ? 'text-amber-600' : 'text-[#2563EB]'}`}>
-                    {proctoring.tabSwitchesCount ?? 0} / 3
-                  </span>
-                </div>
-                <div className="bg-white p-3 rounded-xl border border-blue-100 space-y-1">
-                  <span className="text-[10px] text-slate-500 block">Max Faces</span>
-                  <span className="font-mono font-bold text-[#0F172A] text-sm">{proctoring.maxFacesDetected ?? 1}</span>
-                </div>
-                <div className="bg-white p-3 rounded-xl border border-blue-100 space-y-1">
-                  <span className="text-[10px] text-slate-500 block">Looking Away</span>
-                  <span className="font-mono font-bold text-[#0F172A] text-sm">{proctoring.lookingAwayEvents ?? 0} Events</span>
-                </div>
-              </div>
-
-              <div className="text-[11px] text-slate-600 bg-white p-3 rounded-xl border border-blue-100">
-                <strong className="text-[#0F172A] font-semibold">Integrity Status:</strong> {proctoring.flagReason || "Candidate posture and gaze stable within normal parameters."}
-              </div>
-            </div>
-
           </div>
 
-          <div className="space-y-4 pt-6 border-t border-blue-100">
-            <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
-              <span>Submitted on <strong className="text-[#0F172A]">{submissionData.submissionTime}</strong></span>
-              <span className="font-mono text-[11px]">User: {submissionData.candidateEmail}</span>
+          <div className="bg-white border border-blue-100 rounded-2xl p-6 shadow-sm transition-all duration-300 hover:border-[#2563EB] hover:ring-4 hover:ring-blue-500/10 space-y-5">
+            <div className="flex items-center justify-between border-b border-blue-100 pb-3">
+              <div className="flex items-center space-x-2">
+                <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#2563EB]">Proctoring Integrity Report</h3>
+              </div>
+              <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg ${
+                proctoring.visualActivityFlag === 'YES' ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-blue-50 text-[#2563EB] border border-blue-200'
+              }`}>
+                Flag: {proctoring.visualActivityFlag || "NO"}
+              </span>
             </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+              <div className="bg-[#EFF6FF] p-3.5 rounded-xl border border-blue-100 space-y-1">
+                <span className="text-[10px] text-slate-500 block font-bold uppercase tracking-wider">Face Presence</span>
+                <span className="font-mono font-bold text-[#0F172A] text-sm">{proctoring.facePresencePct ?? 0}%</span>
+              </div>
+              <div className="bg-[#EFF6FF] p-3.5 rounded-xl border border-blue-100 space-y-1">
+                <span className="text-[10px] text-slate-500 block font-bold uppercase tracking-wider">Tab Switches</span>
+                <span className={`font-mono font-bold text-sm ${proctoring.tabSwitchesCount > 0 ? 'text-amber-600' : 'text-[#2563EB]'}`}>
+                  {proctoring.tabSwitchesCount ?? 0} / 3
+                </span>
+              </div>
+              <div className="bg-[#EFF6FF] p-3.5 rounded-xl border border-blue-100 space-y-1">
+                <span className="text-[10px] text-slate-500 block font-bold uppercase tracking-wider">Max Faces</span>
+                <span className="font-mono font-bold text-[#0F172A] text-sm">{proctoring.maxFacesDetected ?? 1}</span>
+              </div>
+              <div className="bg-[#EFF6FF] p-3.5 rounded-xl border border-blue-100 space-y-1">
+                <span className="text-[10px] text-slate-500 block font-bold uppercase tracking-wider">Looking Away</span>
+                <span className="font-mono font-bold text-[#0F172A] text-sm">{proctoring.lookingAwayEvents ?? 0} Events</span>
+              </div>
+            </div>
+
+            <div className="text-xs text-slate-600 bg-[#EFF6FF] p-3.5 rounded-xl border border-blue-100 leading-relaxed">
+              <strong className="text-[#0F172A] font-bold">Integrity Status:</strong> {proctoring.flagReason || "Candidate posture and gaze stable within normal parameters."}
+            </div>
+          </div>
+
+          <div className="pt-6 border-t border-blue-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-xs text-slate-500">Submitted on <strong className="text-[#0F172A]">{submissionData.submissionTime}</strong></span>
 
             <button
               type="button"
               onClick={() => navigate("/")}
-              className="w-full py-3.5 bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.99] text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/20 transition-all cursor-pointer flex items-center justify-center space-x-2 border-none"
+              className="w-full sm:w-auto px-6 py-3 bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.99] text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/20 transition-all cursor-pointer border-none flex items-center justify-center space-x-2"
             >
               <span>Return to Dashboard</span>
+              <span>→</span>
             </button>
           </div>
+
         </main>
+
+        <footer className="py-5 px-8 bg-white border-t border-blue-100 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500">
+          <p>© SmartRecruit · Candidate assessment session</p>
+          <p>Session Verified & Terminated</p>
+        </footer>
       </div>
-
-      <footer className="bg-white border-t border-blue-100 px-6 py-4 flex items-center justify-between text-xs text-slate-500">
-        <span>© SmartRecruit AI Assessment Platform</span>
-        <span>Secure Session Terminated</span>
-      </footer>
-
     </div>
   );
 }

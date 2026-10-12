@@ -94,91 +94,105 @@ function CandidateSystemCheck() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex font-sans selection:bg-[#2563EB] selection:text-white">
-      <aside className="w-72 bg-white border-r border-blue-100 flex flex-col justify-between p-6 hidden lg:flex sticky top-0 h-screen overflow-y-auto">
-        <div>
-          <div className="flex items-center space-x-3 mb-8">
-            <div className="w-8 h-8 rounded-lg bg-[#2563EB] text-white font-bold flex items-center justify-center text-sm shadow-md shadow-blue-500/20">
+    <div 
+      className="min-h-screen bg-[#F8FAFC] text-slate-800 flex selection:bg-[#2563EB] selection:text-white"
+      style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
+    >
+      {/* Landing Page Styled Sidebar */}
+      <aside className="w-80 bg-[#0F172A] text-white p-6 flex flex-col justify-between hidden lg:flex select-none shadow-xl relative overflow-hidden sticky top-0 h-screen">
+        {/* Ambient background glow matching landing page design */}
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div className="relative z-10 space-y-8">
+          <div className="flex items-center space-x-3">
+            <div className="w-9 h-9 rounded-xl bg-[#2563EB] text-white font-bold flex items-center justify-center text-base shadow-lg shadow-blue-500/30">
               S
             </div>
             <div>
-              <h1 className="text-sm font-bold text-[#0F172A] tracking-tight">SmartRecruit</h1>
-              <p className="text-[10px] font-bold text-[#2563EB] tracking-wider uppercase">EVALUATION PORTAL</p>
+              <h1 className="text-lg font-bold text-white tracking-tight leading-none">SmartRecruit</h1>
+              <p className="text-[10px] font-bold text-blue-400 tracking-wider uppercase mt-1">EVALUATION PORTAL</p>
             </div>
           </div>
-          <div className="mb-8">
-            <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-3">YOUR ASSESSMENT</p>
-            <div className="bg-[#EFF6FF] border border-blue-100 rounded-xl p-3.5 flex items-center space-x-3">
-              <div className="w-9 h-9 bg-[#2563EB] text-white rounded-lg flex items-center justify-center font-bold text-xs shadow-sm">
+
+          <div>
+            <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-2.5">YOUR ASSESSMENT</p>
+            <div className="bg-slate-800/80 border border-slate-700/60 rounded-xl p-3.5 flex items-center space-x-3 backdrop-blur-md shadow-inner">
+              <div className="w-9 h-9 bg-[#2563EB] text-white rounded-lg flex items-center justify-center font-bold text-xs shadow-md">
                 {initials}
               </div>
               <div className="overflow-hidden">
-                <p className="text-sm font-semibold text-[#0F172A] leading-tight truncate">{candidateName}</p>
-                <p className="text-xs text-slate-500 truncate">{candidateEmail}</p>
+                <p className="text-sm font-semibold text-white truncate">{candidateName}</p>
+                <p className="text-xs text-slate-400 truncate">{candidateEmail}</p>
               </div>
             </div>
           </div>
+
           <div>
             <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-3">ASSESSMENT STEPS</p>
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <div
                 onClick={() => navigate("/candidate/instructions")}
-                className="flex items-start space-x-3 p-2.5 rounded-xl cursor-pointer hover:bg-blue-50 transition-colors"
+                className="flex items-start space-x-3 p-3 rounded-xl cursor-pointer hover:bg-slate-800/60 transition-colors group"
               >
+                <div className="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 text-blue-400 font-semibold text-xs flex items-center justify-center mt-0.5 group-hover:border-blue-500">
+                  ✓
+                </div>
                 <div>
-                  <p className="text-xs font-semibold text-slate-700">Instructions</p>
+                  <p className="text-xs font-semibold text-slate-300 group-hover:text-white">Instructions</p>
                   <p className="text-[11px] text-slate-500">Review before you begin</p>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-3 p-2.5 rounded-xl bg-blue-50 border border-blue-200">
-                <div className="w-6 h-6 rounded-full bg-[#2563EB] text-white font-bold text-xs flex items-center justify-center mt-0.5 shadow-sm shadow-blue-500/30">
+              <div className="flex items-start space-x-3 p-3.5 bg-blue-600/15 border border-blue-500/30 rounded-xl shadow-sm">
+                <div className="w-6 h-6 rounded-full bg-[#2563EB] text-white font-bold text-xs flex items-center justify-center mt-0.5 shadow-md shadow-blue-500/30">
                   2
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-[#2563EB]">Permission check</p>
-                  <p className="text-[11px] text-slate-600">Make sure your setup is ready</p>
+                  <p className="text-xs font-bold text-blue-400">Permission check</p>
+                  <p className="text-[11px] text-slate-300">Make sure your setup is ready</p>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-3 p-2.5 rounded-xl opacity-60">
-                <div className="w-6 h-6 rounded-full bg-slate-100 border border-slate-200 text-slate-500 font-semibold text-xs flex items-center justify-center mt-0.5">
+              <div className="flex items-start space-x-3 p-3.5 bg-slate-800/30 border border-slate-800 rounded-xl opacity-60">
+                <div className="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 text-slate-400 font-semibold text-xs flex items-center justify-center mt-0.5">
                   3
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-slate-500">Assessment overview</p>
-                  <p className="text-[11px] text-slate-400">See what's included</p>
+                  <p className="text-xs font-semibold text-slate-300">Assessment overview</p>
+                  <p className="text-[11px] text-slate-500">See what's included</p>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-3 p-2.5 rounded-xl opacity-60">
-                <div className="w-6 h-6 rounded-full bg-slate-100 border border-slate-200 text-slate-500 font-semibold text-xs flex items-center justify-center mt-0.5">
+              <div className="flex items-start space-x-3 p-3.5 bg-slate-800/30 border border-slate-800 rounded-xl opacity-60">
+                <div className="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 text-slate-400 font-semibold text-xs flex items-center justify-center mt-0.5">
                   4
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-slate-500">Assessment</p>
-                  <p className="text-[11px] text-slate-400">90 minutes</p>
+                  <p className="text-xs font-semibold text-slate-300">Assessment</p>
+                  <p className="text-[11px] text-slate-500">90 minutes</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-[#EFF6FF] border border-blue-100 rounded-xl p-4 mt-6">
-          <p className="text-xs font-bold text-[#0F172A] mb-1">Need help?</p>
-          <p className="text-[11px] text-slate-600 leading-relaxed mb-3">
+        <div className="p-4 bg-slate-800/60 border border-slate-700/50 rounded-xl relative z-10 mt-6">
+          <p className="text-xs font-bold text-white mb-1">Need help?</p>
+          <p className="text-[11px] text-slate-400 leading-relaxed mb-3">
             Having trouble with a device? Check your settings or contact support before you start.
           </p>
-          <button className="text-xs font-semibold text-[#2563EB] hover:underline flex items-center space-x-1 cursor-pointer bg-transparent border-none">
+          <button className="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center space-x-1 cursor-pointer bg-transparent border-none p-0 transition-colors">
             <span>Contact support</span>
           </button>
         </div>
       </aside>
 
       <div className="flex-1 flex flex-col min-h-screen">
-        <header className="bg-white border-b border-blue-100 px-8 py-3.5 flex items-center justify-between sticky top-0 z-20">
-          <div className="text-xs text-slate-500 font-medium">
-            Candidate portal <span className="text-slate-300 mx-2">/</span> <span className="text-slate-800">Permission check</span>
+        <header className="bg-white/90 border-b border-blue-100 px-8 py-3.5 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md shadow-sm">
+          <div className="text-xs text-slate-500 font-medium flex items-center space-x-2">
+            <span>Candidate portal</span>
+            <span className="text-slate-300">/</span>
+            <span className="text-slate-800 font-semibold">Permission check</span>
           </div>
 
           <div className="flex items-center space-x-4">

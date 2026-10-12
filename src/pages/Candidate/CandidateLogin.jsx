@@ -43,7 +43,10 @@ function CandidateLogin() {
   }
 
   return (
-    <div className="min-h-screen flex w-full overflow-hidden bg-white">
+    <div 
+      className="min-h-screen flex w-full overflow-hidden bg-white"
+      style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
+    >
       <div className="hidden md:block w-[58%] relative min-h-screen">
         <img src={loginImage} alt="Login illustration"
           className="absolute inset-0 w-full h-full object-cover scale-95 origin-center"/>
@@ -59,13 +62,13 @@ function CandidateLogin() {
 
           <div className="flex p-1 bg-slate-100 border border-slate-200 rounded-xl mt-6">
             <button type="button"
-              className="w-1/2 py-2.5 bg-[#2563EB] text-white font-medium rounded-lg shadow-sm transition-all"
+              className="w-1/2 py-2.5 bg-[#2563EB] text-white font-medium rounded-lg shadow-sm transition-all cursor-pointer"
               onClick={() => navigate("/candidate/login")}>
               I'm a Candidate
             </button>
             <button
               type="button"
-              className="w-1/2 py-2.5 text-slate-600 font-medium hover:text-slate-900 transition-all"
+              className="w-1/2 py-2.5 text-slate-600 font-medium hover:text-slate-900 transition-all cursor-pointer"
               onClick={() => navigate("/recruiter/login")}>
               I'm a Recruiter
             </button>
@@ -94,9 +97,9 @@ function CandidateLogin() {
                   className="w-full h-11 bg-white border border-slate-200 rounded-xl px-4 pr-12 text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] transition-all"
                   required/>
                 <button type="button" onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 text-sm"
+                  className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 text-sm cursor-pointer"
                 >
-                  {showPassword ? "!" : "👁"}
+                  <i className={showPassword ? "fa-solid fa-eye" : "fa-solid fa-eye-slash"}></i>
                 </button>
               </div>
             </div>

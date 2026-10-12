@@ -31,6 +31,14 @@ function SignUp({ role = "candidate" }) {
       return;
     }
 
+    const hasLetter = /[a-zA-Z]/.test(formData.password);
+    const hasDigit = /\d/.test(formData.password);
+
+    if (!hasLetter || !hasDigit) {
+      setMessage("Password must contain at least one letter and one digit.");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setMessage("Passwords do not match.");
       return;
@@ -155,7 +163,7 @@ function SignUp({ role = "candidate" }) {
                     className="input password-input"
                     type={showPassword ? "text" : "password"}
                     name="password"
-                    placeholder="Create a password"
+                    placeholder="Create a password (min 1 letter & 1 digit)"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   />
@@ -234,10 +242,6 @@ function SignUp({ role = "candidate" }) {
   );
 }
 
-// ===============================
-// STYLED COMPONENT
-// ===============================
-
 const StyledWrapper = styled.div`
   min-height: 100vh;
   display: flex;
@@ -245,33 +249,46 @@ const StyledWrapper = styled.div`
   justify-content: center;
   padding: 24px;
   background: #f8fafc;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Google Sans Flex', 'Google Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  @keyframes pageFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
   .main-layout {
     display: flex;
     max-width: 1200px;
     width: 100%;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
     background: #ffffff;
     border-radius: 24px;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
     overflow: hidden;
-    padding: 40px;
-    gap: 60px;
+    padding: 0;
+    gap: 0;
+    animation: pageFadeIn 0.5s ease-out forwards;
 
     @media (max-width: 900px) {
       flex-direction: column;
       padding: 24px;
       gap: 30px;
+      align-items: center;
     }
   }
 
   .illustration-section {
     flex: 1;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: stretch;
+    align-items: stretch;
     width: 100%;
 
     @media (max-width: 900px) {
@@ -282,21 +299,21 @@ const StyledWrapper = styled.div`
   .illustration-container {
     position: relative;
     width: 100%;
-    max-width: 500px;
-    height: 540px;
+    height: 100%;
+    min-height: 640px;
     background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    border-radius: 20px;
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+    box-shadow: none;
   }
 
   .illustration-img {
-    width: 85%;
-    height: 85%;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     z-index: 5;
     position: relative;
   }
@@ -305,7 +322,13 @@ const StyledWrapper = styled.div`
     flex: 1;
     display: flex;
     justify-content: center;
+    align-items: center;
     width: 100%;
+    padding: 40px;
+
+    @media (max-width: 900px) {
+      padding: 0;
+    }
   }
 
   .container {

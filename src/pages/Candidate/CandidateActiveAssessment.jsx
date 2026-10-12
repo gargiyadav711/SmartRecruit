@@ -605,7 +605,10 @@ function CandidateActiveAssessment() {
     : 0;
 if (questionsLoading) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex items-center justify-center p-6 font-sans">
+      <div 
+        className="min-h-screen bg-[#F8FAFC] text-slate-800 flex items-center justify-center p-6 selection:bg-[#2563EB] selection:text-white"
+        style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
+      >
         <div className="max-w-lg text-center space-y-3">
           <div className="text-xl font-bold text-[#0F172A]">Preparing your personalized interview</div>
           <p className="text-sm text-slate-500">SmartRecruit is loading the questions generated from your resume and GitHub profile. This may take a little while.</p>
@@ -616,7 +619,10 @@ if (questionsLoading) {
 
   if (questionsError || !currentQ) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex items-center justify-center p-6 font-sans">
+      <div 
+        className="min-h-screen bg-[#F8FAFC] text-slate-800 flex items-center justify-center p-6 selection:bg-[#2563EB] selection:text-white"
+        style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
+      >
         <div className="max-w-lg text-center space-y-4">
           <div className="text-xl font-bold text-[#0F172A]">Personalized questions unavailable</div>
           <p className="text-sm text-amber-700 bg-amber-50 p-3 rounded-xl border border-amber-200">{questionsError || "No questions were returned by the ML service."}</p>
@@ -632,13 +638,17 @@ if (questionsLoading) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 flex flex-col font-sans select-none">
+    <div 
+      className="min-h-screen bg-[#F8FAFC] text-slate-800 flex flex-col select-none selection:bg-[#2563EB] selection:text-white"
+      style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
+    >
       {submissionError && (
         <div role="alert" className="mx-4 mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
           Could not save assessment: {submissionError}. Your responses are still on this page; please retry submission.
           <button className="ml-3 underline font-bold" onClick={() => setSubmissionError("")}>Dismiss</button>
         </div>
       )}
+
       {warningModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-white border border-amber-200 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl text-center">
@@ -660,6 +670,7 @@ if (questionsLoading) {
           </div>
         </div>
       )}
+
       {submittedModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-white border border-blue-100 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl text-center">
@@ -679,7 +690,8 @@ if (questionsLoading) {
           </div>
         </div>
       )}
-      <header className="bg-white border-b border-blue-100 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+
+      <header className="bg-white/90 border-b border-blue-100 px-6 py-4 flex items-center justify-between sticky top-0 z-30 backdrop-blur-md shadow-sm">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 bg-[#2563EB] rounded-xl flex items-center justify-center font-black text-white text-xs shadow-md shadow-blue-500/20">
             S
@@ -704,90 +716,106 @@ if (questionsLoading) {
           </div>
         </div>
       </header>
+
       <div className="max-w-7xl w-full mx-auto p-4 sm:p-6 my-6 flex flex-col lg:flex-row gap-6 flex-grow">
-        <aside className="w-full lg:w-80 bg-white border border-blue-100 rounded-2xl p-5 flex flex-col justify-between space-y-6 shadow-sm">
-          <div className="space-y-6">
-            <div className="space-y-2">
+        
+        {/* Landing Page Dark Theme Sidebar */}
+        <aside className="w-full lg:w-80 bg-[#0F172A] text-white border border-slate-800 rounded-2xl p-5 flex flex-col justify-between space-y-6 shadow-xl relative overflow-hidden shrink-0">
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-blue-600/10 rounded-full blur-2xl pointer-events-none"></div>
+
+          <div className="space-y-6 relative z-10">
+            <div className="space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#2563EB]">Proctoring Feed</span>
-                <span className={`flex items-center space-x-1 text-[10px] px-2 py-0.5 rounded-full border ${visionStatus === "ready" && mlStatus === "ready" ? "text-[#2563EB] bg-blue-50 border-blue-200" : "text-amber-700 bg-amber-50 border-amber-200"}`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${visionStatus === "ready" && mlStatus === "ready" ? "bg-[#2563EB] animate-pulse" : "bg-amber-500"}`}></span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400">Proctoring Feed</span>
+                <span className={`flex items-center space-x-1 text-[10px] px-2 py-0.5 rounded-full border ${
+                  visionStatus === "ready" && mlStatus === "ready" 
+                    ? "text-blue-300 bg-blue-900/40 border-blue-500/30" 
+                    : "text-amber-300 bg-amber-900/40 border-amber-500/30"
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${visionStatus === "ready" && mlStatus === "ready" ? "bg-blue-400 animate-pulse" : "bg-amber-400"}`}></span>
                   <span>{visionStatus === "error" ? "Vision unavailable" : visionStatus !== "ready" ? "Loading face tracking" : mlStatus === "ready" ? "Live vision + XGBoost" : mlStatus === "error" ? "XGBoost unavailable" : "Collecting camera metrics"}</span>
                 </span>
               </div>
-              <div className="relative w-full h-36 bg-slate-900 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
+
+              <div className="relative w-full h-36 bg-slate-950 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center shadow-inner">
                 <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover transform -scale-x-100" />
                 {!cameraActive && (
                   <div className="absolute inset-0 flex items-center justify-center p-2 text-center bg-slate-950/90">
                     <p className="text-[10px] text-amber-400">{cameraError || "Camera starting..."}</p>
                   </div>
                 )}
-                <div className="absolute bottom-2 left-2 right-2 bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg flex items-center justify-between border border-white/10">
+                <div className="absolute bottom-2 left-2 right-2 bg-black/75 backdrop-blur-md px-2.5 py-1 rounded-lg flex items-center justify-between border border-white/10">
                   <span className="text-[9px] font-mono font-bold text-blue-400">{proctoringState.predictedActivity}</span>
                   <span className="text-[9px] font-mono text-slate-300">{(proctoringState.modelConfidence * 100).toFixed(0)}% score</span>
                 </div>
               </div>
-              {cameraError && <p role="status" className="mt-2 text-[10px] leading-relaxed text-amber-600">{cameraError}</p>}
-              {visionStatus === "ready" && <p className="mt-1 text-[10px] leading-relaxed text-slate-400">Face landmarks are processed locally in this browser; only summary metrics are sent to the classifier. Gaze direction is approximate.</p>}
+
+              {cameraError && <p role="status" className="mt-2 text-[10px] leading-relaxed text-amber-400">{cameraError}</p>}
+              {visionStatus === "ready" && <p className="mt-1 text-[10px] leading-relaxed text-slate-400">Face landmarks are processed locally; only summary metrics are evaluated by the ML model.</p>}
             </div>
-            <div className="space-y-3 bg-[#EFF6FF] border border-blue-100 rounded-xl p-3.5">
-              <div className="flex items-center justify-between border-b border-blue-100 pb-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#2563EB]">Activity Telemetry</span>
+
+            <div className="space-y-3 bg-slate-800/80 border border-slate-700/60 rounded-xl p-3.5 backdrop-blur-md">
+              <div className="flex items-center justify-between border-b border-slate-700/60 pb-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400">Activity Telemetry</span>
                 <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md ${
-                  proctoringState.visualActivityFlag === 'YES' ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-blue-100 text-[#2563EB] border border-blue-200'
+                  proctoringState.visualActivityFlag === 'YES' 
+                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' 
+                    : 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
                 }`}>
                   Flag: {proctoringState.visualActivityFlag}
                 </span>
               </div>
 
               <div className="space-y-1.5 text-[10px]">
-                <div className="flex justify-between text-slate-600">
+                <div className="flex justify-between text-slate-300">
                   <span>Face Presence:</span>
-                  <span className="font-mono font-semibold text-slate-900">{proctoringState.facePresencePct}%</span>
+                  <span className="font-mono font-semibold text-white">{proctoringState.facePresencePct}%</span>
                 </div>
-                <div className="flex justify-between text-slate-600">
+                <div className="flex justify-between text-slate-300">
                   <span>Tab Switches:</span>
-                  <span className={`font-mono font-bold ${tabSwitchCount > 0 ? 'text-amber-600' : 'text-slate-900'}`}>{tabSwitchCount} / 3</span>
+                  <span className={`font-mono font-bold ${tabSwitchCount > 0 ? 'text-amber-400' : 'text-white'}`}>{tabSwitchCount} / 3</span>
                 </div>
-                <div className="flex justify-between text-slate-600">
+                <div className="flex justify-between text-slate-300">
                   <span>Max Faces Detected:</span>
-                  <span className="font-mono font-semibold text-slate-900">{proctoringState.maxFacesDetected}</span>
+                  <span className="font-mono font-semibold text-white">{proctoringState.maxFacesDetected}</span>
                 </div>
-                <div className="flex justify-between text-slate-600">
+                <div className="flex justify-between text-slate-300">
                   <span>Looking Away Events:</span>
-                  <span className="font-mono font-semibold text-slate-900">{proctoringState.lookingAwayEventsCount}</span>
+                  <span className="font-mono font-semibold text-white">{proctoringState.lookingAwayEventsCount}</span>
                 </div>
               </div>
 
               {proctoringState.visualActivityFlag === 'YES' && (
-                <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-lg">
-                  <p className="text-[9px] text-amber-800 leading-relaxed"><strong className="font-bold">Reason:</strong> {proctoringState.flagReason}</p>
+                <div className="mt-2 p-2 bg-amber-950/40 border border-amber-800/60 rounded-lg">
+                  <p className="text-[9px] text-amber-300 leading-relaxed"><strong className="font-bold">Reason:</strong> {proctoringState.flagReason}</p>
                 </div>
               )}
             </div>
+
             <div className="space-y-2">
               <div className="flex justify-between text-xs font-semibold">
-                <span className="text-slate-500">Completion</span>
-                <span className="text-[#2563EB]">{progressPercentage}%</span>
+                <span className="text-slate-400">Completion</span>
+                <span className="text-blue-400">{progressPercentage}%</span>
               </div>
-              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden border border-slate-200">
+              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden border border-slate-700">
                 <div className="bg-[#2563EB] h-full transition-all duration-300" style={{ width: `${progressPercentage}%` }}></div>
               </div>
-              <div className="flex justify-between text-[10px] text-slate-500 pt-1">
+              <div className="flex justify-between text-[10px] text-slate-400 pt-1">
                 <span>Saved: {savedCount}</span>
                 <span>Skipped: {skippedCount}</span>
                 <span>Unattempted: {unattemptedCount}</span>
               </div>
             </div>
+
             <div className="space-y-3">
-              <span className="text-[10px] font-bold tracking-wider uppercase text-[#2563EB] block">Question Palette</span>
+              <span className="text-[10px] font-bold tracking-wider uppercase text-blue-400 block">Question Palette</span>
               <div className="grid grid-cols-4 gap-2">
                 {assessmentData.questions.map((q, idx) => {
                   const isCurrent = idx === currentQuestionIndex;
-                  let bgClass = "bg-slate-50 text-slate-700 border-slate-200 hover:bg-blue-50";
-                  if (q.status === "saved") bgClass = "bg-blue-50 text-[#2563EB] border-blue-200";
-                  if (q.status === "skipped") bgClass = "bg-amber-50 text-amber-700 border-amber-200";
-                  if (isCurrent) bgClass += " ring-2 ring-[#2563EB]";
+                  let bgClass = "bg-slate-800/60 text-slate-300 border-slate-700/60 hover:bg-slate-700/60";
+                  if (q.status === "saved") bgClass = "bg-blue-600/30 text-blue-300 border-blue-500/50";
+                  if (q.status === "skipped") bgClass = "bg-amber-600/30 text-amber-300 border-amber-500/50";
+                  if (isCurrent) bgClass += " ring-2 ring-blue-500 border-blue-500";
 
                   return (
                     <button
@@ -804,17 +832,17 @@ if (questionsLoading) {
                 })}
               </div>
             </div>
-
           </div>
 
           <button
             onClick={handleFinalSubmit}
             disabled={isSubmitting}
-            className="w-full py-3 bg-[#2563EB] hover:bg-[#1D4ED8] disabled:opacity-60 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/20 transition-all cursor-pointer border-none"
+            className="w-full py-3 bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.99] disabled:opacity-60 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/20 transition-all cursor-pointer border-none relative z-10"
           >
             {isSubmitting ? "Saving to backend…" : "Submit Assessment"}
           </button>
         </aside>
+
         <main className="flex-grow bg-white border border-blue-100 rounded-2xl p-6 sm:p-8 flex flex-col justify-between space-y-8 shadow-sm">
           
           <div className="space-y-6">
@@ -824,12 +852,13 @@ if (questionsLoading) {
             </div>
 
             <div className="space-y-2">
-              <span className="text-[11px] text-[#2563EB] font-medium block">{currentQ.mlCalibratedTag}</span>
+              <span className="text-[11px] text-[#2563EB] font-bold block">{currentQ.mlCalibratedTag}</span>
               <h1 className="text-lg sm:text-xl font-bold text-[#0F172A] leading-snug">
                 {currentQ.prompt}
               </h1>
               <p className="text-xs text-slate-500">{currentQ.instruction}</p>
             </div>
+
             <div className="space-y-3 pt-2">
               {currentQ.options.map((opt) => {
                 const isSelected = selectedOption === opt.id;
@@ -837,29 +866,30 @@ if (questionsLoading) {
                   <div
                     key={opt.id}
                     onClick={() => setSelectedOption(opt.id)}
-                    className={`p-4 rounded-xl border transition-all cursor-pointer flex items-start space-x-3.5 ${
+                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start space-x-3.5 ${
                       isSelected 
-                        ? 'bg-blue-50 border-[#2563EB] text-slate-900 shadow-sm' 
-                        : 'bg-white border-slate-200 text-slate-700 hover:border-blue-200 hover:bg-slate-50'
+                        ? 'bg-blue-50/70 border-[#2563EB] text-slate-900 shadow-sm ring-2 ring-blue-500/20' 
+                        : 'bg-white border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-slate-50'
                     }`}
                   >
-                    <div className={`w-6 h-6 rounded-lg border flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 ${
+                    <div className={`w-6 h-6 rounded-lg border flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 transition-colors ${
                       isSelected ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'border-slate-300 text-slate-500 bg-slate-50'
                     }`}>
                       {opt.id}
                     </div>
                     <div className="space-y-1">
-                      <p className="text-xs font-semibold text-[#0F172A]">{opt.title}</p>
+                      <p className="text-xs font-bold text-[#0F172A]">{opt.title}</p>
                       <p className="text-[11px] text-slate-500 leading-relaxed">{opt.desc}</p>
                     </div>
                   </div>
                 );
               })}
             </div>
+
             <div className="flex items-center justify-between pt-4">
               <button
                 onClick={handleSkipQuestion}
-                className="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300 text-xs font-semibold transition-all cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300 text-xs font-bold transition-all cursor-pointer"
               >
                 Skip Question →
               </button>
@@ -891,14 +921,12 @@ if (questionsLoading) {
                   handleNavigation("next");
                 }
               }}
-              className="px-4 py-2 text-xs font-semibold rounded-xl bg-white border border-blue-200 text-[#2563EB] hover:bg-blue-50 transition-all cursor-pointer"
+              className="px-4 py-2 text-xs font-bold rounded-xl bg-white border border-blue-200 text-[#2563EB] hover:bg-blue-50 transition-all cursor-pointer"
             >
               {currentQuestionIndex === totalQCount - 1 ? "Submit Assessment →" : "Next Question →"}
             </button>
           </div>
-
         </main>
-
       </div>
 
       <footer className="bg-white border-t border-blue-100 px-6 py-4 flex items-center justify-between text-xs text-slate-500">

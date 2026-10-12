@@ -12,10 +12,7 @@ function CandidateProfileCompletion() {
         githubUrl: ""
     });
 
-    const [resumeFile, setResumeFile] = useState({
-        name: "",
-        size: 2.4 * 1024 * 1024
-    });
+    const [resumeFile, setResumeFile] = useState(null);
 
     const [resumeError, setResumeError] = useState("");
     const [saving, setSaving] = useState(false);
@@ -41,9 +38,22 @@ function CandidateProfileCompletion() {
         }
     };
 
+    const isFormValid = Boolean(
+        formData.fullName.trim() &&
+        formData.email.trim() &&
+        formData.phone.trim() &&
+        formData.college.trim() &&
+        !resumeError
+    );
+
     // Uploads resume + GitHub URL to the backend (which calls the ML service).
     // If nothing new was chosen, behaves exactly as before and just continues.
     const handleSaveAndContinue = async () => {
+        if (!isFormValid) {
+            setSaveError("Please fill in all required profile details.");
+            return;
+        }
+
         if (resumeError) return;
         setSaveError("");
 
@@ -69,7 +79,7 @@ function CandidateProfileCompletion() {
     };
 
     const formatFileSize = (bytes) => {
-        if (bytes === 0) return "0 Bytes";
+        if (!bytes || bytes === 0) return "0 Bytes";
         const k = 1024;
         const sizes = ["Bytes", "KB", "MB", "GB"];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -77,7 +87,10 @@ function CandidateProfileCompletion() {
     };
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] text-[#1E293B] flex flex-col justify-between font-sans selection:bg-[#2563EB] selection:text-white">
+        <div 
+            className="min-h-screen bg-[#F8FAFC] text-[#1E293B] flex flex-col justify-between selection:bg-[#2563EB] selection:text-white"
+            style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
+        >
             <header className="bg-white/90 backdrop-blur-md border-b border-blue-100 px-6 py-3.5 flex items-center justify-between sticky top-0 z-30 shadow-sm">
                 <div className="flex items-center space-x-3">
                     <div className="w-7 h-7 bg-[#2563EB] rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-md shadow-blue-500/20">
@@ -113,11 +126,12 @@ function CandidateProfileCompletion() {
                 <div className="flex-grow space-y-8">
                     <div className="space-y-2">
                         <span className="text-[11px] font-bold tracking-wider uppercase text-[#2563EB]">1 CANDIDATE PROFILE & APPLICATION</span>
-                        <h1 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight">Complete your profile.</h1>
+                        <h1 className="text-5xl sm:text-6xl font-bold text-[#0F172A] tracking-tight">Complete your profile.</h1>
                         <p className="text-slate-600 text-xs sm:text-sm">
                             A few details help the hiring team put your work in context. You can review everything before you continue.
                         </p>
                     </div>
+
                     <div className="space-y-4 pt-2">
                         <div className="flex justify-between items-center">
                             <h2 className="text-base font-bold text-[#0F172A]">Your details</h2>
@@ -197,7 +211,7 @@ function CandidateProfileCompletion() {
                                 <div className="space-y-0.5 overflow-hidden">
                                     <div className="flex items-center space-x-2">
                                         <span className="font-bold text-xs sm:text-sm text-[#0F172A] truncate">
-                                            {resumeFile ? resumeFile.name : "Upload your resume (PDF/DOCX)"}
+                                            {resumeFile ? resumeFile.name : "Upload the doc"}
                                         </span>
                                     </div>
                                     <p className="text-[11px] text-slate-500">
@@ -208,17 +222,21 @@ function CandidateProfileCompletion() {
 
                             <div className="flex items-center space-x-3 w-full sm:w-auto justify-end text-xs font-semibold">
                                 <label className="text-[#2563EB] hover:underline cursor-pointer">
-                                    <span>Replace file</span>
+                                    <span>{resumeFile ? "Replace file" : "Upload file"}</span>
                                     <input type="file" accept=".pdf,.docx" onChange={handleFileUpload} className="hidden" />
                                 </label>
-                                <span className="text-slate-300">|</span>
-                                <button
-                                    type="button"
-                                    onClick={() => alert("Previewing resume...")}
-                                    className="text-[#2563EB] hover:underline cursor-pointer bg-transparent border-none"
-                                >
-                                    Preview
-                                </button>
+                                {resumeFile && (
+                                    <>
+                                        <span className="text-slate-300">|</span>
+                                        <button
+                                            type="button"
+                                            onClick={() => alert("Previewing resume...")}
+                                            className="text-[#2563EB] hover:underline cursor-pointer bg-transparent border-none"
+                                        >
+                                            Preview
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </div>
 
@@ -269,10 +287,10 @@ function CandidateProfileCompletion() {
                     <div className="pt-6 border-t border-blue-100 flex flex-col sm:flex-row items-center justify-between gap-4">
                         <button
                             type="button"
-                            disabled={Boolean(resumeError) || saving}
+                            disabled={!isFormValid || saving}
                             onClick={handleSaveAndContinue}
                             className={`w-full sm:w-auto px-6 py-3 font-bold text-xs rounded-xl transition-all shadow-lg flex items-center justify-center space-x-2 ${
-                                resumeError 
+                                !isFormValid
                                     ? 'bg-slate-200 text-slate-400 cursor-not-allowed opacity-60 shadow-none' 
                                     : 'bg-[#2563EB] hover:bg-[#1D4ED8] text-white cursor-pointer shadow-blue-500/20'
                             }`}
