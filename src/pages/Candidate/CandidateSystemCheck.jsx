@@ -94,7 +94,7 @@ function CandidateSystemCheck() {
   }
 
   return (
-    <div 
+    <div
       className="min-h-screen bg-[#F8FAFC] text-slate-800 flex selection:bg-[#2563EB] selection:text-white"
       style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
     >
@@ -346,7 +346,7 @@ function CandidateSystemCheck() {
             <button
               type="button"
               onClick={() => navigate("/candidate/instructions")}
-              className="text-xs font-semibold text-slate-500 hover:text-[#0F172A] transition-colors cursor-pointer flex items-center space-x-1.5 bg-transparent border-none"
+              className="text-xs font-semibold text-slate-500 hover:text-[#0F172A] transition-colors cursor-pointer flex items-center space-x-1.5 border border-blue-500 px-3 py-1.5 rounded-md bg-transparent"
             >
               <span>Back to instructions</span>
             </button>

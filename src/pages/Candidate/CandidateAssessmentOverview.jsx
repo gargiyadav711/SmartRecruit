@@ -309,9 +309,8 @@ function CandidateAssessmentOverview() {
             <button
               type="button"
               onClick={() => navigate("/candidate/system-check")}
-              className="text-xs font-semibold text-slate-500 hover:text-[#0F172A] transition-colors cursor-pointer flex items-center space-x-1.5 bg-transparent border-none p-0"
+              className="text-xs font-semibold text-slate-500 hover:text-[#0F172A] transition-colors cursor-pointer flex items-center space-x-1.5 border border-blue-500 px-3 py-1.5 rounded-md bg-transparent"
             >
-              <span>←</span>
               <span>Back to System Check</span>
             </button>
 
