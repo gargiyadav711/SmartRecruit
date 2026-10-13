@@ -37,7 +37,7 @@ export default function RequireRecruiter({ children }) {
   }, []);
 
   if (state === "checking") {
-    return <div className="min-h-screen bg-[#021810] text-white flex items-center justify-center">Verifying recruiter session…</div>;
+    return <div className="min-h-screen bg-[#0F172A] text-white flex items-center justify-center">Verifying recruiter session…</div>;
   }
   if (state !== "authenticated") return <Navigate to="/recruiter/login" replace />;
   return children;
