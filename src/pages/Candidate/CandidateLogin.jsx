@@ -32,7 +32,7 @@ function CandidateLogin() {
 
       setMessage("Login successful!");
       setTimeout(() => {
-        navigate("/candidate/profile", { replace: true });
+        navigate("/", { replace: true });
       }, 500);
     } catch (error) {
       console.error("Login error:", error);

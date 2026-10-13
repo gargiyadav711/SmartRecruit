@@ -5,12 +5,23 @@ import logo from "./logo.jpeg";
 
 function CandidateProfileCompletion({ signupName = "" }) {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        fullName: signupName,
-        email: "",
-        phone: "",
-        college: "",
-        githubUrl: ""
+    const [formData, setFormData] = useState(() => {
+        let storedName = signupName;
+        let storedEmail = "";
+        try {
+            const user = JSON.parse(localStorage.getItem("user") || "null");
+            if (user) {
+                if (!storedName) storedName = user.name || "";
+                storedEmail = user.email || "";
+            }
+        } catch {}
+        return {
+            fullName: storedName,
+            email: storedEmail,
+            phone: "",
+            college: "",
+            githubUrl: ""
+        };
     });
 
     const [resumeFile, setResumeFile] = useState(null);
