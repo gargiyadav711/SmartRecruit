@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-
+import logo from "./logo.jpeg";
 function CandidateSystemCheck() {
   const navigate = useNavigate();
 
@@ -98,15 +98,17 @@ function CandidateSystemCheck() {
       className="min-h-screen bg-[#F8FAFC] text-slate-800 flex selection:bg-[#2563EB] selection:text-white"
       style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
     >
-      {/* Landing Page Styled Sidebar */}
       <aside className="w-80 bg-[#0F172A] text-white p-6 flex flex-col justify-between hidden lg:flex select-none shadow-xl relative overflow-hidden sticky top-0 h-screen">
-        {/* Ambient background glow matching landing page design */}
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="relative z-10 space-y-8">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-[#2563EB] text-white font-bold flex items-center justify-center text-base shadow-lg shadow-blue-500/30">
-              S
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center border border-blue-300/40 shrink-0 overflow-hidden">
+              <img
+                src={logo}
+                alt="SmartRecruit Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
               <h1 className="text-lg font-bold text-white tracking-tight leading-none">SmartRecruit</h1>

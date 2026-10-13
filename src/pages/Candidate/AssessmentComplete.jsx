@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { api } from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import logo from "./logo.jpeg";
 
 const getInitials = (name = "") => {
   const parts = name.trim().split(" ").filter(Boolean);
@@ -102,7 +103,7 @@ function AssessmentComplete() {
   }, [submissionData, proctoring]);
 
   return (
-    <div 
+    <div
       className="min-h-screen bg-[#F8FAFC] text-slate-800 flex selection:bg-[#2563EB] selection:text-white"
       style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
     >
@@ -111,9 +112,14 @@ function AssessmentComplete() {
 
         <div className="relative z-10 space-y-8">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-[#2563EB] text-white font-bold flex items-center justify-center text-base shadow-lg shadow-blue-500/30">
-              S
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center border border-blue-300/40 shrink-0 overflow-hidden">
+              <img
+                src={logo}
+                alt="SmartRecruit Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
+            <div></div>
             <div>
               <h1 className="text-lg font-bold text-white tracking-tight leading-none">SmartRecruit</h1>
               <p className="text-[10px] font-bold text-blue-400 tracking-wider uppercase mt-1">EVALUATION PORTAL</p>
@@ -210,7 +216,7 @@ function AssessmentComplete() {
         )}
 
         <main className="max-w-5xl w-full mx-auto px-8 py-10 flex-grow flex flex-col justify-center space-y-8">
-          
+
           <div>
             <span className="text-[10px] font-bold text-[#2563EB] uppercase tracking-widest bg-blue-50 border border-blue-200 px-3 py-1 rounded-lg shadow-sm">
               • STEP 4 OF 4 • COMPLETE
@@ -253,9 +259,8 @@ function AssessmentComplete() {
                 <span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[#2563EB]">Proctoring Integrity Report</h3>
               </div>
-              <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg ${
-                proctoring.visualActivityFlag === 'YES' ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-blue-50 text-[#2563EB] border border-blue-200'
-              }`}>
+              <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg ${proctoring.visualActivityFlag === 'YES' ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-blue-50 text-[#2563EB] border border-blue-200'
+                }`}>
                 Flag: {proctoring.visualActivityFlag || "NO"}
               </span>
             </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import logo from "./logo.jpeg";
 function CandidateAssessmentOverview() {
   const navigate = useNavigate();
 
@@ -27,7 +27,7 @@ function CandidateAssessmentOverview() {
   }
 
   return (
-    <div 
+    <div
       className="min-h-screen bg-[#F8FAFC] text-slate-800 flex selection:bg-[#2563EB] selection:text-white"
       style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
     >
@@ -36,9 +36,14 @@ function CandidateAssessmentOverview() {
 
         <div className="relative z-10 space-y-8">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-[#2563EB] text-white font-bold flex items-center justify-center text-base shadow-lg shadow-blue-500/30">
-              S
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center border border-blue-300/40 shrink-0 overflow-hidden">
+              <img
+                src={logo}
+                alt="SmartRecruit Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
+
             <div>
               <h1 className="text-lg font-bold text-white tracking-tight leading-none">SmartRecruit</h1>
               <p className="text-[10px] font-bold text-blue-400 tracking-wider uppercase mt-1">EVALUATION PORTAL</p>
@@ -61,7 +66,7 @@ function CandidateAssessmentOverview() {
           <div>
             <p className="text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-3">ASSESSMENT STEPS</p>
             <div className="space-y-2.5">
-              <div 
+              <div
                 onClick={() => navigate("/candidate/instructions")}
                 className="flex items-start space-x-3 p-3 rounded-xl cursor-pointer hover:bg-slate-800/60 transition-colors group"
               >
@@ -74,7 +79,7 @@ function CandidateAssessmentOverview() {
                 </div>
               </div>
 
-              <div 
+              <div
                 onClick={() => navigate("/candidate/system-check")}
                 className="flex items-start space-x-3 p-3 rounded-xl cursor-pointer hover:bg-slate-800/60 transition-colors group"
               >

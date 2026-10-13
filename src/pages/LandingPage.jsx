@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import landingImage from "./Candidate/landing.jpeg";
+import logo from "./Candidate/logo.jpeg";
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -20,14 +22,12 @@ function LandingPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(initialAuth.isLoggedIn);
   const [userName] = useState(initialAuth.userName);
   const [userRole] = useState(initialAuth.userRole);
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setIsLoggedIn(false);
     navigate("/");
   };
-
   const featuresList = [
     {
       icon: "fa-solid fa-arrow-right rotate-[-45deg]",
@@ -42,7 +42,7 @@ function LandingPage() {
       action: "View the candidate experience →",
     },
     {
-      icon: "fa-solid fa-[#142B43] fa-shield-halved",
+      icon: "fa-solid fa-shield-halved",
       title: "Secure session controls",
       description: "Set expectations before the assessment and keep session information visible to candidates.",
       action: "Learn about the process →",
@@ -54,49 +54,44 @@ function LandingPage() {
       action: "Explore team review →",
     },
   ];
-
   return (
-    <div 
+    <div
       className="min-h-screen bg-[#F5F7FB] text-[#172554] flex flex-col md:flex-row selection:bg-[#2563EB] selection:text-white scroll-smooth"
       style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
     >
       <style>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
+ @keyframes fadeInUp {
+ from {
+opacity: 0;
+transform: translateY(20px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+ }
+.animate-hero-badge {
+animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-hero-title {
+animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+ opacity: 0;
+}
+.animate-hero-desc {
+ animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+opacity: 0;
+}
 
-        .animate-hero-badge {
-          animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
+.animate-hero-cta {
+ animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards;
+opacity: 0;
+}
+.animate-hero-footer {
+animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+opacity: 0;
+}
 
-        .animate-hero-title {
-          animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
-          opacity: 0;
-        }
-
-        .animate-hero-desc {
-          animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
-          opacity: 0;
-        }
-
-        .animate-hero-cta {
-          animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards;
-          opacity: 0;
-        }
-
-        .animate-hero-footer {
-          animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
-          opacity: 0;
-        }
-      `}</style>
-
+`}</style>
       <aside className="w-full md:w-[240px] h-auto md:h-screen bg-[#142B43] text-slate-400 border-b md:border-b-0 md:border-r border-[#CBD5E1] p-4 flex flex-col justify-between md:sticky md:top-0 shrink-0 overflow-y-auto">
         <div className="flex flex-col gap-5">
           <div
@@ -104,8 +99,12 @@ function LandingPage() {
             onClick={() => navigate(userRole === "recruiter" ? "/recruiter/dashboard" : "/")}
           >
             <div className="flex items-center gap-[10px]">
-              <div className="w-9 h-9 bg-[#2866B9] text-white rounded-xl flex items-center justify-center font-black text-sm border border-blue-300/40 shrink-0">
-                S
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center border border-blue-300/40 shrink-0 overflow-hidden">
+                <img
+                  src={logo}
+                  alt="SmartRecruit Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div className="flex flex-col">
                 <span className="text-base font-bold tracking-tight text-[#FFFFFF] leading-none">
@@ -241,43 +240,89 @@ function LandingPage() {
           </div>
         </header>
 
-        <section id="overview" className="max-w-5xl mx-auto w-full px-4 sm:px-6 py-12 md:py-20 flex flex-col justify-center">
-          <div className="flex flex-col gap-6 max-w-2xl w-full">
-            <div className="animate-hero-badge flex items-center gap-2 text-[#2563EB] text-xs uppercase tracking-widest font-semibold">
-              <span className="w-2 h-2 rounded-full bg-[#2563EB] animate-pulse"></span>
-              A more thoughtful way to hire
+        <section
+          id="overview"
+          className="max-w-6xl mx-auto w-full px-4 sm:px-6 py-12 md:py-16"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+            <div className="flex flex-col gap-6 w-full">
+              <div className="animate-hero-badge flex items-center gap-2 text-[#2563EB] text-xs uppercase tracking-widest font-semibold">
+                <span className="w-2 h-2 rounded-full bg-[#2563EB] animate-pulse"></span>
+                A more thoughtful way to hire
+              </div>
+
+              <h1 className="animate-hero-title text-3xl sm:text-5xl lg:text-6xl font-bold text-[#111e2e] leading-[1.1] tracking-tight">
+                Assess skills beyond the resume.
+              </h1>
+
+              <p className="animate-hero-desc text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
+                Give candidates a fair chance to show how they think, communicate,
+                and build. SmartRecruit brings technical questions, coding exercises,
+                and spoken responses into one clear review for your team.
+              </p>
+
+              <div className="animate-hero-cta flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2">
+                <button
+                  onClick={() =>
+                    navigate(
+                      isLoggedIn
+                        ? userRole === "recruiter"
+                          ? "/recruiter/dashboard"
+                          : "/candidate/instructions"
+                        : "/candidate/SignUpPage"
+                    )
+                  }
+                  className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-6 py-3 rounded-lg font-bold tracking-wide transition-all cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Get started
+                  <i className="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+
+                <button
+                  onClick={() =>
+                    document
+                      .getElementById("features")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                  className="bg-white hover:bg-blue-50 text-black border border-blue-200 px-6 py-3 rounded-lg font-bold tracking-wide transition-all cursor-pointer text-center hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Explore the platform
+                </button>
+              </div>
+
+              <div className="animate-hero-footer flex flex-wrap items-center gap-4 sm:gap-6 pt-2 text-xs text-slate-600 font-medium">
+                <span className="flex items-center gap-1.5">
+                  <i className="fa-solid fa-lock text-[#2563EB]"></i>
+                  Secure sessions
+                </span>
+
+                <span className="flex items-center gap-1.5">
+                  <i className="fa-solid fa-check text-[#2563EB]"></i>
+                  Consistent review
+                </span>
+
+                <span>Candidate-friendly flow</span>
+              </div>
             </div>
 
-            <h1 className="animate-hero-title text-3xl sm:text-5xl lg:text-6xl font-bold text-[#111e2e] leading-[1.1] tracking-tight">
-              Assess skills beyond the resume.
-            </h1>
+            <div className="relative w-full flex justify-center lg:justify-end">
+              <div className="relative w-full flex justify-center lg:justify-end">
+                <div className="relative w-full max-w-[520px]">
+                  <img
+                    src={landingImage}
+                    alt="SmartRecruit technical hiring platform"
+                    className="w-full h-[280px] sm:h-[380px] lg:h-[460px] object-cover rounded-2xl"
+                    style={{
+                      maskImage:
+                        "linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)",
+                      WebkitMaskImage:
+                        "linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)",
+                    }}
+                  />
 
-            <p className="animate-hero-desc text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
-              Give candidates a fair chance to show how they think, communicate, and build. SmartRecruit brings technical questions, coding exercises, and spoken responses into one clear review for your team.
-            </p>
-
-            <div className="animate-hero-cta flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2">
-              <button
-                onClick={() => navigate(isLoggedIn ? (userRole === "recruiter" ? "/recruiter/dashboard" : "/candidate/instructions") : "/candidate/SignUpPage")}
-                className="bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-6 py-3 rounded-lg font-bold tracking-wide transition-all cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
-              >
-                Get started <i className="fa-solid fa-arrow-right text-xs"></i>
-              </button>
-              <button
-                onClick={() => {
-                  const featuresEl = document.getElementById("features");
-                  featuresEl?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="bg-white hover:bg-blue-50 text-black border border-blue-200 px-6 py-3 rounded-lg font-bold tracking-wide transition-all cursor-pointer text-center hover:scale-[1.02] active:scale-[0.98]"
-              >
-                Explore the platform
-              </button>
-            </div>
-
-            <div className="animate-hero-footer flex flex-wrap items-center gap-4 sm:gap-6 pt-4 text-xs text-slate-600 font-medium">
-              <span className="flex items-center gap-1.5"><i className="fa-solid fa-lock text-[#2563EB]"></i> Secure sessions</span>
-              <span className="flex items-center gap-1.5"><i className="fa-solid fa-check text-[#2563EB]"></i> Consistent review</span>
-              <span className="flex items-center gap-1.5">Candidate-friendly flow</span>
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-white/40 via-transparent to-white/20 pointer-events-none"></div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -410,7 +455,6 @@ function LandingPage() {
             <span className="font-bold text-[#172554]">SmartRecruit</span>
             <span className="text-slate-500">— Technical hiring workspace</span>
           </div>
-
           <div className="flex gap-6 font-medium">
             <a href="#" className="hover:text-[#2563EB] transition-colors">Privacy</a>
             <a href="#" className="hover:text-[#2563EB] transition-colors">Terms</a>
@@ -421,5 +465,4 @@ function LandingPage() {
     </div>
   );
 }
-
 export default LandingPage;

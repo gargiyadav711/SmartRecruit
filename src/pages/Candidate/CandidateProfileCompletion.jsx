@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiUpload } from "../../services/api";
+import logo from "./logo.jpeg";
 
-function CandidateProfileCompletion() {
+function CandidateProfileCompletion({ signupName = "" }) {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        fullName: "",
+        fullName: signupName,
         email: "",
         phone: "",
         college: "",
@@ -87,14 +88,18 @@ function CandidateProfileCompletion() {
     };
 
     return (
-        <div 
+        <div
             className="min-h-screen bg-[#F8FAFC] text-[#1E293B] flex flex-col justify-between selection:bg-[#2563EB] selection:text-white"
             style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
         >
             <header className="bg-white/90 backdrop-blur-md border-b border-blue-100 px-6 py-3.5 flex items-center justify-between sticky top-0 z-30 shadow-sm">
                 <div className="flex items-center space-x-3">
-                    <div className="w-7 h-7 bg-[#2563EB] rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-md shadow-blue-500/20">
-                        S
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center border border-blue-300/40 shrink-0 overflow-hidden">
+                        <img
+                            src={logo}
+                            alt="SmartRecruit Logo"
+                            className="w-full h-full object-contain"
+                        />
                     </div>
                     <div>
                         <span className="font-bold text-sm tracking-tight text-[#0F172A] block">SmartRecruit</span>
@@ -289,10 +294,9 @@ function CandidateProfileCompletion() {
                             type="button"
                             disabled={!isFormValid || saving}
                             onClick={handleSaveAndContinue}
-                            className={`w-full sm:w-auto px-6 py-3 font-bold text-xs rounded-xl transition-all shadow-lg flex items-center justify-center space-x-2 ${
-                                !isFormValid
-                                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed opacity-60 shadow-none' 
-                                    : 'bg-[#2563EB] hover:bg-[#1D4ED8] text-white cursor-pointer shadow-blue-500/20'
+                            className={`w-full sm:w-auto px-6 py-3 font-bold text-xs rounded-xl transition-all shadow-lg flex items-center justify-center space-x-2 ${!isFormValid
+                                ? 'bg-slate-200 text-slate-400 cursor-not-allowed opacity-60 shadow-none'
+                                : 'bg-[#2563EB] hover:bg-[#1D4ED8] text-white cursor-pointer shadow-blue-500/20'
                             }`}
                         >
                             <span>{saving ? "Analyzing your profile..." : "Save and continue"}</span>

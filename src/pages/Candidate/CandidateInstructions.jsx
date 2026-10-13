@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import logo from "./logo.jpeg";
 
 function CandidateInstructions() {
   const navigate = useNavigate();
@@ -41,9 +42,13 @@ function CandidateInstructions() {
 
         <div className="relative z-10">
           <div className="flex items-center space-x-3 mb-10">
-            <div className="w-9 h-9 rounded-xl bg-[#2563EB] flex items-center justify-center font-bold text-white text-base shadow-lg shadow-blue-500/30">
-              S
-            </div>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center border border-blue-300/40 shrink-0 overflow-hidden">
+                            <img
+                              src={logo}
+                              alt="SmartRecruit Logo"
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
             <div>
               <span className="text-lg font-bold text-white tracking-tight block leading-none">
                 SmartRecruit

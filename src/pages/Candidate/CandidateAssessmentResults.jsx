@@ -57,15 +57,19 @@ function CandidateAssessmentResults() {
   const hasAssessment = resultsData && (resultsData.questions?.length > 0 || resultsData.overallScore !== undefined);
 
   return (
-    <div 
+    <div
       className="min-h-screen bg-[#F8FAFC] text-slate-800 flex flex-col justify-between selection:bg-[#2563EB] selection:text-white"
       style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
     >
       <header className="bg-white border-b border-blue-100 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm">
         <div className="flex items-center space-x-6">
           <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate("/")}>
-            <div className="w-8 h-8 bg-[#2563EB] rounded-xl flex items-center justify-center font-black text-white text-xs shadow-md shadow-blue-500/20">
-              S
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center border border-blue-300/40 shrink-0 overflow-hidden">
+              <img
+                src={logo}
+                alt="SmartRecruit Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
             <span className="font-bold text-sm tracking-tight text-[#0F172A]">SmartRecruit</span>
           </div>
@@ -128,7 +132,7 @@ function CandidateAssessmentResults() {
                   Review your performance, learn from technical rationales, and explore tailored potential career opportunities based on verified competence.
                 </p>
               </div>
-              <button 
+              <button
                 onClick={() => window.print()}
                 className="self-start md:self-auto bg-white hover:bg-blue-50 border border-blue-200 text-[#2563EB] px-4 py-2.5 rounded-xl text-xs font-mono font-semibold transition-all shadow-sm flex items-center gap-2 cursor-pointer"
               >
@@ -216,19 +220,19 @@ function CandidateAssessmentResults() {
                   <p className="text-xs text-slate-500 mt-0.5">Detailed breakdown of questions, your submitted responses, and verified rationales.</p>
                 </div>
                 <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-mono">
-                  <button 
+                  <button
                     onClick={() => setFilterTab("all")}
                     className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer border-none ${filterTab === "all" ? "bg-white text-[#2563EB] shadow-sm font-bold" : "text-slate-600 bg-transparent"}`}
                   >
                     All Questions ({totalQ})
                   </button>
-                  <button 
+                  <button
                     onClick={() => setFilterTab("correct")}
                     className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer border-none ${filterTab === "correct" ? "bg-white text-[#2563EB] shadow-sm font-bold" : "text-slate-600 bg-transparent"}`}
                   >
                     Correct ({correctCount})
                   </button>
-                  <button 
+                  <button
                     onClick={() => setFilterTab("incorrect")}
                     className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer border-none ${filterTab === "incorrect" ? "bg-white text-[#2563EB] shadow-sm font-bold" : "text-slate-600 bg-transparent"}`}
                   >
@@ -245,7 +249,7 @@ function CandidateAssessmentResults() {
                   const isExpanded = Boolean(expandedQuestions[idx]);
                   return (
                     <div key={idx} className="border border-blue-100 rounded-xl bg-slate-50 overflow-hidden transition-all">
-                      <div 
+                      <div
                         onClick={() => toggleQuestionExpansion(idx)}
                         className="p-4 sm:p-5 flex items-center justify-between cursor-pointer hover:bg-blue-50/50 transition-colors"
                       >
@@ -257,11 +261,10 @@ function CandidateAssessmentResults() {
                           </div>
                         </div>
                         <div className="flex items-center gap-3 shrink-0">
-                          <span className={`text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg border ${
-                            q.isCorrect 
-                              ? "bg-blue-50 text-[#2563EB] border-blue-200" 
+                          <span className={`text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg border ${q.isCorrect
+                              ? "bg-blue-50 text-[#2563EB] border-blue-200"
                               : "bg-amber-50 text-amber-700 border-amber-200"
-                          }`}>
+                            }`}>
                             {q.isCorrect ? "✓ Correct" : "x Incorrect"}
                           </span>
                           <span className="text-xs font-mono text-slate-400">View Answer {isExpanded ? "<i" : "▼"}</span>
@@ -342,7 +345,7 @@ function CandidateAssessmentResults() {
                   Your results are private to your account and authorized enterprise hiring reviewers. Role suggestions are indicative indicators and should be evaluated alongside your portfolio, verified practical experience, and career trajectory goals.
                 </p>
               </div>
-              <button 
+              <button
                 onClick={() => window.print()}
                 className="shrink-0 bg-[#2563EB] hover:bg-[#1D4ED8] text-white px-4 py-2.5 rounded-xl text-xs font-mono font-bold transition-all shadow-md shadow-blue-500/20 cursor-pointer border-none"
               >

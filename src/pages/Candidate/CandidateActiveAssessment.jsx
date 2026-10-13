@@ -2,11 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
 import { createFaceLandmarker, estimateGaze } from "../../utils/faceLandmarker";
+import logo from "./logo.jpeg";
 
 function CandidateActiveAssessment() {
   const navigate = useNavigate();
   const videoRef = useRef(null);
-  const handleFinalSubmitRef = useRef(() => {});
+  const handleFinalSubmitRef = useRef(() => { });
   const submissionLockRef = useRef(false);
   const [interviewSessionId] = useState(() => {
     return globalThis.crypto?.randomUUID
@@ -28,7 +29,7 @@ function CandidateActiveAssessment() {
       return "";
     }
   });
-  
+
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState("");
   const [visionStatus, setVisionStatus] = useState("waiting");
@@ -423,11 +424,11 @@ function CandidateActiveAssessment() {
       if (document.hidden) {
         setTabSwitchCount((prev) => {
           const updatedCount = prev + 1;
-          
+
           if (updatedCount === 1 || updatedCount === 2) {
             setWarningMessage(`Warning ${updatedCount}/2: Leaving the assessment tab or minimizing the window is prohibited. Your activity has been flagged. One more violation will result in automatic submission.`);
             setWarningModalOpen(true);
-            
+
             setProctoringState(p => ({
               ...p,
               visualActivityFlag: "YES",
@@ -437,12 +438,12 @@ function CandidateActiveAssessment() {
           } else if (updatedCount >= 3) {
             setWarningMessage("Maximum tab switch limit (3) exceeded. Submitting assessment automatically.");
             setWarningModalOpen(true);
-            
+
             setTimeout(() => {
               handleFinalSubmitRef.current();
             }, 2500);
           }
-          
+
           return updatedCount;
         });
       }
@@ -603,9 +604,9 @@ function CandidateActiveAssessment() {
   const progressPercentage = totalQCount
     ? Math.round((savedCount / totalQCount) * 100)
     : 0;
-if (questionsLoading) {
+  if (questionsLoading) {
     return (
-      <div 
+      <div
         className="min-h-screen bg-[#F8FAFC] text-slate-800 flex items-center justify-center p-6 selection:bg-[#2563EB] selection:text-white"
         style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
       >
@@ -619,7 +620,7 @@ if (questionsLoading) {
 
   if (questionsError || !currentQ) {
     return (
-      <div 
+      <div
         className="min-h-screen bg-[#F8FAFC] text-slate-800 flex items-center justify-center p-6 selection:bg-[#2563EB] selection:text-white"
         style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
       >
@@ -638,7 +639,7 @@ if (questionsLoading) {
   }
 
   return (
-    <div 
+    <div
       className="min-h-screen bg-[#F8FAFC] text-slate-800 flex flex-col select-none selection:bg-[#2563EB] selection:text-white"
       style={{ fontFamily: "'Google Sans Flex', 'Google Sans', sans-serif" }}
     >
@@ -693,9 +694,14 @@ if (questionsLoading) {
 
       <header className="bg-white/90 border-b border-blue-100 px-6 py-4 flex items-center justify-between sticky top-0 z-30 backdrop-blur-md shadow-sm">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-[#2563EB] rounded-xl flex items-center justify-center font-black text-white text-xs shadow-md shadow-blue-500/20">
-            S
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center border border-blue-300/40 shrink-0 overflow-hidden">
+            <img
+              src={logo}
+              alt="SmartRecruit Logo"
+              className="w-full h-full object-contain"
+            />
           </div>
+          <div></div>
           <div>
             <span className="font-bold text-sm tracking-tight text-[#0F172A] block">SmartRecruit</span>
             <span className="text-[10px] text-[#2563EB] font-semibold uppercase tracking-wider">{assessmentData.assessmentTitle}</span>
@@ -718,7 +724,7 @@ if (questionsLoading) {
       </header>
 
       <div className="max-w-7xl w-full mx-auto p-4 sm:p-6 my-6 flex flex-col lg:flex-row gap-6 flex-grow">
-        
+
         {/* Landing Page Dark Theme Sidebar */}
         <aside className="w-full lg:w-80 bg-[#0F172A] text-white border border-slate-800 rounded-2xl p-5 flex flex-col justify-between space-y-6 shadow-xl relative overflow-hidden shrink-0">
           <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-blue-600/10 rounded-full blur-2xl pointer-events-none"></div>
@@ -727,11 +733,10 @@ if (questionsLoading) {
             <div className="space-y-2.5">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400">Proctoring Feed</span>
-                <span className={`flex items-center space-x-1 text-[10px] px-2 py-0.5 rounded-full border ${
-                  visionStatus === "ready" && mlStatus === "ready" 
-                    ? "text-blue-300 bg-blue-900/40 border-blue-500/30" 
+                <span className={`flex items-center space-x-1 text-[10px] px-2 py-0.5 rounded-full border ${visionStatus === "ready" && mlStatus === "ready"
+                    ? "text-blue-300 bg-blue-900/40 border-blue-500/30"
                     : "text-amber-300 bg-amber-900/40 border-amber-500/30"
-                }`}>
+                  }`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${visionStatus === "ready" && mlStatus === "ready" ? "bg-blue-400 animate-pulse" : "bg-amber-400"}`}></span>
                   <span>{visionStatus === "error" ? "Vision unavailable" : visionStatus !== "ready" ? "Loading face tracking" : mlStatus === "ready" ? "Live vision + XGBoost" : mlStatus === "error" ? "XGBoost unavailable" : "Collecting camera metrics"}</span>
                 </span>
@@ -757,11 +762,10 @@ if (questionsLoading) {
             <div className="space-y-3 bg-slate-800/80 border border-slate-700/60 rounded-xl p-3.5 backdrop-blur-md">
               <div className="flex items-center justify-between border-b border-slate-700/60 pb-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400">Activity Telemetry</span>
-                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md ${
-                  proctoringState.visualActivityFlag === 'YES' 
-                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' 
+                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md ${proctoringState.visualActivityFlag === 'YES'
+                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
                     : 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
-                }`}>
+                  }`}>
                   Flag: {proctoringState.visualActivityFlag}
                 </span>
               </div>
@@ -844,7 +848,7 @@ if (questionsLoading) {
         </aside>
 
         <main className="flex-grow bg-white border border-blue-100 rounded-2xl p-6 sm:p-8 flex flex-col justify-between space-y-8 shadow-sm">
-          
+
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-blue-100 pb-4">
               <span className="text-xs font-mono text-[#2563EB] uppercase tracking-wide">{currentQ.type}</span>
@@ -866,15 +870,13 @@ if (questionsLoading) {
                   <div
                     key={opt.id}
                     onClick={() => setSelectedOption(opt.id)}
-                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start space-x-3.5 ${
-                      isSelected 
-                        ? 'bg-blue-50/70 border-[#2563EB] text-slate-900 shadow-sm ring-2 ring-blue-500/20' 
+                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start space-x-3.5 ${isSelected
+                        ? 'bg-blue-50/70 border-[#2563EB] text-slate-900 shadow-sm ring-2 ring-blue-500/20'
                         : 'bg-white border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-slate-50'
-                    }`}
+                      }`}
                   >
-                    <div className={`w-6 h-6 rounded-lg border flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 transition-colors ${
-                      isSelected ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'border-slate-300 text-slate-500 bg-slate-50'
-                    }`}>
+                    <div className={`w-6 h-6 rounded-lg border flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 transition-colors ${isSelected ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'border-slate-300 text-slate-500 bg-slate-50'
+                      }`}>
                       {opt.id}
                     </div>
                     <div className="space-y-1">
@@ -907,9 +909,8 @@ if (questionsLoading) {
             <button
               onClick={() => handleNavigation("prev")}
               disabled={currentQuestionIndex === 0}
-              className={`px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 transition-all ${
-                currentQuestionIndex === 0 ? 'opacity-40 cursor-not-allowed bg-slate-50 text-slate-400' : 'bg-white text-slate-700 hover:bg-slate-50 cursor-pointer'
-              }`}
+              className={`px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 transition-all ${currentQuestionIndex === 0 ? 'opacity-40 cursor-not-allowed bg-slate-50 text-slate-400' : 'bg-white text-slate-700 hover:bg-slate-50 cursor-pointer'
+                }`}
             >
               ← Previous Question
             </button>
