@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../../services/api";
 import { createFaceLandmarker, estimateGaze } from "../../utils/faceLandmarker";
 import logo from "./logo.jpeg";
 
 function CandidateActiveAssessment() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const assessmentId = searchParams.get("assessmentId");
   const videoRef = useRef(null);
   const handleFinalSubmitRef = useRef(() => { });
   const submissionLockRef = useRef(false);
@@ -91,14 +93,20 @@ function CandidateActiveAssessment() {
     const loadGeneratedQuestions = async () => {
       setQuestionsLoading(true);
       setQuestionsError("");
+      if (!assessmentId) {
+        setQuestionsError("No assessment ID was provided. Return to the overview and start a new assessment.");
+        setQuestionsLoading(false);
+        return;
+      }
       const deadline = Date.now() + 5 * 60 * 1000;
 
       try {
         while (active && Date.now() < deadline) {
-          const result = await api("/api/profile/interview");
+          // This endpoint returns the questions for this specific attempt only.
+          const result = await api(`/api/assessments/${encodeURIComponent(assessmentId)}`);
 
           if (result.status === "ready") {
-            const generated = result.interview?.questions;
+            const generated = result.assessment?.questions || result.questions;
             if (!Array.isArray(generated) || generated.length === 0) {
               throw new Error("ML completed, but no generated questions were returned.");
             }
@@ -113,11 +121,23 @@ function CandidateActiveAssessment() {
               mlCalibratedTag: [item.topic, item.difficulty].filter(Boolean).join(" · ") || "Personalized technical question",
               prompt: item.question || "",
               instruction: "Select the most accurate option below.",
-              options: Object.entries(item.options || {}).map(([id, title]) => ({
-                id,
-                title: String(title),
-                desc: ""
-              })),
+              options: Array.isArray(item.options)
+                ? item.options.map((option, optionIndex) => {
+                    if (typeof option === "string") {
+                      return { id: String.fromCharCode(65 + optionIndex), title: option, desc: "" };
+                    }
+                    const id = String(option.id ?? option.key ?? String.fromCharCode(65 + optionIndex));
+                    return {
+                      id,
+                      title: String(option.title ?? option.text ?? option.label ?? ""),
+                      desc: String(option.desc ?? option.description ?? ""),
+                    };
+                  }).filter((option) => option.title)
+                : Object.entries(item.options || {}).map(([id, title]) => ({
+                    id,
+                    title: String(typeof title === "object" ? title.title ?? title.text ?? title.label ?? "" : title),
+                    desc: typeof title === "object" ? String(title.desc ?? title.description ?? "") : ""
+                  })).filter((option) => option.title),
               status: "unattempted",
               savedAnswer: null
             })).filter((question) => question.prompt && question.options.length > 0);
@@ -143,7 +163,7 @@ function CandidateActiveAssessment() {
           }
 
           if (result.status === "none") {
-            throw new Error("No generated interview was found. Upload your resume and GitHub profile first, then wait for analysis to finish.");
+            throw new Error("No assessment was found for this ID. Return to the overview and start a new assessment.");
           }
 
           await new Promise((resolve) => {
@@ -168,7 +188,7 @@ function CandidateActiveAssessment() {
       active = false;
       if (waitTimer) clearTimeout(waitTimer);
     };
-  }, []);
+  }, [assessmentId]);
 
   const getInitials = (name) => {
     const parts = name.trim().split(" ");
@@ -473,7 +493,7 @@ function CandidateActiveAssessment() {
   };
 
   const handleSaveAnswer = () => {
-    if (!selectedOption) return;
+    if (selectedOption == null) return;
     const updatedQuestions = [...assessmentData.questions];
     updatedQuestions[currentQuestionIndex] = {
       ...currentQ,
@@ -548,6 +568,9 @@ function CandidateActiveAssessment() {
       const saved = await api("/api/profile/interview/submit", {
         method: "POST",
         body: JSON.stringify({
+          // Link the submitted answers to the exact ML-generated assessment attempt.
+          assessmentId,
+          attemptId: assessmentId,
           sessionId: interviewSessionIdRef.current,
           assessmentTitle: assessmentData.assessmentTitle,
           questions: finalQuestions.map((question) => ({

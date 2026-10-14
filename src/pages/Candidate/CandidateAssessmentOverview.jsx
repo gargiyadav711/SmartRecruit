@@ -1,8 +1,12 @@
 import { useState } from "react";
+import { api } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import logo from "./logo.jpeg";
 function CandidateAssessmentOverview() {
   const navigate = useNavigate();
+
+  const [startingAssessment, setStartingAssessment] = useState(false);
+  const [startError, setStartError] = useState("");
 
   const [candidateName] = useState(() => {
     try {
@@ -22,8 +26,49 @@ function CandidateAssessmentOverview() {
 
   const initials = getInitials(candidateName);
 
-  function handleStartAssessment() {
-    navigate("/candidate/assessment");
+  async function handleStartAssessment() {
+    // Prevent double-clicks from creating two attempts.
+    if (startingAssessment) return;
+
+    setStartingAssessment(true);
+    setStartError("");
+
+    try {
+      // Generate a unique ID for every click/new attempt. The backend should
+      // create a new attempt and trigger ML question generation for this request.
+      const clientAttemptId = globalThis.crypto?.randomUUID
+        ? globalThis.crypto.randomUUID()
+        : `attempt-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+      const result = await api("/api/assessments/generate", {
+        method: "POST",
+        headers: { "X-Client-Attempt-Id": clientAttemptId },
+        body: JSON.stringify({
+          clientAttemptId,
+          newAttempt: true,
+        }),
+      });
+
+      const assessmentId =
+        result?.assessmentId ??
+        result?.assessment?.id ??
+        result?.data?.assessmentId ??
+        result?.data?.assessment?.id;
+
+      if (!assessmentId) {
+        throw new Error(
+          result?.message || "The server did not return an assessment ID. Please try again."
+        );
+      }
+
+      navigate(`/candidate/assessment?assessmentId=${encodeURIComponent(assessmentId)}`);
+    } catch (error) {
+      setStartError(
+        error?.message || "Could not start a new assessment. Please try again."
+      );
+    } finally {
+      setStartingAssessment(false);
+    }
   }
 
   return (
@@ -317,13 +362,22 @@ function CandidateAssessmentOverview() {
             <div className="flex flex-col items-end">
               <button
                 type="button"
-                onClick={handleStartAssessment}
-                className="py-3 px-6 rounded-xl font-bold text-xs bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.99] text-white shadow-lg shadow-blue-500/25 transition-all flex items-center space-x-2 cursor-pointer border-none"
+                onClick={() => navigate("/candidate/profile")}
+                className="mb-3 text-xs font-semibold text-[#2563EB] hover:text-[#1D4ED8] underline underline-offset-4"
               >
-                <span>Start Assessment</span>
+                Edit candidate profile
+              </button>
+              {startError && <p role="alert" className="mb-2 max-w-xs text-right text-xs text-red-600">{startError}</p>}
+              <button
+                type="button"
+                onClick={handleStartAssessment}
+                disabled={startingAssessment}
+                className="py-3 px-6 rounded-xl font-bold text-xs bg-[#2563EB] hover:bg-[#1D4ED8] disabled:opacity-60 disabled:cursor-wait active:scale-[0.99] text-white shadow-lg shadow-blue-500/25 transition-all flex items-center space-x-2 cursor-pointer border-none"
+              >
+                <span>{startingAssessment ? "Generating questions…" : "Start Assessment"}</span>
                 <span>→</span>
               </button>
-              <p className="text-[10px] text-slate-500 mt-1.5">Your timed evaluation session will begin immediately.</p>
+              <p className="text-[10px] text-slate-500 mt-1.5">A new personalized question set will be generated for each attempt.</p>
             </div>
           </div>
 
