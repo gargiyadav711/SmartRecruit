@@ -87,7 +87,7 @@ function CandidateProfileCompletion({ signupName = "" }) {
             }
             setSaving(false);
         }
-        navigate("/candidate/assessment");
+        navigate("/candidate/instructions");
     };
 
     const formatFileSize = (bytes) => {
@@ -196,7 +196,6 @@ function CandidateProfileCompletion({ signupName = "" }) {
                                     className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-xs text-[#0F172A] placeholder-slate-400 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-500/20 transition-colors font-medium shadow-sm"
                                 />
                             </div>
-
                             <div className="space-y-1.5">
                                 <label className="text-xs font-semibold text-[#334155] block">
                                     College or university <span className="text-[#2563EB]">*</span>
@@ -331,5 +330,4 @@ function CandidateProfileCompletion({ signupName = "" }) {
         </div>
     );
 }
-
 export default CandidateProfileCompletion;
