@@ -4,10 +4,8 @@ import { useNavigate } from "react-router-dom";
 import logo from "./logo.jpeg";
 function CandidateAssessmentOverview() {
   const navigate = useNavigate();
-
   const [startingAssessment, setStartingAssessment] = useState(false);
   const [startError, setStartError] = useState("");
-
   const [candidateName] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("user") || "null")?.name || "Candidate";
@@ -15,7 +13,6 @@ function CandidateAssessmentOverview() {
       return "Candidate";
     }
   });
-
   const getInitials = (name) => {
     const parts = name.trim().split(" ");
     if (parts.length >= 2) {
@@ -25,17 +22,12 @@ function CandidateAssessmentOverview() {
   };
 
   const initials = getInitials(candidateName);
-
   async function handleStartAssessment() {
     // Prevent double-clicks from creating two attempts.
     if (startingAssessment) return;
-
     setStartingAssessment(true);
     setStartError("");
-
     try {
-      // Generate a unique ID for every click/new attempt. The backend should
-      // create a new attempt and trigger ML question generation for this request.
       const clientAttemptId = globalThis.crypto?.randomUUID
         ? globalThis.crypto.randomUUID()
         : `attempt-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -54,7 +46,6 @@ function CandidateAssessmentOverview() {
         result?.assessment?.id ??
         result?.data?.assessmentId ??
         result?.data?.assessment?.id;
-
       if (!assessmentId) {
         throw new Error(
           result?.message || "The server did not return an assessment ID. Please try again."
@@ -70,7 +61,6 @@ function CandidateAssessmentOverview() {
       setStartingAssessment(false);
     }
   }
-
   return (
     <div
       className="min-h-screen bg-[#F8FAFC] text-slate-800 flex selection:bg-[#2563EB] selection:text-white"
@@ -88,7 +78,6 @@ function CandidateAssessmentOverview() {
                 className="w-full h-full object-contain"
               />
             </div>
-
             <div>
               <h1 className="text-lg font-bold text-white tracking-tight leading-none">SmartRecruit</h1>
               <p className="text-[10px] font-bold text-blue-400 tracking-wider uppercase mt-1">EVALUATION PORTAL</p>
@@ -123,7 +112,6 @@ function CandidateAssessmentOverview() {
                   <p className="text-[11px] text-slate-500">Review before you begin</p>
                 </div>
               </div>
-
               <div
                 onClick={() => navigate("/candidate/system-check")}
                 className="flex items-start space-x-3 p-3 rounded-xl cursor-pointer hover:bg-slate-800/60 transition-colors group"
@@ -358,7 +346,6 @@ function CandidateAssessmentOverview() {
             >
               <span>Back to System Check</span>
             </button>
-
             <div className="flex flex-col items-end">
               <button
                 type="button"
@@ -380,9 +367,7 @@ function CandidateAssessmentOverview() {
               <p className="text-[10px] text-slate-500 mt-1.5">A new personalized question set will be generated for each attempt.</p>
             </div>
           </div>
-
         </main>
-
         <footer className="py-5 px-8 bg-white border-t border-blue-100 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500">
           <p>© SmartRecruit · Secure candidate portal</p>
           <div className="flex space-x-4 mt-2 sm:mt-0">
@@ -391,11 +376,8 @@ function CandidateAssessmentOverview() {
             <a href="#terms" onClick={(e) => e.preventDefault()} className="hover:text-[#2563EB] transition-colors">Candidate terms</a>
           </div>
         </footer>
-
       </div>
-
     </div>
   );
 }
-
 export default CandidateAssessmentOverview;
