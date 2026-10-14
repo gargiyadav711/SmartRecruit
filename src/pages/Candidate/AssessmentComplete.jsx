@@ -285,7 +285,6 @@ function AssessmentComplete() {
                 <span className="font-mono font-bold text-[#0F172A] text-sm">{proctoring.lookingAwayEvents ?? 0} Events</span>
               </div>
             </div>
-
             <div className="text-xs text-slate-600 bg-[#EFF6FF] p-3.5 rounded-xl border border-blue-100 leading-relaxed">
               <strong className="text-[#0F172A] font-bold">Integrity Status:</strong> {proctoring.flagReason || "Candidate posture and gaze stable within normal parameters."}
             </div>
@@ -314,5 +313,4 @@ function AssessmentComplete() {
     </div>
   );
 }
-
 export default AssessmentComplete;

@@ -268,7 +268,7 @@ opacity: 0;
                       isLoggedIn
                         ? userRole === "recruiter"
                           ? "/recruiter/dashboard"
-                          : "/candidate/instructions"
+                          : "/candidate/profile"
                         : "/candidate/SignUpPage"
                     )
                   }

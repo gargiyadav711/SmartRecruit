@@ -87,7 +87,7 @@ function CandidateProfileCompletion({ signupName = "" }) {
             }
             setSaving(false);
         }
-        navigate("/");
+        navigate("/candidate/assessment");
     };
 
     const formatFileSize = (bytes) => {
