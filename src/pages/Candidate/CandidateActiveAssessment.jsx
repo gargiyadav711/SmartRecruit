@@ -927,7 +927,6 @@ function CandidateActiveAssessment() {
               </button>
             </div>
           </div>
-
           <div className="pt-6 border-t border-blue-100 flex items-center justify-between">
             <button
               onClick={() => handleNavigation("prev")}
@@ -952,12 +951,10 @@ function CandidateActiveAssessment() {
           </div>
         </main>
       </div>
-
       <footer className="bg-white border-t border-blue-100 px-6 py-4 flex items-center justify-between text-xs text-slate-500">
         <span>© SmartRecruit · Candidate assessment session</span>
         <span>MediaPipe Face Landmarks + XGBoost Activity Classifier</span>
       </footer>
-
     </div>
   );
 }

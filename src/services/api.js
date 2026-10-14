@@ -1,36 +1,53 @@
 import { API_URL } from "../config";
 
-// JSON helper. Automatically sends the saved login token (if any).
+async function readResponse(response) {
+  const raw = await response.text();
+  let data = {};
+
+  if (raw) {
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      data = { message: raw };
+    }
+  }
+
+  if (!response.ok) {
+    const message = data?.message || data?.error || `Request failed (${response.status})`;
+    const error = new Error(message);
+    error.status = response.status;
+    error.data = data;
+    throw error;
+  }
+
+  return data;
+}
+
+// JSON API helper. Uses the JWT saved by the login flow.
 export const api = async (endpoint, options = {}) => {
   const token = localStorage.getItem("token");
+  const headers = {
+    ...(options.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...options.headers,
+  };
 
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
+    headers,
   });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(data.message || "Something went wrong");
-  }
-  return data;
+
+  return readResponse(response);
 };
 
-// Multipart helper (file uploads). Lets the browser set the Content-Type boundary.
+// Multipart helper: do not set Content-Type manually; the browser adds the boundary.
 export const apiUpload = async (endpoint, formData) => {
   const token = localStorage.getItem("token");
-
   const response = await fetch(`${API_URL}${endpoint}`, {
     method: "POST",
     headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: formData,
   });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(data.message || "Upload failed");
-  }
-  return data;
+
+  return readResponse(response);
 };

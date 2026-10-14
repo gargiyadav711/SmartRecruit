@@ -28,21 +28,46 @@ function CandidateProfileCompletion({ signupName = "" }) {
 
         const loadProfile = async () => {
             try {
-                const response = await api("/api/candidates/me");
-                const profile =
-                    response.candidate ||
-                    response.profile ||
-                    response.data ||
-                    response;
+                // This backend exposes GET /api/profile, not /api/candidates/me.
+                // New users may not have an analyzed CandidateProfile yet, so
+                // also load their account details from the existing /api/auth/me.
+                let profile = {};
+                let account = {};
+
+                try {
+                    const response = await api("/api/profile");
+                    profile =
+                        response?.candidate ||
+                        response?.candidateProfile?.candidate ||
+                        response?.candidateProfile ||
+                        response?.profile ||
+                        response?.data ||
+                        {};
+                } catch (profileError) {
+                    // A 404 here can simply mean the candidate has not uploaded
+                    // and analyzed a resume yet. Try the account endpoint below.
+                    if (!/not found|candidate profile/i.test(profileError.message || "")) {
+                        throw profileError;
+                    }
+                }
+
+                try {
+                    const accountResponse = await api("/api/auth/me");
+                    account = accountResponse?.user || accountResponse?.data?.user || {};
+                } catch (accountError) {
+                    // Keep any candidate profile data if the account endpoint
+                    // is unavailable, but surface errors if neither source works.
+                    if (!Object.keys(profile).length) throw accountError;
+                }
 
                 if (!active) return;
 
                 setFormData({
-                    fullName: profile.fullName || profile.name || signupName || "",
-                    email: profile.email || "",
-                    phone: profile.phone || "",
-                    college: profile.college || profile.university || "",
-                    githubUrl: profile.githubUrl || "",
+                    fullName: profile.fullName || profile.name || account.name || signupName || "",
+                    email: profile.email || account.email || "",
+                    phone: profile.phone || account.phone || "",
+                    college: profile.college || profile.university || account.college || "",
+                    githubUrl: profile.githubUrl || account.githubUrl || "",
                 });
             } catch (error) {
                 if (active) {
@@ -138,7 +163,9 @@ function CandidateProfileCompletion({ signupName = "" }) {
 
         try {
             // 1. Save the latest profile details in the backend.
-            await api("/api/candidates/me", {
+            // Requires the backend to implement PUT /api/profile. The current
+            // Backend.zip only implements GET /api/profile and POST /api/profile/analyze.
+            await api("/api/profile", {
                 method: "PUT",
                 body: JSON.stringify({
                     fullName: formData.fullName.trim(),
