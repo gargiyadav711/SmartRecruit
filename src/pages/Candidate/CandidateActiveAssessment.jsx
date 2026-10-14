@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../../services/api";
 import { createFaceLandmarker, estimateGaze } from "../../utils/faceLandmarker";
 import logo from "./logo.jpeg";
 
 function CandidateActiveAssessment() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const assessmentId = searchParams.get("assessmentId");
   const videoRef = useRef(null);
   const handleFinalSubmitRef = useRef(() => { });
   const submissionLockRef = useRef(false);
@@ -91,14 +93,23 @@ function CandidateActiveAssessment() {
     const loadGeneratedQuestions = async () => {
       setQuestionsLoading(true);
       setQuestionsError("");
+      if (!assessmentId) {
+        setQuestionsError("No assessment ID was provided. Return to the overview and start a new assessment.");
+        setQuestionsLoading(false);
+        return;
+      }
       const deadline = Date.now() + 5 * 60 * 1000;
 
       try {
         while (active && Date.now() < deadline) {
-          const result = await api("/api/profile/interview");
+          // This endpoint returns the questions for this specific attempt only.
+          const assessment = result.data?.assessment;
 
+          if (!assessment) {
+            throw new Error("Assessment was not returned by the server.");
+          }
           if (result.status === "ready") {
-            const generated = result.interview?.questions;
+            const generated = result.assessment?.questions || result.questions;
             if (!Array.isArray(generated) || generated.length === 0) {
               throw new Error("ML completed, but no generated questions were returned.");
             }
@@ -113,11 +124,23 @@ function CandidateActiveAssessment() {
               mlCalibratedTag: [item.topic, item.difficulty].filter(Boolean).join(" · ") || "Personalized technical question",
               prompt: item.question || "",
               instruction: "Select the most accurate option below.",
-              options: Object.entries(item.options || {}).map(([id, title]) => ({
-                id,
-                title: String(title),
-                desc: ""
-              })),
+              options: Array.isArray(item.options)
+                ? item.options.map((option, optionIndex) => {
+                  if (typeof option === "string") {
+                    return { id: String.fromCharCode(65 + optionIndex), title: option, desc: "" };
+                  }
+                  const id = String(option.id ?? option.key ?? String.fromCharCode(65 + optionIndex));
+                  return {
+                    id,
+                    title: String(option.title ?? option.text ?? option.label ?? ""),
+                    desc: String(option.desc ?? option.description ?? ""),
+                  };
+                }).filter((option) => option.title)
+                : Object.entries(item.options || {}).map(([id, title]) => ({
+                  id,
+                  title: String(typeof title === "object" ? title.title ?? title.text ?? title.label ?? "" : title),
+                  desc: typeof title === "object" ? String(title.desc ?? title.description ?? "") : ""
+                })).filter((option) => option.title),
               status: "unattempted",
               savedAnswer: null
             })).filter((question) => question.prompt && question.options.length > 0);
@@ -143,7 +166,7 @@ function CandidateActiveAssessment() {
           }
 
           if (result.status === "none") {
-            throw new Error("No generated interview was found. Upload your resume and GitHub profile first, then wait for analysis to finish.");
+            throw new Error("No assessment was found for this ID. Return to the overview and start a new assessment.");
           }
 
           await new Promise((resolve) => {
@@ -168,7 +191,7 @@ function CandidateActiveAssessment() {
       active = false;
       if (waitTimer) clearTimeout(waitTimer);
     };
-  }, []);
+  }, [assessmentId]);
 
   const getInitials = (name) => {
     const parts = name.trim().split(" ");
@@ -473,7 +496,7 @@ function CandidateActiveAssessment() {
   };
 
   const handleSaveAnswer = () => {
-    if (!selectedOption) return;
+    if (selectedOption == null) return;
     const updatedQuestions = [...assessmentData.questions];
     updatedQuestions[currentQuestionIndex] = {
       ...currentQ,
@@ -548,6 +571,9 @@ function CandidateActiveAssessment() {
       const saved = await api("/api/profile/interview/submit", {
         method: "POST",
         body: JSON.stringify({
+          // Link the submitted answers to the exact ML-generated assessment attempt.
+          assessmentId,
+          attemptId: assessmentId,
           sessionId: interviewSessionIdRef.current,
           assessmentTitle: assessmentData.assessmentTitle,
           questions: finalQuestions.map((question) => ({
@@ -734,8 +760,8 @@ function CandidateActiveAssessment() {
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400">Proctoring Feed</span>
                 <span className={`flex items-center space-x-1 text-[10px] px-2 py-0.5 rounded-full border ${visionStatus === "ready" && mlStatus === "ready"
-                    ? "text-blue-300 bg-blue-900/40 border-blue-500/30"
-                    : "text-amber-300 bg-amber-900/40 border-amber-500/30"
+                  ? "text-blue-300 bg-blue-900/40 border-blue-500/30"
+                  : "text-amber-300 bg-amber-900/40 border-amber-500/30"
                   }`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${visionStatus === "ready" && mlStatus === "ready" ? "bg-blue-400 animate-pulse" : "bg-amber-400"}`}></span>
                   <span>{visionStatus === "error" ? "Vision unavailable" : visionStatus !== "ready" ? "Loading face tracking" : mlStatus === "ready" ? "Live vision + XGBoost" : mlStatus === "error" ? "XGBoost unavailable" : "Collecting camera metrics"}</span>
@@ -763,8 +789,8 @@ function CandidateActiveAssessment() {
               <div className="flex items-center justify-between border-b border-slate-700/60 pb-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400">Activity Telemetry</span>
                 <span className={`text-[9px] font-bold px-2 py-0.5 rounded-md ${proctoringState.visualActivityFlag === 'YES'
-                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                    : 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                  : 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
                   }`}>
                   Flag: {proctoringState.visualActivityFlag}
                 </span>
@@ -871,8 +897,8 @@ function CandidateActiveAssessment() {
                     key={opt.id}
                     onClick={() => setSelectedOption(opt.id)}
                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start space-x-3.5 ${isSelected
-                        ? 'bg-blue-50/70 border-[#2563EB] text-slate-900 shadow-sm ring-2 ring-blue-500/20'
-                        : 'bg-white border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-slate-50'
+                      ? 'bg-blue-50/70 border-[#2563EB] text-slate-900 shadow-sm ring-2 ring-blue-500/20'
+                      : 'bg-white border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-slate-50'
                       }`}
                   >
                     <div className={`w-6 h-6 rounded-lg border flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 transition-colors ${isSelected ? 'bg-[#2563EB] text-white border-[#2563EB]' : 'border-slate-300 text-slate-500 bg-slate-50'
@@ -904,7 +930,6 @@ function CandidateActiveAssessment() {
               </button>
             </div>
           </div>
-
           <div className="pt-6 border-t border-blue-100 flex items-center justify-between">
             <button
               onClick={() => handleNavigation("prev")}
@@ -929,12 +954,10 @@ function CandidateActiveAssessment() {
           </div>
         </main>
       </div>
-
       <footer className="bg-white border-t border-blue-100 px-6 py-4 flex items-center justify-between text-xs text-slate-500">
         <span>© SmartRecruit · Candidate assessment session</span>
         <span>MediaPipe Face Landmarks + XGBoost Activity Classifier</span>
       </footer>
-
     </div>
   );
 }

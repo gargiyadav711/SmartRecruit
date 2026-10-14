@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { api } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import logo from "./logo.jpeg";
 function CandidateAssessmentOverview() {
   const navigate = useNavigate();
-
+  const [startingAssessment, setStartingAssessment] = useState(false);
+  const [startError, setStartError] = useState("");
   const [candidateName] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("user") || "null")?.name || "Candidate";
@@ -11,7 +13,6 @@ function CandidateAssessmentOverview() {
       return "Candidate";
     }
   });
-
   const getInitials = (name) => {
     const parts = name.trim().split(" ");
     if (parts.length >= 2) {
@@ -21,11 +22,45 @@ function CandidateAssessmentOverview() {
   };
 
   const initials = getInitials(candidateName);
+  async function handleStartAssessment() {
+    // Prevent double-clicks from creating two attempts.
+    if (startingAssessment) return;
+    setStartingAssessment(true);
+    setStartError("");
+    try {
+      const clientAttemptId = globalThis.crypto?.randomUUID
+        ? globalThis.crypto.randomUUID()
+        : `attempt-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
-  function handleStartAssessment() {
-    navigate("/candidate/assessment");
+      const result = await api("/api/assessments/generate", {
+        method: "POST",
+        headers: { "X-Client-Attempt-Id": clientAttemptId },
+        body: JSON.stringify({
+          clientAttemptId,
+          newAttempt: true,
+        }),
+      });
+
+      const assessmentId =
+        result?.assessmentId ??
+        result?.assessment?.id ??
+        result?.data?.assessmentId ??
+        result?.data?.assessment?.id;
+      if (!assessmentId) {
+        throw new Error(
+          result?.message || "The server did not return an assessment ID. Please try again."
+        );
+      }
+
+      navigate(`/candidate/assessment?assessmentId=${encodeURIComponent(assessmentId)}`);
+    } catch (error) {
+      setStartError(
+        error?.message || "Could not start a new assessment. Please try again."
+      );
+    } finally {
+      setStartingAssessment(false);
+    }
   }
-
   return (
     <div
       className="min-h-screen bg-[#F8FAFC] text-slate-800 flex selection:bg-[#2563EB] selection:text-white"
@@ -43,7 +78,6 @@ function CandidateAssessmentOverview() {
                 className="w-full h-full object-contain"
               />
             </div>
-
             <div>
               <h1 className="text-lg font-bold text-white tracking-tight leading-none">SmartRecruit</h1>
               <p className="text-[10px] font-bold text-blue-400 tracking-wider uppercase mt-1">EVALUATION PORTAL</p>
@@ -78,7 +112,6 @@ function CandidateAssessmentOverview() {
                   <p className="text-[11px] text-slate-500">Review before you begin</p>
                 </div>
               </div>
-
               <div
                 onClick={() => navigate("/candidate/system-check")}
                 className="flex items-start space-x-3 p-3 rounded-xl cursor-pointer hover:bg-slate-800/60 transition-colors group"
@@ -313,22 +346,28 @@ function CandidateAssessmentOverview() {
             >
               <span>Back to System Check</span>
             </button>
-
             <div className="flex flex-col items-end">
               <button
                 type="button"
-                onClick={handleStartAssessment}
-                className="py-3 px-6 rounded-xl font-bold text-xs bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-[0.99] text-white shadow-lg shadow-blue-500/25 transition-all flex items-center space-x-2 cursor-pointer border-none"
+                onClick={() => navigate("/candidate/profile")}
+                className="mb-3 text-xs font-semibold text-[#2563EB] hover:text-[#1D4ED8] underline underline-offset-4"
               >
-                <span>Start Assessment</span>
+                Edit candidate profile
+              </button>
+              {startError && <p role="alert" className="mb-2 max-w-xs text-right text-xs text-red-600">{startError}</p>}
+              <button
+                type="button"
+                onClick={handleStartAssessment}
+                disabled={startingAssessment}
+                className="py-3 px-6 rounded-xl font-bold text-xs bg-[#2563EB] hover:bg-[#1D4ED8] disabled:opacity-60 disabled:cursor-wait active:scale-[0.99] text-white shadow-lg shadow-blue-500/25 transition-all flex items-center space-x-2 cursor-pointer border-none"
+              >
+                <span>{startingAssessment ? "Generating questions…" : "Start Assessment"}</span>
                 <span>→</span>
               </button>
-              <p className="text-[10px] text-slate-500 mt-1.5">Your timed evaluation session will begin immediately.</p>
+              <p className="text-[10px] text-slate-500 mt-1.5">A new personalized question set will be generated for each attempt.</p>
             </div>
           </div>
-
         </main>
-
         <footer className="py-5 px-8 bg-white border-t border-blue-100 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500">
           <p>© SmartRecruit · Secure candidate portal</p>
           <div className="flex space-x-4 mt-2 sm:mt-0">
@@ -337,11 +376,8 @@ function CandidateAssessmentOverview() {
             <a href="#terms" onClick={(e) => e.preventDefault()} className="hover:text-[#2563EB] transition-colors">Candidate terms</a>
           </div>
         </footer>
-
       </div>
-
     </div>
   );
 }
-
 export default CandidateAssessmentOverview;
