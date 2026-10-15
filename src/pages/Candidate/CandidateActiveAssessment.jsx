@@ -377,7 +377,7 @@ function CandidateActiveAssessment() {
             if (metrics.samples >= 10 && timestamp - metrics.lastMlRequestAt >= 5000 && !predictionInFlight) {
               metrics.lastMlRequestAt = timestamp;
               predictionInFlight = true;
-              api("/api/ml/predict-face-activity", {
+              api("/api/proctoring/predict-face-activity", {
                 method: "POST",
                 body: JSON.stringify(observedMetrics),
               })
